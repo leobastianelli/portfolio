@@ -1,20 +1,22 @@
 "use client";
 
-const links = [
+import { useLang } from "@/context/LanguageContext";
+
+const contactLinks = [
   {
-    label: "Email",
+    labelKey: "Email",
     value: "leonelbastianelli@gmail.com",
     href: "mailto:leonelbastianelli@gmail.com",
     mono: true,
   },
   {
-    label: "LinkedIn",
+    labelKey: "LinkedIn",
     value: "linkedin.com/in/leonelbstein",
     href: "https://linkedin.com/in/leonelbstein",
     mono: false,
   },
   {
-    label: "Freelancer",
+    labelKey: "Freelancer",
     value: "@leonelbstein",
     href: "https://www.freelancer.com/u/leonelbstein",
     mono: false,
@@ -22,6 +24,9 @@ const links = [
 ];
 
 export default function Contact() {
+  const { t } = useLang();
+  const c = t.contact;
+
   return (
     <section
       id="contact"
@@ -30,12 +35,12 @@ export default function Contact() {
     >
       <div className="max-w-6xl mx-auto">
         {/* Headline */}
-        <div className="reveal mb-20 text-center">
+        <div className="reveal mb-6 text-center">
           <p
             className="section-label mb-4"
             style={{ fontFamily: "var(--font-dm-mono)" }}
           >
-            Get in touch
+            {c.sectionLabel}
           </p>
           <h2
             style={{
@@ -46,22 +51,43 @@ export default function Contact() {
               letterSpacing: "-0.01em",
             }}
           >
-            Let&apos;s work{" "}
+            {c.headlineMain}{" "}
             <span style={{ fontStyle: "italic", color: "var(--gold)" }}>
-              together.
+              {c.headlineItalic}
             </span>
           </h2>
         </div>
 
+        {/* Subtitle */}
+        <div className="reveal mb-16 text-center">
+          <p
+            style={{
+              fontFamily: "var(--font-dm-sans)",
+              fontSize: "0.92rem",
+              color: "var(--text-muted)",
+              lineHeight: 1.7,
+              maxWidth: "460px",
+              margin: "0 auto",
+            }}
+          >
+            {c.subtitle}
+          </p>
+        </div>
+
         {/* Links */}
-        <div className="flex flex-col md:flex-row justify-center gap-px" style={{ border: "1px solid var(--border)" }}>
-          {links.map((link, i) => (
+        <div
+          className="flex flex-col md:flex-row justify-center gap-px"
+          style={{ border: "1px solid var(--border)" }}
+        >
+          {contactLinks.map((link, i) => (
             <a
-              key={link.label}
+              key={link.labelKey}
               href={link.href}
               target={link.href.startsWith("mailto") ? undefined : "_blank"}
               rel={
-                link.href.startsWith("mailto") ? undefined : "noopener noreferrer"
+                link.href.startsWith("mailto")
+                  ? undefined
+                  : "noopener noreferrer"
               }
               className="reveal project-card flex-1 p-8 md:p-10 flex flex-col gap-2 group"
               style={{ transitionDelay: `${i * 0.08}s`, textDecoration: "none" }}
@@ -75,7 +101,7 @@ export default function Contact() {
                   color: "var(--gold)",
                 }}
               >
-                {link.label}
+                {link.labelKey}
               </span>
               <span
                 style={{

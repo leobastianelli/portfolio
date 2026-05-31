@@ -1,6 +1,10 @@
 "use client";
 
+import { useLang } from "@/context/LanguageContext";
+
 export default function Hero() {
+  const { t } = useLang();
+
   return (
     <section
       id="hero"
@@ -28,7 +32,7 @@ export default function Hero() {
           className="fade-up flex items-center gap-3 mb-8"
           style={{ fontFamily: "var(--font-dm-mono)" }}
         >
-          <span className="section-label">Full-Stack Developer</span>
+          <span className="section-label">{t.hero.labelRole}</span>
           <span
             style={{
               display: "inline-block",
@@ -37,7 +41,7 @@ export default function Hero() {
               background: "var(--gold)",
             }}
           />
-          <span className="section-label">Córdoba, Argentina</span>
+          <span className="section-label">{t.hero.labelCity}</span>
         </div>
 
         {/* Display name */}
@@ -83,9 +87,7 @@ export default function Hero() {
             marginBottom: "2.5rem",
           }}
         >
-          I build production-ready web applications for international clients.
-          5+ years working across e-commerce, SaaS, and content platforms —
-          from WordPress to Next.js, Shopify to Firebase.
+          {t.hero.bio}
         </p>
 
         {/* CTA */}
@@ -95,7 +97,7 @@ export default function Hero() {
             className="cta-btn"
             style={{ fontFamily: "var(--font-dm-mono)" }}
           >
-            Get in touch <span aria-hidden="true">→</span>
+            {t.hero.cta}
           </a>
         </div>
 

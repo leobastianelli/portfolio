@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { LanguageProvider } from "@/context/LanguageContext";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Work from "@/components/Work";
@@ -9,7 +10,7 @@ import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
-export default function Home() {
+function Portfolio() {
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -41,5 +42,13 @@ export default function Home() {
       <Contact />
       <Footer />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <LanguageProvider>
+      <Portfolio />
+    </LanguageProvider>
   );
 }

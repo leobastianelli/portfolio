@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const links = [
-  { label: "Work", href: "#work" },
-  { label: "Stack", href: "#stack" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
-];
+import { useLang, type Lang } from "@/context/LanguageContext";
 
 export default function Nav() {
+  const { lang, t, setLang } = useLang();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -17,6 +12,46 @@ export default function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const navLinks = [
+    { label: t.nav.work, href: "#work" },
+    { label: t.nav.stack, href: "#stack" },
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.contact, href: "#contact" },
+  ];
+
+  const LangToggle = () => (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0",
+        fontFamily: "var(--font-dm-mono)",
+        fontSize: "0.7rem",
+        letterSpacing: "0.1em",
+        border: "1px solid var(--border)",
+      }}
+    >
+      {(["es", "en"] as Lang[]).map((l, i) => (
+        <button
+          key={l}
+          onClick={() => setLang(l)}
+          style={{
+            padding: "0.3rem 0.6rem",
+            color: lang === l ? "var(--gold)" : "var(--text-muted)",
+            background: lang === l ? "rgba(201,169,110,0.08)" : "transparent",
+            borderRight: i === 0 ? "1px solid var(--border)" : "none",
+            transition: "color 0.2s, background 0.2s",
+            cursor: "pointer",
+            textTransform: "uppercase",
+          }}
+          aria-label={`Switch to ${l === "es" ? "Spanish" : "English"}`}
+        >
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <header
@@ -38,25 +73,31 @@ export default function Nav() {
           lb.dev
         </a>
 
+        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
+          {navLinks.map((link) => (
             <a key={link.href} href={link.href} className="nav-link">
               {link.label}
             </a>
           ))}
         </nav>
 
-        <a
-          href="mailto:leonelbastianelli@gmail.com"
-          className="hidden md:flex cta-btn"
-          style={{ fontFamily: "var(--font-dm-mono)" }}
-        >
-          Hire me
-        </a>
+        {/* Desktop right side */}
+        <div className="hidden md:flex items-center gap-4">
+          <LangToggle />
+          <a
+            href="mailto:leonelbastianelli@gmail.com"
+            className="cta-btn"
+            style={{ fontFamily: "var(--font-dm-mono)" }}
+          >
+            {t.nav.hire}
+          </a>
+        </div>
 
         {/* Mobile nav */}
-        <div className="flex md:hidden items-center gap-5">
-          {links.map((link) => (
+        <div className="flex md:hidden items-center gap-4">
+          <LangToggle />
+          {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}

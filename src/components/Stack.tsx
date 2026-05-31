@@ -1,51 +1,33 @@
 "use client";
 
-const stacks = [
-  {
-    category: "Frontend",
-    items: ["Next.js", "React", "TypeScript", "Tailwind CSS", "HTML / CSS / SCSS"],
-  },
-  {
-    category: "Backend",
-    items: ["Node.js", "PHP", "Firebase", "REST APIs", "n8n Automation"],
-  },
-  {
-    category: "E-Commerce",
-    items: [
-      "Shopify Plus",
-      "Storefront API",
-      "Admin API",
-      "Loop Subscriptions",
-      "WooCommerce",
-    ],
-  },
-  {
-    category: "CMS",
-    items: ["WordPress", "Custom Plugins", "Elementor", "WPML", "ACF"],
-  },
-  {
-    category: "Infrastructure",
-    items: ["Vercel", "Git / GitHub", "Google Cloud Run", "Linux / SSH"],
-  },
-  {
-    category: "AI & Tooling",
-    items: [
-      "Claude API",
-      "Google Places API",
-      "SerpAPI",
-      "Gemini AI",
-    ],
-  },
+import { useLang } from "@/context/LanguageContext";
+
+const stackItems = [
+  ["Next.js", "React", "TypeScript", "Tailwind CSS", "HTML / CSS / SCSS"],
+  ["Node.js", "PHP", "Firebase", "REST APIs", "n8n Automation"],
+  ["Shopify Plus", "Storefront API", "Admin API", "Loop Subscriptions", "WooCommerce"],
+  ["WordPress", "Custom Plugins", "Elementor", "WPML", "ACF"],
+  ["Vercel", "Git / GitHub", "Google Cloud Run", "Linux / SSH"],
+  ["Claude API", "Google Places API", "SerpAPI", "Gemini AI"],
 ];
 
 export default function Stack() {
+  const { t } = useLang();
+
   return (
-    <section id="stack" className="py-32 px-6 md:px-10" style={{ borderTop: "1px solid var(--border)" }}>
+    <section
+      id="stack"
+      className="py-32 px-6 md:px-10"
+      style={{ borderTop: "1px solid var(--border)" }}
+    >
       <div className="max-w-6xl mx-auto">
         <div className="reveal mb-16">
           <span className="gold-line" />
-          <p className="section-label mb-3" style={{ fontFamily: "var(--font-dm-mono)" }}>
-            Technical expertise
+          <p
+            className="section-label mb-3"
+            style={{ fontFamily: "var(--font-dm-mono)" }}
+          >
+            {t.stack.sectionLabel}
           </p>
           <h2
             style={{
@@ -58,15 +40,15 @@ export default function Stack() {
           >
             Stack &{" "}
             <span style={{ fontStyle: "italic", color: "var(--gold)" }}>
-              Tools
+              {t.stack.sectionTitleItalic}
             </span>
           </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {stacks.map((stack, i) => (
+          {stackItems.map((items, i) => (
             <div
-              key={stack.category}
+              key={i}
               className="stack-card reveal p-7"
               style={{
                 background: "rgba(255,255,255,0.012)",
@@ -83,11 +65,11 @@ export default function Stack() {
                   marginBottom: "1.2rem",
                 }}
               >
-                {stack.category}
+                {t.stack.categories[i]}
               </p>
 
               <ul className="flex flex-col gap-2">
-                {stack.items.map((item) => (
+                {items.map((item) => (
                   <li
                     key={item}
                     style={{

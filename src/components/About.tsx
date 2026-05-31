@@ -1,14 +1,11 @@
 "use client";
 
-const info = [
-  { label: "Experience", value: "5+ years" },
-  { label: "Location", value: "Córdoba, Argentina" },
-  { label: "Languages", value: "Spanish (native) · English (fluent)" },
-  { label: "Availability", value: "Open to freelance & contracts" },
-  { label: "Time Zone", value: "ART (UTC−3)" },
-];
+import { useLang } from "@/context/LanguageContext";
 
 export default function About() {
+  const { t } = useLang();
+  const a = t.about;
+
   return (
     <section
       id="about"
@@ -18,8 +15,11 @@ export default function About() {
       <div className="max-w-6xl mx-auto">
         <div className="reveal mb-16">
           <span className="gold-line" />
-          <p className="section-label mb-3" style={{ fontFamily: "var(--font-dm-mono)" }}>
-            Background
+          <p
+            className="section-label mb-3"
+            style={{ fontFamily: "var(--font-dm-mono)" }}
+          >
+            {a.sectionLabel}
           </p>
           <h2
             style={{
@@ -30,9 +30,9 @@ export default function About() {
               lineHeight: 1.15,
             }}
           >
-            About{" "}
+            {a.sectionTitleMain}{" "}
             <span style={{ fontStyle: "italic", color: "var(--gold)" }}>
-              me
+              {a.sectionTitleItalic}
             </span>
           </h2>
         </div>
@@ -48,9 +48,7 @@ export default function About() {
                 color: "var(--text)",
               }}
             >
-              I&apos;m a full-stack developer with over five years of experience
-              building digital products for international clients — from lean
-              startups to established brands across Europe and the Americas.
+              {a.p1}
             </p>
             <p
               style={{
@@ -60,11 +58,7 @@ export default function About() {
                 color: "var(--text-muted)",
               }}
             >
-              My work spans e-commerce storefronts, SaaS dashboards, and
-              content-driven platforms. I approach each project with a product
-              mindset: understanding the business goals, not just shipping
-              features. I care about performance, reliability, and the small
-              details that make a product feel finished.
+              {a.p2}
             </p>
             <p
               style={{
@@ -74,7 +68,7 @@ export default function About() {
                 color: "var(--text-muted)",
               }}
             >
-              Outside of client work, I contribute to{" "}
+              {a.p3pre}
               <a
                 href="https://purpuraceniza.com"
                 target="_blank"
@@ -95,14 +89,13 @@ export default function About() {
               >
                 Púrpura Ceniza
               </a>
-              , a band from Córdoba blending shoegaze, trip-hop, and Argentine
-              folk — where I also handle the digital presence.
+              {a.p3post}
             </p>
           </div>
 
           {/* Info table column */}
           <div className="reveal flex flex-col justify-start gap-0">
-            {info.map((row, i) => (
+            {a.table.map((row, i) => (
               <div
                 key={row.label}
                 style={{
@@ -110,7 +103,7 @@ export default function About() {
                   flexDirection: "column",
                   padding: "1.1rem 0",
                   borderBottom:
-                    i < info.length - 1
+                    i < a.table.length - 1
                       ? "1px solid var(--border)"
                       : "none",
                   gap: "0.25rem",
