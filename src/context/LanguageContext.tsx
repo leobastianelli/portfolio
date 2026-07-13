@@ -13,6 +13,7 @@ export type Lang = "es" | "en";
 export const translations = {
   es: {
     nav: {
+      services: "Servicios",
       work: "Trabajo",
       stack: "Stack",
       about: "Sobre mí",
@@ -20,10 +21,37 @@ export const translations = {
       hire: "Contratame",
     },
     hero: {
-      labelRole: "Desarrollador Full-Stack",
+      labelRole: "Software para pymes argentinas",
       labelCity: "Córdoba, Argentina",
-      bio: "Construyo aplicaciones web listas para producción para clientes internacionales. Más de 5 años trabajando en e-commerce, SaaS y plataformas de contenido — desde WordPress hasta Next.js, desde Shopify hasta Firebase.",
+      bio: "Vi bastantes negocios chicos y medianos de acá quedar afuera de herramientas que las empresas grandes —muchas veces extranjeras— usan hace años. Desarrollo tiendas online, sistemas internos y automatizaciones para que ese acceso no dependa del tamaño de la empresa.",
       cta: "Escribime →",
+    },
+    services: {
+      sectionLabel: "Servicios",
+      sectionTitleMain: "Qué",
+      sectionTitleItalic: "resuelvo",
+      items: [
+        {
+          title: "Tiendas online",
+          description:
+            "Desarrollo de e-commerce a medida: Shopify, WooCommerce o soluciones custom, según lo que tu negocio ya usa y lo que necesita vender más.",
+        },
+        {
+          title: "Sistemas a medida",
+          description:
+            "Herramientas internas para pedidos, stock, turnos o lo que hoy resolvés con planillas y llamados. Pensadas para cómo trabaja tu equipo, no al revés.",
+        },
+        {
+          title: "Automatización",
+          description:
+            "Conectar lo que ya usás —WhatsApp, mail, planillas, sistemas de gestión— para sacarte tareas repetitivas de encima.",
+        },
+        {
+          title: "Arquitectura y estrategia",
+          description:
+            "Antes de programar, te ayudo a decidir qué construir primero. No toda pyme necesita lo mismo, ni en el mismo orden.",
+        },
+      ],
     },
     work: {
       sectionLabel: "Proyectos Seleccionados",
@@ -67,8 +95,8 @@ export const translations = {
       sectionLabel: "Trayectoria",
       sectionTitleMain: "Sobre",
       sectionTitleItalic: "mí",
-      p1: "Soy desarrollador full-stack con más de cinco años de experiencia construyendo productos digitales para clientes internacionales — desde startups ágiles hasta marcas consolidadas de Europa y América.",
-      p2: "Mi trabajo abarca tiendas de e-commerce, dashboards SaaS y plataformas orientadas al contenido. Abordo cada proyecto con una mentalidad de producto: entender los objetivos del negocio, no solo entregar funcionalidades. Me importa el rendimiento, la confiabilidad y los pequeños detalles que hacen que un producto se sienta terminado.",
+      p1: "Soy desarrollador full-stack, pero antes de escribir una línea de código me importa entender cómo funciona tu negocio: qué vendés, cómo lo vendés hoy, y dónde se traba el proceso. Eso define qué vale la pena construir — no al revés.",
+      p2: "Trabajé en tiendas de e-commerce, sistemas internos y automatizaciones para negocios de distintos tamaños, desde pymes locales hasta clientes en Europa y América. Esa mezcla me sirve acá: sé qué tecnología usan las empresas grandes y cómo adaptarla a la escala y el presupuesto real de una pyme argentina.",
       p3pre: "Fuera del trabajo con clientes, contribuyo a ",
       p3post:
         ", una banda de Córdoba que fusiona shoegaze, trip-hop y folk argentino — donde también me encargo de la presencia digital.",
@@ -88,12 +116,13 @@ export const translations = {
       headlineMain: "Trabajemos",
       headlineItalic: "juntos.",
       subtitle:
-        "Disponible para proyectos freelance, contratos y colaboraciones a largo plazo. Respondo en menos de 24 horas.",
+        "Contame cómo funciona tu negocio hoy y te digo qué tiene sentido construir. Respondo en menos de 24 horas.",
     },
   },
 
   en: {
     nav: {
+      services: "Services",
       work: "Work",
       stack: "Stack",
       about: "About",
@@ -101,10 +130,37 @@ export const translations = {
       hire: "Hire me",
     },
     hero: {
-      labelRole: "Full-Stack Developer",
+      labelRole: "Software for Argentine SMEs",
       labelCity: "Córdoba, Argentina",
-      bio: "I build production-ready web applications for international clients. 5+ years working across e-commerce, SaaS, and content platforms — from WordPress to Next.js, Shopify to Firebase.",
+      bio: "I've seen plenty of small and medium businesses here get left out of tools that large companies — often foreign ones — have used for years. I build online stores, internal systems, and automations so that access doesn't depend on company size.",
       cta: "Get in touch →",
+    },
+    services: {
+      sectionLabel: "Services",
+      sectionTitleMain: "What",
+      sectionTitleItalic: "I solve",
+      items: [
+        {
+          title: "Online stores",
+          description:
+            "Custom e-commerce development: Shopify, WooCommerce, or custom-built solutions, based on what your business already uses and what it needs to sell more.",
+        },
+        {
+          title: "Custom systems",
+          description:
+            "Internal tools for orders, stock, bookings, or whatever you currently handle with spreadsheets and phone calls. Built around how your team actually works.",
+        },
+        {
+          title: "Automation",
+          description:
+            "Connecting what you already use — WhatsApp, email, spreadsheets, management systems — to take repetitive tasks off your plate.",
+        },
+        {
+          title: "Architecture & strategy",
+          description:
+            "Before writing code, I help you decide what to build first. Not every SME needs the same thing, or in the same order.",
+        },
+      ],
     },
     work: {
       sectionLabel: "Selected work",
@@ -148,8 +204,8 @@ export const translations = {
       sectionLabel: "Background",
       sectionTitleMain: "About",
       sectionTitleItalic: "me",
-      p1: "I'm a full-stack developer with over five years of experience building digital products for international clients — from lean startups to established brands across Europe and the Americas.",
-      p2: "My work spans e-commerce storefronts, SaaS dashboards, and content-driven platforms. I approach each project with a product mindset: understanding the business goals, not just shipping features. I care about performance, reliability, and the small details that make a product feel finished.",
+      p1: "I'm a full-stack developer, but before writing a single line of code I want to understand how your business works: what you sell, how you sell it today, and where the process breaks down. That's what defines what's worth building — not the other way around.",
+      p2: "I've worked on e-commerce stores, internal systems, and automations for businesses of different sizes, from local SMEs to clients in Europe and the Americas. That mix is useful here: I know what technology large companies use and how to adapt it to the real scale and budget of an Argentine SME.",
       p3pre: "Outside of client work, I contribute to ",
       p3post:
         ", a band from Córdoba blending shoegaze, trip-hop, and Argentine folk — where I also handle the digital presence.",
@@ -166,7 +222,7 @@ export const translations = {
       headlineMain: "Let's work",
       headlineItalic: "together.",
       subtitle:
-        "Available for freelance projects, contracts, and long-term collaborations. I respond within 24 hours.",
+        "Tell me how your business works today and I'll tell you what's worth building. I reply within 24 hours.",
     },
   },
 } as const;

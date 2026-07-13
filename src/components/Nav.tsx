@@ -14,6 +14,7 @@ export default function Nav() {
   }, []);
 
   const navLinks = [
+    { label: t.nav.services, href: "#services" },
     { label: t.nav.work, href: "#work" },
     { label: t.nav.stack, href: "#stack" },
     { label: t.nav.about, href: "#about" },

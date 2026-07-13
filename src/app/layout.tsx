@@ -22,18 +22,38 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Leo Bastianelli — Full-Stack Developer",
+  title: "Leo Bastianelli — Desarrollo web para pymes argentinas",
   description:
-    "Full-Stack Developer based in Córdoba, Argentina. 5+ years building production-ready web applications for international clients across e-commerce, SaaS, and content platforms.",
+    "Desarrollador full-stack en Córdoba, Argentina. Tiendas online, sistemas a medida y automatización para pequeños y medianos negocios que quieren crecer con la misma tecnología que usan las empresas grandes.",
   openGraph: {
-    title: "Leo Bastianelli — Full-Stack Developer",
+    title: "Leo Bastianelli — Desarrollo web para pymes argentinas",
     description:
-      "Full-Stack Developer based in Córdoba, Argentina. 5+ years building production-ready web apps.",
-    url: "https://leo-portfolio.vercel.app",
+      "Desarrollador full-stack en Córdoba, Argentina. Tiendas online, sistemas a medida y automatización para pymes.",
+    url: "https://leo-portfolio-liard.vercel.app",
     siteName: "lb.dev",
-    locale: "en_US",
+    locale: "es_AR",
     type: "website",
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Leo Bastianelli",
+  jobTitle: "Full-Stack Developer",
+  description:
+    "Desarrollador full-stack en Córdoba, Argentina. Tiendas online, sistemas a medida y automatización para pequeños y medianos negocios que quieren crecer con la misma tecnología que usan las empresas grandes.",
+  url: "https://leo-portfolio-liard.vercel.app",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Córdoba",
+    addressCountry: "AR",
+  },
+  areaServed: "AR",
+  sameAs: [
+    "https://linkedin.com/in/leonelbstein",
+    "https://www.freelancer.com/u/leonelbstein",
+  ],
 };
 
 export default function RootLayout({
@@ -41,10 +61,16 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`${playfair.variable} ${dmMono.variable} ${dmSans.variable}`}
     >
-      <body className="min-h-screen">{children}</body>
+      <body className="min-h-screen">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

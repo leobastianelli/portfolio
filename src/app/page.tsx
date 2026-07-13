@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
+import Services from "@/components/Services";
 import Work from "@/components/Work";
 import Stack from "@/components/Stack";
 import About from "@/components/About";
@@ -36,6 +37,7 @@ function Portfolio() {
     <div className="grain relative" style={{ backgroundColor: "var(--bg)" }}>
       <Nav />
       <Hero />
+      <Services />
       <Work />
       <Stack />
       <About />
