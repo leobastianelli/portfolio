@@ -30,32 +30,33 @@ export default function LocaleSwitcher() {
       style={{
         display: "flex",
         alignItems: "center",
-        fontFamily: "var(--font-dm-mono)",
-        fontSize: "0.7rem",
-        letterSpacing: "0.1em",
-        border: "1px solid var(--border)",
+        gap: "0.35rem",
       }}
     >
       {locales.map((l, i) => {
         const current = l === locale;
         return (
-          <Link
-            key={l}
-            href={localizePath(pathname, l)}
-            hrefLang={l}
-            aria-label={t.nav.localeNames[l]}
-            aria-current={current ? "true" : undefined}
-            onClick={() => rememberLocale(l)}
-            style={{
-              padding: "0.3rem 0.6rem",
-              color: current ? "var(--gold)" : "var(--text-muted)",
-              background: current ? "rgba(201,169,110,0.08)" : "transparent",
-              borderRight: i === 0 ? "1px solid var(--border)" : "none",
-              textTransform: "uppercase",
-            }}
-          >
-            {l.toUpperCase()}
-          </Link>
+          <span key={l} style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+            {i > 0 && (
+              <span aria-hidden="true" className="label-engraved" style={{ opacity: 0.5 }}>
+                /
+              </span>
+            )}
+            <Link
+              href={localizePath(pathname, l)}
+              hrefLang={l}
+              aria-label={t.nav.localeNames[l]}
+              aria-current={current ? "true" : undefined}
+              onClick={() => rememberLocale(l)}
+              className="label-engraved"
+              style={{
+                color: current ? "var(--color-ink)" : "var(--color-engrave)",
+                opacity: current ? 1 : 0.65,
+              }}
+            >
+              {l.toUpperCase()}
+            </Link>
+          </span>
         );
       })}
     </div>

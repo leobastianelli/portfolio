@@ -12,6 +12,7 @@ export interface UiContent {
     hire: string;
     language: string;
     localeNames: Record<Locale, string>;
+    contentMode: { label: string; overview: string; technical: string };
   };
   hero: { labelRole: string; labelCity: string; bio: string; cta: string };
   work: { sectionLabel: string; sectionTitle: string };

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { ContentModeProvider } from "@/context/ContentModeContext";
 import type { Locale } from "@/lib/i18n";
 import type { UiContent } from "@/lib/content/ui";
 import type { Project } from "@/lib/content/types";
@@ -55,7 +56,9 @@ export default function Portfolio({
 }) {
   return (
     <LanguageProvider locale={locale} ui={ui}>
-      <Sections projects={projects} />
+      <ContentModeProvider>
+        <Sections projects={projects} />
+      </ContentModeProvider>
     </LanguageProvider>
   );
 }

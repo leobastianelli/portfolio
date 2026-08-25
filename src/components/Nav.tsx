@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLang } from "@/context/LanguageContext";
 import { SITE } from "@/lib/site";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
+import ContentModeToggle from "@/components/ContentModeToggle";
 
 export default function Nav() {
   const { locale, t } = useLang();
@@ -52,21 +53,23 @@ export default function Nav() {
           ))}
         </nav>
 
-        {/* Desktop right side */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Controls: the mode switch has priority, the language pair stays discreet
+            (brief section 5) — rendered once, not duplicated per breakpoint. */}
+        <div className="flex items-center gap-3 md:gap-4">
+          <ContentModeToggle />
           <LocaleSwitcher />
+
           <a
             href={`mailto:${SITE.email}`}
-            className="cta-btn"
+            className="hidden md:inline-flex cta-btn"
             style={{ fontFamily: "var(--font-dm-mono)" }}
           >
             {t.nav.hire}
           </a>
         </div>
 
-        {/* Mobile nav */}
+        {/* Mobile nav links */}
         <div className="flex md:hidden items-center gap-4">
-          <LocaleSwitcher />
           {navLinks.map((link) => (
             <a
               key={link.href}

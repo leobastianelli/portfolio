@@ -10,7 +10,12 @@
     "contact": "Contacto",
     "hire": "Contratame",
     "language": "Idioma",
-    "localeNames": { "en": "English", "es": "Español" }
+    "localeNames": { "en": "English", "es": "Español" },
+    "contentMode": {
+      "label": "Cambiar entre resumen y detalle técnico",
+      "overview": "Resumen",
+      "technical": "Técnico"
+    }
   },
   "hero": {
     "labelRole": "Software para pymes argentinas",

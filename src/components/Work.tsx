@@ -1,10 +1,12 @@
 "use client";
 
 import { useLang } from "@/context/LanguageContext";
+import { useContentMode } from "@/context/ContentModeContext";
 import type { Project } from "@/lib/content/types";
 
 export default function Work({ projects }: { projects: Project[] }) {
   const { t } = useLang();
+  const { mode } = useContentMode();
   const featured = projects.filter((project) => project.featured);
 
   return (
@@ -104,17 +106,30 @@ export default function Work({ projects }: { projects: Project[] }) {
                   )}
                 </div>
 
-                <p
-                  style={{
-                    fontFamily: "var(--font-dm-sans)",
-                    fontSize: "0.88rem",
-                    lineHeight: 1.72,
-                    color: "var(--text-muted)",
-                    marginBottom: "1.5rem",
-                  }}
-                >
-                  {project.summary}
-                </p>
+                <div className="content-mode-text" style={{ marginBottom: "1.5rem" }}>
+                  <p
+                    data-hidden={mode !== "overview"}
+                    style={{
+                      fontFamily: "var(--font-dm-sans)",
+                      fontSize: "0.88rem",
+                      lineHeight: 1.72,
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    {project.summary}
+                  </p>
+                  <p
+                    data-hidden={mode !== "technical"}
+                    style={{
+                      fontFamily: "var(--font-dm-sans)",
+                      fontSize: "0.88rem",
+                      lineHeight: 1.72,
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    {project.technical}
+                  </p>
+                </div>
 
                 <div className="flex flex-wrap gap-2">
                   {project.stack.map((tag) => (

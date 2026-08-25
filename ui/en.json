@@ -10,7 +10,12 @@
     "contact": "Contact",
     "hire": "Hire me",
     "language": "Language",
-    "localeNames": { "en": "English", "es": "Español" }
+    "localeNames": { "en": "English", "es": "Español" },
+    "contentMode": {
+      "label": "Switch between overview and technical detail",
+      "overview": "Overview",
+      "technical": "Technical"
+    }
   },
   "hero": {
     "labelRole": "Software for Argentine SMEs",
