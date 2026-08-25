@@ -6,6 +6,7 @@ import retEnrollmentSystem from "./ret-enrollment-system/meta";
 import armadorDeApuntes from "./armador-de-apuntes/meta";
 import scout from "./scout/meta";
 import purpuraCeniza from "./purpura-ceniza/meta";
+import victoriapp from "./victoriapp/meta";
 
 /**
  * Explicit registry rather than a directory scan: Next.js bundles these
@@ -20,4 +21,5 @@ export const projectMetas: ProjectMeta[] = [
   armadorDeApuntes,
   scout,
   purpuraCeniza,
+  victoriapp,
 ];

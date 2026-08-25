@@ -1,12 +1,11 @@
 import type { ProjectMeta } from "@/lib/content/types";
 
-// TODO: year pending — Leo needs to confirm before stage 5.
 const meta: ProjectMeta = {
   slug: "ret-enrollment-system",
   org: "Facultad de Ciencias Sociales, UNC",
-  year: "TODO",
+  year: "2026",
   status: "live",
-  stack: ["Next.js", "Firebase"],
+  stack: ["Next.js", "Firebase", "shadcn/ui", "Recharts"],
   links: [],
   featured: true,
 };
