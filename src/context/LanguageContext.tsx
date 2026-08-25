@@ -1,57 +1,24 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-
-export type Lang = "es" | "en";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
+import type { Locale } from "@/lib/i18n";
 
 export const translations = {
   es: {
     nav: {
-      services: "Servicios",
       work: "Trabajo",
       stack: "Stack",
       about: "Sobre mí",
       contact: "Contacto",
       hire: "Contratame",
+      language: "Idioma",
+      localeNames: { en: "English", es: "Español" },
     },
     hero: {
       labelRole: "Software para pymes argentinas",
       labelCity: "Córdoba, Argentina",
       bio: "Vi bastantes negocios chicos y medianos de acá quedar afuera de herramientas que las empresas grandes —muchas veces extranjeras— usan hace años. Desarrollo tiendas online, sistemas internos y automatizaciones para que ese acceso no dependa del tamaño de la empresa.",
       cta: "Escribime →",
-    },
-    services: {
-      sectionLabel: "Servicios",
-      sectionTitleMain: "Qué",
-      sectionTitleItalic: "resuelvo",
-      items: [
-        {
-          title: "Tiendas online",
-          description:
-            "Desarrollo de e-commerce a medida: Shopify, WooCommerce o soluciones custom, según lo que tu negocio ya usa y lo que necesita vender más.",
-        },
-        {
-          title: "Sistemas a medida",
-          description:
-            "Herramientas internas para pedidos, stock, turnos o lo que hoy resolvés con planillas y llamados. Pensadas para cómo trabaja tu equipo, no al revés.",
-        },
-        {
-          title: "Automatización",
-          description:
-            "Conectar lo que ya usás —WhatsApp, mail, planillas, sistemas de gestión— para sacarte tareas repetitivas de encima.",
-        },
-        {
-          title: "Arquitectura y estrategia",
-          description:
-            "Antes de programar, te ayudo a decidir qué construir primero. No toda pyme necesita lo mismo, ni en el mismo orden.",
-        },
-      ],
     },
     work: {
       sectionLabel: "Proyectos Seleccionados",
@@ -122,45 +89,19 @@ export const translations = {
 
   en: {
     nav: {
-      services: "Services",
       work: "Work",
       stack: "Stack",
       about: "About",
       contact: "Contact",
       hire: "Hire me",
+      language: "Language",
+      localeNames: { en: "English", es: "Español" },
     },
     hero: {
       labelRole: "Software for Argentine SMEs",
       labelCity: "Córdoba, Argentina",
       bio: "I've seen plenty of small and medium businesses here get left out of tools that large companies — often foreign ones — have used for years. I build online stores, internal systems, and automations so that access doesn't depend on company size.",
       cta: "Get in touch →",
-    },
-    services: {
-      sectionLabel: "Services",
-      sectionTitleMain: "What",
-      sectionTitleItalic: "I solve",
-      items: [
-        {
-          title: "Online stores",
-          description:
-            "Custom e-commerce development: Shopify, WooCommerce, or custom-built solutions, based on what your business already uses and what it needs to sell more.",
-        },
-        {
-          title: "Custom systems",
-          description:
-            "Internal tools for orders, stock, bookings, or whatever you currently handle with spreadsheets and phone calls. Built around how your team actually works.",
-        },
-        {
-          title: "Automation",
-          description:
-            "Connecting what you already use — WhatsApp, email, spreadsheets, management systems — to take repetitive tasks off your plate.",
-        },
-        {
-          title: "Architecture & strategy",
-          description:
-            "Before writing code, I help you decide what to build first. Not every SME needs the same thing, or in the same order.",
-        },
-      ],
     },
     work: {
       sectionLabel: "Selected work",
@@ -230,43 +171,28 @@ export const translations = {
 export type Translations = typeof translations;
 
 interface LangContextValue {
-  lang: Lang;
-  t: (typeof translations)[Lang];
-  toggle: () => void;
-  setLang: (l: Lang) => void;
+  locale: Locale;
+  t: (typeof translations)[Locale];
 }
 
 const LangContext = createContext<LangContextValue | null>(null);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("es");
+/**
+ * The locale is owned by the route, so there is nothing to detect on the
+ * client and nothing to correct after hydration.
+ *
+ * TODO(stage 2): replaced by the `content/` + `ui/` layer.
+ */
+export function LanguageProvider({
+  locale,
+  children,
+}: {
+  locale: Locale;
+  children: ReactNode;
+}) {
+  const value = useMemo(() => ({ locale, t: translations[locale] }), [locale]);
 
-  useEffect(() => {
-    const stored = localStorage.getItem("lang") as Lang | null;
-    if (stored === "es" || stored === "en") {
-      setLangState(stored);
-    } else {
-      const browserLang = navigator.language.toLowerCase();
-      setLangState(browserLang.startsWith("en") ? "en" : "es");
-    }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
-
-  const setLang = (l: Lang) => {
-    setLangState(l);
-    localStorage.setItem("lang", l);
-  };
-
-  const toggle = () => setLang(lang === "es" ? "en" : "es");
-
-  return (
-    <LangContext.Provider value={{ lang, t: translations[lang], toggle, setLang }}>
-      {children}
-    </LangContext.Provider>
-  );
+  return <LangContext.Provider value={value}>{children}</LangContext.Provider>;
 }
 
 export function useLang() {

@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLang, type Lang } from "@/context/LanguageContext";
+import Link from "next/link";
+import { useLang } from "@/context/LanguageContext";
+import { SITE } from "@/lib/site";
+import LocaleSwitcher from "@/components/LocaleSwitcher";
 
 export default function Nav() {
-  const { lang, t, setLang } = useLang();
+  const { locale, t } = useLang();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -14,45 +17,11 @@ export default function Nav() {
   }, []);
 
   const navLinks = [
-    { label: t.nav.services, href: "#services" },
     { label: t.nav.work, href: "#work" },
     { label: t.nav.stack, href: "#stack" },
     { label: t.nav.about, href: "#about" },
     { label: t.nav.contact, href: "#contact" },
   ];
-
-  const LangToggle = () => (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0",
-        fontFamily: "var(--font-dm-mono)",
-        fontSize: "0.7rem",
-        letterSpacing: "0.1em",
-        border: "1px solid var(--border)",
-      }}
-    >
-      {(["es", "en"] as Lang[]).map((l, i) => (
-        <button
-          key={l}
-          onClick={() => setLang(l)}
-          style={{
-            padding: "0.3rem 0.6rem",
-            color: lang === l ? "var(--gold)" : "var(--text-muted)",
-            background: lang === l ? "rgba(201,169,110,0.08)" : "transparent",
-            borderRight: i === 0 ? "1px solid var(--border)" : "none",
-            transition: "color 0.2s, background 0.2s",
-            cursor: "pointer",
-            textTransform: "uppercase",
-          }}
-          aria-label={`Switch to ${l === "es" ? "Spanish" : "English"}`}
-        >
-          {l.toUpperCase()}
-        </button>
-      ))}
-    </div>
-  );
 
   return (
     <header
@@ -61,8 +30,8 @@ export default function Nav() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 md:px-10 flex items-center justify-between h-16">
-        <a
-          href="#"
+        <Link
+          href={`/${locale}`}
           style={{
             fontFamily: "var(--font-dm-mono)",
             color: "var(--gold)",
@@ -71,8 +40,8 @@ export default function Nav() {
             fontWeight: 400,
           }}
         >
-          lb.dev
-        </a>
+          {SITE.name}
+        </Link>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
@@ -85,9 +54,9 @@ export default function Nav() {
 
         {/* Desktop right side */}
         <div className="hidden md:flex items-center gap-4">
-          <LangToggle />
+          <LocaleSwitcher />
           <a
-            href="mailto:leonelbastianelli@gmail.com"
+            href={`mailto:${SITE.email}`}
             className="cta-btn"
             style={{ fontFamily: "var(--font-dm-mono)" }}
           >
@@ -97,7 +66,7 @@ export default function Nav() {
 
         {/* Mobile nav */}
         <div className="flex md:hidden items-center gap-4">
-          <LangToggle />
+          <LocaleSwitcher />
           {navLinks.map((link) => (
             <a
               key={link.href}

@@ -1,43 +1,38 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { LanguageProvider } from "@/context/LanguageContext";
+import type { Locale } from "@/lib/i18n";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import Services from "@/components/Services";
 import Work from "@/components/Work";
 import Stack from "@/components/Stack";
 import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
-function Portfolio() {
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
+// TODO(stage 5): this whole shell is replaced by the panel layout. It is kept
+// here so stage 1 ships a working site while the routing changes underneath.
+function Sections() {
   useEffect(() => {
-    observerRef.current = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
+          if (entry.isIntersecting) entry.target.classList.add("visible");
         });
       },
       { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
     );
 
-    document.querySelectorAll(".reveal").forEach((el) => {
-      observerRef.current?.observe(el);
-    });
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-    return () => observerRef.current?.disconnect();
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div className="grain relative" style={{ backgroundColor: "var(--bg)" }}>
       <Nav />
       <Hero />
-      <Services />
       <Work />
       <Stack />
       <About />
@@ -47,10 +42,10 @@ function Portfolio() {
   );
 }
 
-export default function Home() {
+export default function Portfolio({ locale }: { locale: Locale }) {
   return (
-    <LanguageProvider>
-      <Portfolio />
+    <LanguageProvider locale={locale}>
+      <Sections />
     </LanguageProvider>
   );
 }
