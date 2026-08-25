@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# leftover clone from awesome-ux-skills, skills live in ~/.claude/skills/
+/awesome-ux-skills
