@@ -1,13 +1,51 @@
 @import "tailwindcss";
 
+/*
+ * Panel system — the visual language is audio equipment: amplifier
+ * faceplates, pedals, racks. Neumorphism anchored in a real object, not a
+ * decorative texture. Gradients and glow are deliberate here (LEDs, relief);
+ * see BRIEF.md section 6.
+ */
+@theme {
+  --color-panel: #cbc7c0;
+  --color-panel-deep: #bfbab2;
+  --color-highlight: #eae7e1;
+  --color-shadow: #a29c93;
+  --color-ink: #17161a;
+  --color-ink-soft: #4e4a44;
+  --color-engrave: #59544c;
+  --color-accent: #523a9e;
+  --color-accent-glow: #7b5bd6;
+  --color-led-on: #2f7d4f;
+  --color-led-work: #b26a12;
+  --color-led-off: #8a857d;
+}
+
+/* `inline`: these reference the CSS vars next/font sets on <html>, not literal values. */
+@theme inline {
+  --font-display: var(--font-bricolage);
+  --font-body: var(--font-instrument);
+  --font-mono: var(--font-plex-mono);
+}
+
 @layer base {
   :root {
-    --bg: #0a0a08;
-    --gold: #c9a96e;
-    --gold-dim: #9a7a4a;
-    --text: #e8e4dc;
-    --text-muted: #8a8578;
-    --border: rgba(201, 169, 110, 0.12);
+    /*
+     * TODO(stage 5): bridge for the stage-1 dark/gold theme so existing
+     * components (Hero, Work, Stack, About, Contact, Nav, Footer,
+     * LocaleSwitcher — all still reading these names via inline styles)
+     * don't break before the panel layout rewires them directly to the
+     * tokens above. Remove this block once nothing references it.
+     */
+    --bg: var(--color-panel);
+    --text: var(--color-ink);
+    --text-muted: var(--color-ink-soft);
+    --gold: var(--color-accent);
+    --gold-dim: var(--color-accent-glow);
+    --border: color-mix(in srgb, var(--color-ink) 14%, transparent);
+    --font-playfair: var(--font-display);
+    --font-dm-mono: var(--font-mono);
+    --font-dm-sans: var(--font-body);
   }
 
   * {
@@ -19,53 +57,26 @@
   }
 
   body {
-    background-color: var(--bg);
-    color: var(--text);
+    background-color: var(--color-panel);
+    color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
   }
 
   ::selection {
-    background: var(--gold);
-    color: var(--bg);
+    background: var(--color-accent);
+    color: var(--color-highlight);
   }
 
   ::-webkit-scrollbar {
     width: 4px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--bg);
+    background: var(--color-panel);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--gold-dim);
+    background: var(--color-accent-glow);
     border-radius: 2px;
   }
-}
-
-/* Grain texture overlay */
-.grain::before {
-  content: "";
-  position: fixed;
-  inset: -200%;
-  width: 400%;
-  height: 400%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.035;
-  pointer-events: none;
-  z-index: 999;
-  animation: grain 8s steps(10) infinite;
-}
-
-@keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -25%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 35%); }
-  90% { transform: translate(-10%, 10%); }
 }
 
 @keyframes fadeUp {
@@ -92,7 +103,7 @@
 .nav-blur {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background: rgba(10, 10, 8, 0.82);
+  background: color-mix(in srgb, var(--color-panel) 82%, transparent);
   border-bottom: 1px solid var(--border);
 }
 
@@ -122,8 +133,8 @@
   transition: border-color 0.3s ease, background 0.3s ease;
 }
 .project-card:hover {
-  border-color: rgba(201, 169, 110, 0.32);
-  background: rgba(201, 169, 110, 0.025);
+  border-color: color-mix(in srgb, var(--color-accent) 32%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 3%, transparent);
 }
 
 .stack-card {
@@ -131,7 +142,7 @@
   transition: border-color 0.3s, transform 0.3s;
 }
 .stack-card:hover {
-  border-color: rgba(201, 169, 110, 0.28);
+  border-color: color-mix(in srgb, var(--color-accent) 28%, transparent);
   transform: translateY(-3px);
 }
 
@@ -149,7 +160,7 @@
 }
 .cta-btn:hover {
   background: var(--gold);
-  color: var(--bg);
+  color: var(--color-highlight);
 }
 
 .gold-line {
@@ -175,4 +186,87 @@
   letter-spacing: 0.08em;
   color: var(--text-muted);
   text-transform: uppercase;
+}
+
+/* --- Panel primitives (stage 3) --- */
+
+/* Raised surface: the faceplate itself. */
+.panel-surface {
+  background: var(--color-panel);
+  border-radius: 10px;
+  box-shadow:
+    -6px -6px 12px var(--color-highlight),
+    6px 6px 14px var(--color-shadow);
+}
+
+/* Sunken surface: a display window or a pressed control. */
+.panel-recessed {
+  background: var(--color-panel-deep);
+  border-radius: 8px;
+  box-shadow:
+    inset 3px 3px 6px var(--color-shadow),
+    inset -3px -3px 6px var(--color-highlight);
+}
+
+/* A single screw, positioned by the parent (`position: relative`) at one corner. */
+.panel-screw {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, var(--color-highlight), var(--color-panel-deep) 60%, var(--color-shadow) 100%);
+  box-shadow: 0 1px 1px var(--color-highlight), 0 -1px 1px var(--color-shadow);
+}
+.panel-screw::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: var(--color-shadow);
+  transform: translateY(-50%) rotate(28deg);
+}
+
+/* Four-corner screw placement helper: apply to a `position: relative` container. */
+.panel-screws > .panel-screw:nth-child(1) { top: 10px; left: 10px; }
+.panel-screws > .panel-screw:nth-child(2) { top: 10px; right: 10px; }
+.panel-screws > .panel-screw:nth-child(3) { bottom: 10px; left: 10px; }
+.panel-screws > .panel-screw:nth-child(4) { bottom: 10px; right: 10px; }
+
+/* Engraved label: text carved into the faceplate, not printed on it. */
+.label-engraved {
+  color: var(--color-engrave);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow:
+    -1px -1px 0 var(--color-shadow),
+    1px 1px 0 var(--color-highlight);
+}
+
+/* Status LED. Default is off; add .led-on / .led-work to light it up. */
+.led {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-led-off);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.35);
+}
+.led-on {
+  background: var(--color-led-on);
+  box-shadow:
+    0 0 4px 1px var(--color-led-on),
+    0 0 8px 2px color-mix(in srgb, var(--color-led-on) 60%, transparent),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4);
+}
+.led-work {
+  background: var(--color-led-work);
+  box-shadow:
+    0 0 4px 1px var(--color-led-work),
+    0 0 8px 2px color-mix(in srgb, var(--color-led-work) 60%, transparent),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4);
 }

@@ -1,28 +1,26 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Playfair_Display, DM_Mono, DM_Sans } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
 import { SITE } from "@/lib/site";
 import { isLocale, locales, localizedUrl } from "@/lib/i18n";
 import { getUi } from "@/lib/content/ui";
 import "../globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const display = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  style: ["normal", "italic"],
 });
 
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
+const mono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const body = Instrument_Sans({
+  variable: "--font-instrument",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600"],
 });
 
 export function generateStaticParams() {
@@ -81,7 +79,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${playfair.variable} ${dmMono.variable} ${dmSans.variable}`}
+      className={`${display.variable} ${mono.variable} ${body.variable}`}
     >
       <body className="min-h-screen">
         <script
