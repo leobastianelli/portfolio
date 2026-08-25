@@ -1,13 +1,11 @@
 import type { ProjectMeta } from "@/lib/content/types";
 
-// TODO: year pending — el repo tiene "dubious ownership" para git, no se
-// pudo leer `git log` sin tocar la config global de git. Preguntarle a Leo.
 const meta: ProjectMeta = {
   slug: "greens-club",
   org: "Mully Group",
-  year: "TODO",
+  year: "2024–2025",
   status: "live",
-  stack: ["Next.js", "Supabase", "Stripe", "xAI Grok", "Google Gemini", "Vercel"],
+  stack: ["Next.js", "Supabase", "Stripe", "Third-party LLM API", "AI vision API", "Vercel"],
   links: [
     { label: "greensclub.ai", url: "https://greensclub.ai" },
     { label: "app.greensclub.ai", url: "https://app.greensclub.ai" },

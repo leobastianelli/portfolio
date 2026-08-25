@@ -3,10 +3,10 @@ import greensClub from "./greens-club/meta";
 import onefamCommunityPortal from "./onefam-community-portal/meta";
 import golfMembershipPlatform from "./golf-membership-platform/meta";
 import retEnrollmentSystem from "./ret-enrollment-system/meta";
-import armadorDeApuntes from "./armador-de-apuntes/meta";
 import scout from "./scout/meta";
 import purpuraCeniza from "./purpura-ceniza/meta";
 import victoriapp from "./victoriapp/meta";
+import onefamPlatform from "./onefam-platform/meta";
 
 /**
  * Explicit registry rather than a directory scan: Next.js bundles these
@@ -18,7 +18,7 @@ export const projectMetas: ProjectMeta[] = [
   onefamCommunityPortal,
   golfMembershipPlatform,
   retEnrollmentSystem,
-  armadorDeApuntes,
+  onefamPlatform,
   scout,
   purpuraCeniza,
   victoriapp,
