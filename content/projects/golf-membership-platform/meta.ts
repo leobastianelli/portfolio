@@ -1,0 +1,13 @@
+import type { ProjectMeta } from "@/lib/content/types";
+
+const meta: ProjectMeta = {
+  slug: "golf-membership-platform",
+  org: "Mully Group / NewReserve",
+  year: "2024–2025",
+  status: "archived",
+  stack: ["Shopify Plus", "Next.js", "Firebase", "n8n", "Impact.com"],
+  links: [],
+  featured: true,
+};
+
+export default meta;

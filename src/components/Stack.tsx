@@ -2,15 +2,6 @@
 
 import { useLang } from "@/context/LanguageContext";
 
-const stackItems = [
-  ["Next.js", "React", "TypeScript", "Tailwind CSS", "HTML / CSS / SCSS"],
-  ["Node.js", "PHP", "Firebase", "REST APIs", "n8n Automation"],
-  ["Shopify Plus", "Storefront API", "Admin API", "Loop Subscriptions", "WooCommerce"],
-  ["WordPress", "Custom Plugins", "Elementor", "WPML", "ACF"],
-  ["Vercel", "Git / GitHub", "Google Cloud Run", "Linux / SSH"],
-  ["Claude API", "Google Places API", "SerpAPI", "Gemini AI"],
-];
-
 export default function Stack() {
   const { t } = useLang();
 
@@ -46,9 +37,9 @@ export default function Stack() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {stackItems.map((items, i) => (
+          {t.stack.groups.map((group, i) => (
             <div
-              key={i}
+              key={group.category}
               className="stack-card reveal p-7"
               style={{
                 background: "rgba(255,255,255,0.012)",
@@ -65,11 +56,11 @@ export default function Stack() {
                   marginBottom: "1.2rem",
                 }}
               >
-                {t.stack.categories[i]}
+                {group.category}
               </p>
 
               <ul className="flex flex-col gap-2">
-                {items.map((item) => (
+                {group.items.map((item) => (
                   <li
                     key={item}
                     style={{

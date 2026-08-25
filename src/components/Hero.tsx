@@ -1,6 +1,7 @@
 "use client";
 
 import { useLang } from "@/context/LanguageContext";
+import { SITE } from "@/lib/site";
 
 export default function Hero() {
   const { t } = useLang();
@@ -93,7 +94,7 @@ export default function Hero() {
         {/* CTA */}
         <div className="fade-up delay-4">
           <a
-            href="mailto:leonelbastianelli@gmail.com"
+            href={`mailto:${SITE.email}`}
             className="cta-btn"
             style={{ fontFamily: "var(--font-dm-mono)" }}
           >

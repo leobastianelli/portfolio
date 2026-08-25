@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { LanguageProvider } from "@/context/LanguageContext";
 import type { Locale } from "@/lib/i18n";
+import type { UiContent } from "@/lib/content/ui";
+import type { Project } from "@/lib/content/types";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Work from "@/components/Work";
@@ -13,7 +15,7 @@ import Footer from "@/components/Footer";
 
 // TODO(stage 5): this whole shell is replaced by the panel layout. It is kept
 // here so stage 1 ships a working site while the routing changes underneath.
-function Sections() {
+function Sections({ projects }: { projects: Project[] }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,7 +35,7 @@ function Sections() {
     <div className="grain relative" style={{ backgroundColor: "var(--bg)" }}>
       <Nav />
       <Hero />
-      <Work />
+      <Work projects={projects} />
       <Stack />
       <About />
       <Contact />
@@ -42,10 +44,18 @@ function Sections() {
   );
 }
 
-export default function Portfolio({ locale }: { locale: Locale }) {
+export default function Portfolio({
+  locale,
+  ui,
+  projects,
+}: {
+  locale: Locale;
+  ui: UiContent;
+  projects: Project[];
+}) {
   return (
-    <LanguageProvider locale={locale}>
-      <Sections />
+    <LanguageProvider locale={locale} ui={ui}>
+      <Sections projects={projects} />
     </LanguageProvider>
   );
 }

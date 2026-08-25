@@ -1,31 +1,30 @@
 "use client";
 
 import { useLang } from "@/context/LanguageContext";
+import { SITE } from "@/lib/site";
 
-const contactLinks = [
-  {
-    labelKey: "Email",
-    value: "leonelbastianelli@gmail.com",
-    href: "mailto:leonelbastianelli@gmail.com",
+const linkData: Record<string, { value: string; href: string; mono: boolean }> = {
+  email: {
+    value: SITE.email,
+    href: `mailto:${SITE.email}`,
     mono: true,
   },
-  {
-    labelKey: "LinkedIn",
-    value: "linkedin.com/in/leonelbstein",
-    href: "https://linkedin.com/in/leonelbstein",
+  linkedin: {
+    value: SITE.social.linkedin.replace(/^https?:\/\//, ""),
+    href: SITE.social.linkedin,
     mono: false,
   },
-  {
-    labelKey: "Freelancer",
-    value: "@leonelbstein",
-    href: "https://www.freelancer.com/u/leonelbstein",
+  github: {
+    value: SITE.social.github.replace(/^https?:\/\//, ""),
+    href: SITE.social.github,
     mono: false,
   },
-];
+};
 
 export default function Contact() {
   const { t } = useLang();
   const c = t.contact;
+  const contactLinks = c.links.map((link) => ({ labelKey: link.label, ...linkData[link.key] }));
 
   return (
     <section

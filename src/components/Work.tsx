@@ -1,36 +1,11 @@
 "use client";
 
 import { useLang } from "@/context/LanguageContext";
+import type { Project } from "@/lib/content/types";
 
-const projects = [
-  {
-    name: "Onefam Hostels",
-    period: "2023–2025",
-    tags: ["WordPress", "PHP", "AJAX", "WPML", "Elementor"],
-    url: null,
-  },
-  {
-    name: "NewReserve / Mully Group",
-    period: "2024–2025",
-    tags: ["Next.js", "TypeScript", "Firebase", "Shopify", "Stripe"],
-    url: null,
-  },
-  {
-    name: "Púrpura Ceniza",
-    period: "2024",
-    tags: ["Next.js", "Vercel"],
-    url: "https://purpuraceniza.com",
-  },
-  {
-    name: "Landing Agency",
-    period: "2025",
-    tags: ["Claude API", "Node.js", "Google Places", "n8n"],
-    url: null,
-  },
-];
-
-export default function Work() {
+export default function Work({ projects }: { projects: Project[] }) {
   const { t } = useLang();
+  const featured = projects.filter((project) => project.featured);
 
   return (
     <section id="work" className="py-32 px-6 md:px-10">
@@ -59,11 +34,11 @@ export default function Work() {
           className="grid grid-cols-1 md:grid-cols-2 gap-px"
           style={{ border: "1px solid var(--border)" }}
         >
-          {projects.map((project, i) => {
-            const tx = t.work.projects[i];
+          {featured.map((project, i) => {
+            const link = project.links[0];
             return (
               <div
-                key={project.name}
+                key={project.slug}
                 className="project-card reveal p-8 md:p-10"
                 style={{ transitionDelay: `${i * 0.08}s` }}
               >
@@ -79,7 +54,7 @@ export default function Work() {
                         marginBottom: "0.4rem",
                       }}
                     >
-                      {project.period}
+                      {project.year}
                     </p>
                     <h3
                       style={{
@@ -89,7 +64,7 @@ export default function Work() {
                         color: "var(--text)",
                       }}
                     >
-                      {project.name}
+                      {project.title}
                     </h3>
                     <p
                       style={{
@@ -100,13 +75,13 @@ export default function Work() {
                         marginTop: "0.2rem",
                       }}
                     >
-                      {tx.role}
+                      {project.role}
                     </p>
                   </div>
 
-                  {project.url && (
+                  {link && (
                     <a
-                      href={project.url}
+                      href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
@@ -122,7 +97,7 @@ export default function Work() {
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.opacity = "0.7")
                       }
-                      aria-label={`Visit ${project.name}`}
+                      aria-label={`Visit ${project.title}`}
                     >
                       ↗
                     </a>
@@ -138,11 +113,11 @@ export default function Work() {
                     marginBottom: "1.5rem",
                   }}
                 >
-                  {tx.description}
+                  {project.summary}
                 </p>
 
                 <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
+                  {project.stack.map((tag) => (
                     <span
                       key={tag}
                       className="tag"

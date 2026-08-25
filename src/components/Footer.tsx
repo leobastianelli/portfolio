@@ -1,6 +1,11 @@
 "use client";
 
+import { useLang } from "@/context/LanguageContext";
+import { SITE } from "@/lib/site";
+
 export default function Footer() {
+  const { t } = useLang();
+
   return (
     <footer
       className="px-6 md:px-10 py-8"
@@ -17,7 +22,7 @@ export default function Footer() {
             letterSpacing: "0.06em",
           }}
         >
-          lb.dev
+          {SITE.name}
         </span>
 
         <span
@@ -28,11 +33,11 @@ export default function Footer() {
             letterSpacing: "0.1em",
           }}
         >
-          © 2025 Leo Bastianelli. Córdoba, Argentina.
+          {t.footer.copyright}
         </span>
 
         <a
-          href="mailto:leonelbastianelli@gmail.com"
+          href={`mailto:${SITE.email}`}
           style={{
             fontFamily: "var(--font-dm-mono)",
             color: "var(--text-muted)",
@@ -48,7 +53,7 @@ export default function Footer() {
               "var(--text-muted)")
           }
         >
-          leonelbastianelli@gmail.com
+          {SITE.email}
         </a>
       </div>
     </footer>
