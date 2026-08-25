@@ -50,6 +50,14 @@ export default function LocaleSwitcher() {
               onClick={() => rememberLocale(l)}
               className="label-engraved"
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                /* R-A: the visible glyph stays label-sized, but the tap
+                   target grows via padding + a matching negative margin so
+                   surrounding spacing doesn't shift. */
+                padding: "0.6rem",
+                margin: "-0.6rem",
                 color: current ? "var(--color-ink)" : "var(--color-engrave)",
                 opacity: current ? 1 : 0.65,
               }}

@@ -11,6 +11,7 @@ const meta: ProjectMeta = {
     { label: "app.greensclub.ai", url: "https://app.greensclub.ai" },
   ],
   featured: true,
+  cover: "/covers/greens-club.webp",
 };
 
 export default meta;

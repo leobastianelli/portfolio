@@ -6,7 +6,6 @@
   "nav": {
     "work": "Work",
     "stack": "Stack",
-    "about": "About",
     "contact": "Contact",
     "hire": "Hire me",
     "language": "Language",
@@ -20,12 +19,33 @@
   "hero": {
     "labelRole": "Software for Argentine SMEs",
     "labelCity": "Córdoba, Argentina",
-    "bio": "I've seen plenty of small and medium businesses here get left out of tools that large companies — often foreign ones — have used for years. I build online stores, internal systems, and automations so that access doesn't depend on company size.",
-    "cta": "Get in touch →"
+    "intro": "I've seen plenty of small and medium businesses here get left out of tools that large companies — often foreign ones — have used for years. I build online stores, internal systems, and automations so that access doesn't depend on company size.",
+    "cta": "Get in touch →",
+    "moreLabel": "Background",
+    "bioMore": {
+      "p1": "I'm a full-stack developer, but before writing a single line of code I want to understand how your business works: what you sell, how you sell it today, and where the process breaks down. That's what defines what's worth building — not the other way around.",
+      "p2": "I've worked on e-commerce stores, internal systems, and automations for businesses of different sizes, from local SMEs to clients in Europe and the Americas. That mix is useful here: I know what technology large companies use and how to adapt it to the real scale and budget of an Argentine SME.",
+      "p3pre": "Outside of client work, I contribute to ",
+      "p3post": ", a band from Córdoba blending shoegaze, trip-hop, and Argentine folk — where I also handle the digital presence."
+    },
+    "table": [
+      { "label": "Experience", "value": "5+ years" },
+      { "label": "Location", "value": "Córdoba, Argentina" },
+      { "label": "Languages", "value": "Spanish (native) · English (fluent)" },
+      { "label": "Availability", "value": "Open to freelance & contracts" },
+      { "label": "Time Zone", "value": "ART (UTC−3)" }
+    ]
   },
   "work": {
     "sectionLabel": "Selected work",
-    "sectionTitle": "Projects & Collaborations"
+    "sectionTitle": "Projects & Collaborations",
+    "moreLabel": "More projects",
+    "moreTitle": "Everything else",
+    "status": {
+      "live": "In production",
+      "building": "In development",
+      "archived": "Archived"
+    }
   },
   "stack": {
     "sectionLabel": "Technical expertise",
@@ -37,22 +57,6 @@
       { "category": "CMS", "items": ["WordPress", "Custom Plugins", "Elementor", "WPML", "ACF"] },
       { "category": "Infrastructure", "items": ["Vercel", "Git / GitHub", "Google Cloud Run", "Linux / SSH"] },
       { "category": "AI & Tooling", "items": ["Claude API", "Google Places API", "SerpAPI", "Gemini AI"] }
-    ]
-  },
-  "about": {
-    "sectionLabel": "Background",
-    "sectionTitleMain": "About",
-    "sectionTitleItalic": "me",
-    "p1": "I'm a full-stack developer, but before writing a single line of code I want to understand how your business works: what you sell, how you sell it today, and where the process breaks down. That's what defines what's worth building — not the other way around.",
-    "p2": "I've worked on e-commerce stores, internal systems, and automations for businesses of different sizes, from local SMEs to clients in Europe and the Americas. That mix is useful here: I know what technology large companies use and how to adapt it to the real scale and budget of an Argentine SME.",
-    "p3pre": "Outside of client work, I contribute to ",
-    "p3post": ", a band from Córdoba blending shoegaze, trip-hop, and Argentine folk — where I also handle the digital presence.",
-    "table": [
-      { "label": "Experience", "value": "5+ years" },
-      { "label": "Location", "value": "Córdoba, Argentina" },
-      { "label": "Languages", "value": "Spanish (native) · English (fluent)" },
-      { "label": "Availability", "value": "Open to freelance & contracts" },
-      { "label": "Time Zone", "value": "ART (UTC−3)" }
     ]
   },
   "contact": {

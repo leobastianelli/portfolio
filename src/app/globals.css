@@ -13,7 +13,9 @@
   --color-shadow: #a29c93;
   --color-ink: #17161a;
   --color-ink-soft: #4e4a44;
-  --color-engrave: #59544c;
+  /* Darkened from the original #59544c: that failed AA (~4.46:1 on panel,
+     ~3.89:1 on panel-deep). This passes 4.5:1 on both (R-A, stage 5). */
+  --color-engrave: #3f3b34;
   --color-accent: #523a9e;
   --color-accent-glow: #7b5bd6;
   --color-led-on: #2f7d4f;
@@ -30,22 +32,7 @@
 
 @layer base {
   :root {
-    /*
-     * TODO(stage 5): bridge for the stage-1 dark/gold theme so existing
-     * components (Hero, Work, Stack, About, Contact, Nav, Footer,
-     * LocaleSwitcher — all still reading these names via inline styles)
-     * don't break before the panel layout rewires them directly to the
-     * tokens above. Remove this block once nothing references it.
-     */
-    --bg: var(--color-panel);
-    --text: var(--color-ink);
-    --text-muted: var(--color-ink-soft);
-    --gold: var(--color-accent);
-    --gold-dim: var(--color-accent-glow);
     --border: color-mix(in srgb, var(--color-ink) 14%, transparent);
-    --font-playfair: var(--font-display);
-    --font-dm-mono: var(--font-mono);
-    --font-dm-sans: var(--font-body);
   }
 
   * {
@@ -109,7 +96,7 @@
 
 .nav-link {
   position: relative;
-  color: var(--text-muted);
+  color: var(--color-ink-soft);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -122,28 +109,41 @@
   left: 0;
   width: 0;
   height: 1px;
-  background: var(--gold);
+  background: var(--color-accent);
   transition: width 0.28s ease;
 }
-.nav-link:hover { color: var(--gold); }
+.nav-link:hover { color: var(--color-accent); }
 .nav-link:hover::after { width: 100%; }
 
 .project-card {
-  border: 1px solid var(--border);
-  transition: border-color 0.3s ease, background 0.3s ease;
+  background: var(--color-panel);
+  border-radius: 10px;
+  box-shadow:
+    -4px -4px 8px var(--color-highlight),
+    4px 4px 10px var(--color-shadow);
+  transition: box-shadow 0.3s ease;
 }
 .project-card:hover {
-  border-color: color-mix(in srgb, var(--color-accent) 32%, transparent);
-  background: color-mix(in srgb, var(--color-accent) 3%, transparent);
+  box-shadow:
+    -4px -4px 8px var(--color-highlight),
+    4px 4px 10px var(--color-shadow),
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 32%, transparent);
 }
 
 .stack-card {
-  border: 1px solid var(--border);
-  transition: border-color 0.3s, transform 0.3s;
+  background: var(--color-panel);
+  border-radius: 10px;
+  box-shadow:
+    -3px -3px 6px var(--color-highlight),
+    3px 3px 8px var(--color-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .stack-card:hover {
-  border-color: color-mix(in srgb, var(--color-accent) 28%, transparent);
   transform: translateY(-3px);
+  box-shadow:
+    -3px -3px 6px var(--color-highlight),
+    3px 3px 8px var(--color-shadow),
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 28%, transparent);
 }
 
 .cta-btn {
@@ -151,23 +151,29 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.8rem 2.2rem;
-  border: 1px solid var(--gold);
-  color: var(--gold);
+  border-radius: 999px;
+  background: var(--color-panel);
+  color: var(--color-accent);
   font-size: 0.78rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  transition: background 0.22s, color 0.22s;
+  box-shadow:
+    -3px -3px 6px var(--color-highlight),
+    3px 3px 8px var(--color-shadow);
+  transition: color 0.22s ease, box-shadow 0.22s ease;
 }
 .cta-btn:hover {
-  background: var(--gold);
-  color: var(--color-highlight);
+  color: var(--color-accent-glow);
+  box-shadow:
+    inset 2px 2px 4px var(--color-shadow),
+    inset -2px -2px 4px var(--color-highlight);
 }
 
-.gold-line {
+.accent-line {
   display: block;
   width: 36px;
   height: 1px;
-  background: var(--gold);
+  background: var(--color-accent);
   margin-bottom: 1.5rem;
 }
 
@@ -175,7 +181,7 @@
   font-size: 0.68rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--color-accent);
 }
 
 .tag {
@@ -184,7 +190,7 @@
   border: 1px solid var(--border);
   font-size: 0.65rem;
   letter-spacing: 0.08em;
-  color: var(--text-muted);
+  color: var(--color-ink-soft);
   text-transform: uppercase;
 }
 
@@ -235,40 +241,55 @@
 .panel-screws > .panel-screw:nth-child(3) { bottom: 10px; left: 10px; }
 .panel-screws > .panel-screw:nth-child(4) { bottom: 10px; right: 10px; }
 
-/* Engraved label: text carved into the faceplate, not printed on it. */
+/*
+ * Engraved label: text carved into the faceplate, not printed on it.
+ * No text-shadow at all: confirmed by screenshot (at 3x zoom) that ANY
+ * offset shadow on this mono font at 11-13px anti-aliases into visible
+ * color fringing — even a single 1px/0-blur shadow, not just the original
+ * opposed dark+light pair. A same-size, same-color span with no shadow
+ * renders perfectly crisp at the same zoom, so the "carved" look here is
+ * flat: color + letter-spacing only, no relief.
+ */
 .label-engraved {
   color: var(--color-engrave);
   font-family: var(--font-mono);
   font-size: 0.65rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  text-shadow:
-    -1px -1px 0 var(--color-shadow),
-    1px 1px 0 var(--color-highlight);
 }
 
-/* Status LED. Default is off; add .led-on / .led-work to light it up. */
+/*
+ * Status LED. Default is off; add .led-on / .led-work to light it up. Every
+ * variant carries a dark ring (R-A: the fill colors alone measure under the
+ * 3:1 non-text contrast minimum against `panel`) so the dot has a real edge
+ * regardless of hue — on top of the text label next to it, never the sole
+ * cue (1.4.1).
+ */
 .led {
   display: inline-block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--color-led-off);
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    inset 1px 1px 2px rgba(0, 0, 0, 0.35),
+    0 0 0 1px color-mix(in srgb, var(--color-ink) 45%, transparent);
 }
 .led-on {
   background: var(--color-led-on);
   box-shadow:
     0 0 4px 1px var(--color-led-on),
     0 0 8px 2px color-mix(in srgb, var(--color-led-on) 60%, transparent),
-    inset 1px 1px 1px rgba(255, 255, 255, 0.4);
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--color-ink) 45%, transparent);
 }
 .led-work {
   background: var(--color-led-work);
   box-shadow:
     0 0 4px 1px var(--color-led-work),
     0 0 8px 2px color-mix(in srgb, var(--color-led-work) 60%, transparent),
-    inset 1px 1px 1px rgba(255, 255, 255, 0.4);
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--color-ink) 45%, transparent);
 }
 
 /* Overview/Technical switch — the physical, personality control (brief section 5). */
@@ -294,8 +315,8 @@
   border-radius: 999px;
   background: var(--color-panel-deep);
   box-shadow:
-    inset 2px 2px 4px var(--color-shadow),
-    inset -2px -2px 4px var(--color-highlight);
+    inset 3px 3px 5px var(--color-shadow),
+    inset -3px -3px 5px var(--color-highlight);
   transition: background-color 0.2s ease;
 }
 .content-mode-toggle[aria-checked="true"] .content-mode-toggle-track {
@@ -334,4 +355,25 @@
 .content-mode-text > [data-hidden="true"] {
   opacity: 0;
   pointer-events: none;
+}
+
+/*
+ * R-A: box-shadow-only relief disappears under forced-colors (Windows high
+ * contrast) — panels, the switch track, and buttons would lose their edge
+ * entirely. Give each a real border in that mode so they stay legible.
+ */
+@media (forced-colors: active) {
+  .panel-surface,
+  .panel-recessed,
+  .project-card,
+  .stack-card,
+  .cta-btn,
+  .content-mode-toggle-track {
+    border: 1px solid CanvasText;
+  }
+
+  .led {
+    border: 1px solid CanvasText;
+    forced-color-adjust: none;
+  }
 }

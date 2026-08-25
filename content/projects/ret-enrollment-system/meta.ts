@@ -8,6 +8,7 @@ const meta: ProjectMeta = {
   stack: ["Next.js", "Firebase", "shadcn/ui", "Recharts"],
   links: [],
   featured: true,
+  cover: "/covers/ret-enrollment-system.webp",
 };
 
 export default meta;

@@ -20,7 +20,6 @@ export default function Nav() {
   const navLinks = [
     { label: t.nav.work, href: "#work" },
     { label: t.nav.stack, href: "#stack" },
-    { label: t.nav.about, href: "#about" },
     { label: t.nav.contact, href: "#contact" },
   ];
 
@@ -33,13 +32,8 @@ export default function Nav() {
       <div className="max-w-6xl mx-auto px-6 md:px-10 flex items-center justify-between h-16">
         <Link
           href={`/${locale}`}
-          style={{
-            fontFamily: "var(--font-dm-mono)",
-            color: "var(--gold)",
-            fontSize: "0.9rem",
-            letterSpacing: "0.08em",
-            fontWeight: 400,
-          }}
+          className="font-mono text-accent"
+          style={{ fontSize: "0.9rem", letterSpacing: "0.08em", fontWeight: 400 }}
         >
           {SITE.name}
         </Link>
@@ -59,11 +53,7 @@ export default function Nav() {
           <ContentModeToggle />
           <LocaleSwitcher />
 
-          <a
-            href={`mailto:${SITE.email}`}
-            className="hidden md:inline-flex cta-btn"
-            style={{ fontFamily: "var(--font-dm-mono)" }}
-          >
+          <a href={`mailto:${SITE.email}`} className="hidden md:inline-flex cta-btn font-mono">
             {t.nav.hire}
           </a>
         </div>
@@ -74,13 +64,8 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              style={{
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "0.65rem",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--text-muted)",
-              }}
+              className="font-mono text-ink-soft"
+              style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase" }}
             >
               {link.label}
             </a>

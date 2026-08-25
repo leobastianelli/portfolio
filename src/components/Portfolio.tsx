@@ -10,12 +10,9 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Work from "@/components/Work";
 import Stack from "@/components/Stack";
-import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
-// TODO(stage 5): this whole shell is replaced by the panel layout. It is kept
-// here so stage 1 ships a working site while the routing changes underneath.
 function Sections({ projects }: { projects: Project[] }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -33,12 +30,11 @@ function Sections({ projects }: { projects: Project[] }) {
   }, []);
 
   return (
-    <div className="grain relative" style={{ backgroundColor: "var(--bg)" }}>
+    <div className="relative">
       <Nav />
       <Hero />
       <Work projects={projects} />
       <Stack />
-      <About />
       <Contact />
       <Footer />
     </div>

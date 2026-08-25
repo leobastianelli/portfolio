@@ -21,8 +21,16 @@ export default function ContentModeToggle() {
         <span className="content-mode-toggle-knob" />
       </span>
       <span className={`led ${isTechnical ? "led-work" : ""}`} aria-hidden="true" />
-      <span className="label-engraved">
-        {isTechnical ? t.nav.contentMode.technical : t.nav.contentMode.overview}
+      {/* "Overview"/"Technical" render at different widths — stacked in the
+          same grid cell (like Work's summary/technical) so the toggle's own
+          footprint never changes and nothing next to it in Nav reflows. */}
+      <span className="content-mode-text">
+        <span data-hidden={isTechnical} className="label-engraved">
+          {t.nav.contentMode.overview}
+        </span>
+        <span data-hidden={!isTechnical} className="label-engraved">
+          {t.nav.contentMode.technical}
+        </span>
       </span>
     </button>
   );

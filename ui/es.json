@@ -6,7 +6,6 @@
   "nav": {
     "work": "Trabajo",
     "stack": "Stack",
-    "about": "Sobre mí",
     "contact": "Contacto",
     "hire": "Contratame",
     "language": "Idioma",
@@ -20,12 +19,33 @@
   "hero": {
     "labelRole": "Software para pymes argentinas",
     "labelCity": "Córdoba, Argentina",
-    "bio": "Vi bastantes negocios chicos y medianos de acá quedar afuera de herramientas que las empresas grandes —muchas veces extranjeras— usan hace años. Desarrollo tiendas online, sistemas internos y automatizaciones para que ese acceso no dependa del tamaño de la empresa.",
-    "cta": "Escribime →"
+    "intro": "Vi bastantes negocios chicos y medianos de acá quedar afuera de herramientas que las empresas grandes —muchas veces extranjeras— usan hace años. Desarrollo tiendas online, sistemas internos y automatizaciones para que ese acceso no dependa del tamaño de la empresa.",
+    "cta": "Escribime →",
+    "moreLabel": "Trayectoria",
+    "bioMore": {
+      "p1": "Soy desarrollador full-stack, pero antes de escribir una línea de código me importa entender cómo funciona tu negocio: qué vendés, cómo lo vendés hoy, y dónde se traba el proceso. Eso define qué vale la pena construir — no al revés.",
+      "p2": "Trabajé en tiendas de e-commerce, sistemas internos y automatizaciones para negocios de distintos tamaños, desde pymes locales hasta clientes en Europa y América. Esa mezcla me sirve acá: sé qué tecnología usan las empresas grandes y cómo adaptarla a la escala y el presupuesto real de una pyme argentina.",
+      "p3pre": "Fuera del trabajo con clientes, contribuyo a ",
+      "p3post": ", una banda de Córdoba que fusiona shoegaze, trip-hop y folk argentino — donde también me encargo de la presencia digital."
+    },
+    "table": [
+      { "label": "Experiencia", "value": "5+ años" },
+      { "label": "Ubicación", "value": "Córdoba, Argentina" },
+      { "label": "Idiomas", "value": "Español (nativo) · Inglés (fluido)" },
+      { "label": "Disponibilidad", "value": "Disponible para freelance y contratos" },
+      { "label": "Zona horaria", "value": "GMT-3 (ART)" }
+    ]
   },
   "work": {
     "sectionLabel": "Proyectos Seleccionados",
-    "sectionTitle": "Proyectos & Colaboraciones"
+    "sectionTitle": "Proyectos & Colaboraciones",
+    "moreLabel": "Más proyectos",
+    "moreTitle": "Todo lo demás",
+    "status": {
+      "live": "En producción",
+      "building": "En desarrollo",
+      "archived": "Archivado"
+    }
   },
   "stack": {
     "sectionLabel": "Tecnologías",
@@ -37,22 +57,6 @@
       { "category": "CMS", "items": ["WordPress", "Custom Plugins", "Elementor", "WPML", "ACF"] },
       { "category": "Infraestructura", "items": ["Vercel", "Git / GitHub", "Google Cloud Run", "Linux / SSH"] },
       { "category": "IA & Herramientas", "items": ["Claude API", "Google Places API", "SerpAPI", "Gemini AI"] }
-    ]
-  },
-  "about": {
-    "sectionLabel": "Trayectoria",
-    "sectionTitleMain": "Sobre",
-    "sectionTitleItalic": "mí",
-    "p1": "Soy desarrollador full-stack, pero antes de escribir una línea de código me importa entender cómo funciona tu negocio: qué vendés, cómo lo vendés hoy, y dónde se traba el proceso. Eso define qué vale la pena construir — no al revés.",
-    "p2": "Trabajé en tiendas de e-commerce, sistemas internos y automatizaciones para negocios de distintos tamaños, desde pymes locales hasta clientes en Europa y América. Esa mezcla me sirve acá: sé qué tecnología usan las empresas grandes y cómo adaptarla a la escala y el presupuesto real de una pyme argentina.",
-    "p3pre": "Fuera del trabajo con clientes, contribuyo a ",
-    "p3post": ", una banda de Córdoba que fusiona shoegaze, trip-hop y folk argentino — donde también me encargo de la presencia digital.",
-    "table": [
-      { "label": "Experiencia", "value": "5+ años" },
-      { "label": "Ubicación", "value": "Córdoba, Argentina" },
-      { "label": "Idiomas", "value": "Español (nativo) · Inglés (fluido)" },
-      { "label": "Disponibilidad", "value": "Disponible para freelance y contratos" },
-      { "label": "Zona horaria", "value": "GMT-3 (ART)" }
     ]
   },
   "contact": {

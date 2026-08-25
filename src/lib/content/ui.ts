@@ -7,29 +7,32 @@ export interface UiContent {
   nav: {
     work: string;
     stack: string;
-    about: string;
     contact: string;
     hire: string;
     language: string;
     localeNames: Record<Locale, string>;
     contentMode: { label: string; overview: string; technical: string };
   };
-  hero: { labelRole: string; labelCity: string; bio: string; cta: string };
-  work: { sectionLabel: string; sectionTitle: string };
+  hero: {
+    labelRole: string;
+    labelCity: string;
+    intro: string;
+    cta: string;
+    moreLabel: string;
+    bioMore: { p1: string; p2: string; p3pre: string; p3post: string };
+    table: { label: string; value: string }[];
+  };
+  work: {
+    sectionLabel: string;
+    sectionTitle: string;
+    moreLabel: string;
+    moreTitle: string;
+    status: { live: string; building: string; archived: string };
+  };
   stack: {
     sectionLabel: string;
     sectionTitleItalic: string;
     groups: { category: string; items: string[] }[];
-  };
-  about: {
-    sectionLabel: string;
-    sectionTitleMain: string;
-    sectionTitleItalic: string;
-    p1: string;
-    p2: string;
-    p3pre: string;
-    p3post: string;
-    table: { label: string; value: string }[];
   };
   contact: {
     sectionLabel: string;
