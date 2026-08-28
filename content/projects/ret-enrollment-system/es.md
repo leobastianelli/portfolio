@@ -1,5 +1,5 @@
 title: RET Enrollment System
-role: TODO — falta confirmar el rol.
+role: Desarrollador
 
 ## Summary
 Sistema de inscripciones para una facultad, usado por estudiantes, docentes y administración, con una vista distinta para cada rol.

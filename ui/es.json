@@ -4,29 +4,37 @@
     "description": "Desarrollador full-stack. Tiendas online, sistemas a medida y automatización para negocios que quieren crecer con la misma tecnología que usan las empresas grandes."
   },
   "nav": {
+    "home": "Inicio",
     "work": "Trabajo",
     "stack": "Stack",
     "contact": "Contacto",
     "hire": "Contratame",
     "language": "Idioma",
+    "sections": "Secciones",
     "localeNames": { "en": "English", "es": "Español" },
     "contentMode": {
       "label": "Cambiar entre resumen y detalle técnico",
       "overview": "Resumen",
       "technical": "Técnico"
+    },
+    "menu": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú",
+      "title": "Menú",
+      "label": "Contactame"
     }
   },
   "hero": {
-    "labelRole": "Software para pymes argentinas",
+    "labelRole": "Desarrollador full-stack",
     "labelCity": "Córdoba, Argentina",
-    "intro": "Vi bastantes negocios chicos y medianos de acá quedar afuera de herramientas que las empresas grandes —muchas veces extranjeras— usan hace años. Desarrollo tiendas online, sistemas internos y automatizaciones para que ese acceso no dependa del tamaño de la empresa.",
+    "intro": "Empecé a programar viendo negocios pequeños quedar excluidos de herramientas que las empresas grandes usan desde hace años. Esa mirada no cambió: sigo pensando primero en cómo funciona un negocio y dónde se traba el proceso, antes de pensar en qué tecnología usar.",
+    "introSecondary": "Hoy eso me lleva a trabajar con clientes de escalas muy distintas — desde una cadena de hostels en Europa hasta una app de coaching con IA en Estados Unidos — sin perder esa costumbre de preguntar primero qué hace falta, no qué se puede vender.",
     "cta": "Escribime →",
     "moreLabel": "Trayectoria",
     "bioMore": {
-      "p1": "Soy desarrollador full-stack, pero antes de escribir una línea de código me importa entender cómo funciona tu negocio: qué vendés, cómo lo vendés hoy, y dónde se traba el proceso. Eso define qué vale la pena construir — no al revés.",
-      "p2": "Trabajé en tiendas de e-commerce, sistemas internos y automatizaciones para negocios de distintos tamaños, desde pymes locales hasta clientes en Europa y América. Esa mezcla me sirve acá: sé qué tecnología usan las empresas grandes y cómo adaptarla a la escala y el presupuesto real de una pyme argentina.",
-      "p3pre": "Fuera del trabajo con clientes, contribuyo a ",
-      "p3post": ", una banda de Córdoba que fusiona shoegaze, trip-hop y folk argentino — donde también me encargo de la presencia digital."
+      "p1": "Soy desarrollador full-stack con foco en producto: React, Next.js, TypeScript, y las últimas suscripciones e integraciones de IA que construí para clientes en Europa y Estados Unidos.",
+      "p2pre": "Fuera del trabajo con clientes, toco la guitarra en ",
+      "p2post": ", una banda de Córdoba que fusiona shoegaze, trip-hop y folk argentino, y construyo herramientas de sim racing como pasatiempo técnico — desde análisis de datos de carrera hasta control por visión artificial."
     },
     "table": [
       { "label": "Experiencia", "value": "5+ años" },
@@ -44,8 +52,14 @@
     "status": {
       "live": "En producción",
       "building": "En desarrollo",
-      "archived": "Archivado"
+      "archived": "Archivado",
+      "experimental": "Experimental"
     }
+  },
+  "personal": {
+    "sectionLabel": "Fuera del trabajo con clientes",
+    "sectionTitle": "Sim racing",
+    "subtitle": "Proyectos propios, sin fecha de entrega — herramientas que construyo para mi propia simulación de carreras."
   },
   "stack": {
     "sectionLabel": "Tecnologías",
@@ -69,8 +83,5 @@
       { "key": "linkedin", "label": "LinkedIn" },
       { "key": "github", "label": "GitHub" }
     ]
-  },
-  "footer": {
-    "copyright": "© 2025 Leo Bastianelli. Córdoba, Argentina."
   }
 }

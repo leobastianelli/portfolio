@@ -8,6 +8,7 @@ const meta: ProjectMeta = {
   stack: ["Shopify Plus", "Next.js", "Firebase", "n8n", "Impact.com"],
   links: [],
   featured: true,
+  cover: "/covers/golf-membership-platform.webp",
 };
 
 export default meta;

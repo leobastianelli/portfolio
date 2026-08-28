@@ -12,6 +12,9 @@ const meta: ProjectMeta = {
   ],
   featured: true,
   cover: "/covers/greens-club.webp",
+  // Mobile-app screenshot, cropped to its real content (586×675) — see the
+  // `coverAspect` doc comment on ProjectMeta.
+  coverAspect: 586 / 675,
 };
 
 export default meta;

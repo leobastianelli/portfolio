@@ -1,0 +1,74 @@
+"use client";
+
+import { useLang } from "@/context/LanguageContext";
+import { useContentMode } from "@/context/ContentModeContext";
+import { ProjectCover, StatusLabel } from "@/components/Work";
+import type { Project } from "@/lib/content/types";
+
+export default function Personal({ projects }: { projects: Project[] }) {
+  const { t } = useLang();
+  const { mode } = useContentMode();
+  const personalProjects = projects.filter((project) => project.personal);
+  const statusLabels = t.work.status;
+
+  if (personalProjects.length === 0) return null;
+
+  return (
+    <section
+      id="personal"
+      className="py-20 md:py-32 px-6 md:px-10"
+      style={{ borderTop: "1px solid var(--border)", marginTop: "2rem" }}
+    >
+      <div className="max-w-6xl mx-auto">
+        <div className="reveal mb-16">
+          <p className="section-label font-mono mb-3">{t.personal.sectionLabel}</p>
+          <h2 className="editorial-type" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 500, lineHeight: 1.15, color: "var(--color-ink)" }}>
+            {t.personal.sectionTitle}
+          </h2>
+          <p className="editorial-type mt-4" style={{ fontSize: "1rem", lineHeight: 1.7, maxWidth: "540px", color: "var(--color-ink-faded)" }}>
+            {t.personal.subtitle}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-12">
+          {personalProjects.map((project, i) => (
+            <div key={project.slug} className="reveal flex flex-col" style={{ transitionDelay: `${i * 0.08}s` }}>
+              <ProjectCover title={project.title} cover={project.cover} />
+
+              <div className="mt-4 mb-2 flex items-center gap-3 flex-wrap">
+                <span className="font-mono" style={{ fontSize: "0.7rem", letterSpacing: "0.1em", color: "var(--color-ink-faded)" }}>
+                  {project.year}
+                </span>
+                <StatusLabel status={project.status} label={statusLabels[project.status]} />
+              </div>
+
+              <h3 className="editorial-type" style={{ fontSize: "1.25rem", fontWeight: 500, color: "var(--color-ink)", marginBottom: "0.3rem" }}>
+                {project.title}
+              </h3>
+              <p className="editorial-type mb-4" style={{ fontStyle: "italic", fontSize: "0.9rem", color: "var(--color-ink-faded)" }}>
+                {project.role}
+              </p>
+
+              <div className="content-mode-text mb-5">
+                <p data-hidden={mode !== "overview"} className="editorial-type" style={{ fontSize: "0.98rem", lineHeight: 1.7, color: "var(--color-ink)" }}>
+                  {project.summary}
+                </p>
+                <p data-hidden={mode !== "technical"} className="editorial-type" style={{ fontSize: "0.98rem", lineHeight: 1.7, color: "var(--color-ink)" }}>
+                  {project.technical}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {project.stack.map((tag) => (
+                  <span key={tag} className="tag font-mono">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

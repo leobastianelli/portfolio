@@ -7,6 +7,8 @@ import scout from "./scout/meta";
 import purpuraCeniza from "./purpura-ceniza/meta";
 import victoriapp from "./victoriapp/meta";
 import onefamPlatform from "./onefam-platform/meta";
+import pitEngineer from "./pit-engineer/meta";
+import acHeadTracking from "./ac-head-tracking/meta";
 
 /**
  * Explicit registry rather than a directory scan: Next.js bundles these
@@ -22,4 +24,6 @@ export const projectMetas: ProjectMeta[] = [
   scout,
   purpuraCeniza,
   victoriapp,
+  pitEngineer,
+  acHeadTracking,
 ];

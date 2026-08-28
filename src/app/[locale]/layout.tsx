@@ -6,6 +6,12 @@ import { isLocale, locales, localizedUrl } from "@/lib/i18n";
 import { getUi } from "@/lib/content/ui";
 import "../globals.css";
 
+// The sole headline+body voice sitewide (see the note by `.editorial-type`
+// in globals.css for why it replaced Newsreader). Bricolage Grotesque has
+// no real italic face on Google Fonts (next/font only types "normal" for
+// it) — `font-style: italic` still works everywhere it's used (roles,
+// accents), the browser synthesizes an oblique, which is normal for a
+// grotesque and not a build error.
 const display = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
@@ -14,7 +20,9 @@ const display = Bricolage_Grotesque({
 const mono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  // 700 added for direccion-visual-v3's grayscale pass: `.status-label--live`
+  // needs a real bold face, not the browser faux-bolding 500.
+  weight: ["400", "500", "700"],
 });
 
 const body = Instrument_Sans({

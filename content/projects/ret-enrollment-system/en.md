@@ -1,5 +1,5 @@
 title: RET Enrollment System
-role: TODO — role not confirmed yet.
+role: Developer
 
 ## Summary
 An enrollment system for a university department, used by students, faculty, and administration, each with its own view.

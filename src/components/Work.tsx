@@ -5,40 +5,60 @@ import { useLang } from "@/context/LanguageContext";
 import { useContentMode } from "@/context/ContentModeContext";
 import type { Project, ProjectStatus } from "@/lib/content/types";
 
-const STATUS_LED: Record<ProjectStatus, string> = {
-  live: "led-on",
-  building: "led-work",
-  archived: "led",
-};
+/*
+ * direccion-visual-v3.md: status reads as a colored category label (PDR's
+ * "Art & Illustration" pattern), not a panel LED. The real text label is
+ * still what carries the status — color alone is never the only cue.
+ */
+export function StatusLabel({ status, label }: { status: ProjectStatus; label: string }) {
+  return <span className={`status-label status-label--${status}`}>{label}</span>;
+}
 
-function StatusIndicator({ status, label }: { status: ProjectStatus; label: string }) {
+export function ProjectCover({
+  title,
+  cover,
+  coverAspect = 16 / 9,
+}: {
+  title: string;
+  cover?: string;
+  coverAspect?: number;
+}) {
+  if (cover) {
+    return (
+      <div className="cover-frame" style={{ aspectRatio: coverAspect }}>
+        <Image src={cover} alt={title} fill sizes="(min-width: 768px) 50vw, 100vw" style={{ objectFit: "cover" }} />
+      </div>
+    );
+  }
+
   return (
-    <span className="inline-flex items-center gap-2">
-      <span className={`led ${STATUS_LED[status]}`} aria-hidden="true" />
-      <span className="label-engraved">{label}</span>
-    </span>
+    <div className="cover-typographic" style={{ aspectRatio: coverAspect }}>
+      <span className="editorial-type cover-typographic__title" style={{ fontSize: "clamp(1.3rem, 2.6vw, 1.9rem)" }}>
+        {title}
+      </span>
+    </div>
   );
 }
 
-function ProjectCover({ title, cover }: { title: string; cover?: string }) {
+function ProjectMeta({ project, statusLabels }: { project: Project; statusLabels: Record<ProjectStatus, string> }) {
   return (
-    <div
-      className="panel-recessed relative flex items-center justify-center mb-5 overflow-hidden"
-      style={{ aspectRatio: "16 / 9" }}
-    >
-      {cover ? (
-        <Image
-          src={cover}
-          alt={title}
-          fill
-          sizes="(min-width: 768px) 50vw, 100vw"
-          style={{ objectFit: "cover" }}
-        />
-      ) : (
-        <span className="label-engraved" style={{ fontSize: "0.85rem", letterSpacing: "0.08em" }}>
-          {title}
+    <div className="flex items-center gap-3 flex-wrap mb-2">
+      <span className="font-mono" style={{ fontSize: "0.7rem", letterSpacing: "0.1em", color: "var(--color-ink-faded)" }}>
+        {project.year}
+      </span>
+      <StatusLabel status={project.status} label={statusLabels[project.status]} />
+    </div>
+  );
+}
+
+function ProjectTags({ stack }: { stack: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {stack.map((tag) => (
+        <span key={tag} className="tag font-mono">
+          {tag}
         </span>
-      )}
+      ))}
     </div>
   );
 }
@@ -46,138 +66,150 @@ function ProjectCover({ title, cover }: { title: string; cover?: string }) {
 export default function Work({ projects }: { projects: Project[] }) {
   const { t } = useLang();
   const { mode } = useContentMode();
-  const featured = projects.filter((project) => project.featured);
-  const rest = projects.filter((project) => !project.featured);
+  const clientProjects = projects.filter((project) => !project.personal);
+  const featured = clientProjects.filter((project) => project.featured);
+  const [lead, ...featuredRest] = featured;
+  const rest = clientProjects.filter((project) => !project.featured);
   const statusLabels = t.work.status;
 
   return (
-    <section id="work" className="py-32 px-6 md:px-10" style={{ borderTop: "1px solid var(--border)" }}>
+    <section id="work" className="work-section py-20 md:py-32 px-6 md:px-10">
       <div className="max-w-6xl mx-auto">
         {/* Selected work */}
         <div className="reveal mb-16">
-          <span className="accent-line" />
           <p className="section-label font-mono mb-3">{t.work.sectionLabel}</p>
-          <h2 className="font-display text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 400, lineHeight: 1.15 }}>
+          <h2 className="editorial-type" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 500, lineHeight: 1.15, color: "var(--color-ink)" }}>
             {t.work.sectionTitle}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-32">
-          {featured.map((project, i) => {
-            const link = project.links[0];
-            return (
-              <div key={project.slug} className="project-card reveal p-8 md:p-10" style={{ transitionDelay: `${i * 0.08}s` }}>
-                <ProjectCover title={project.title} cover={project.cover} />
+        {/* Lead: the most recent featured project, full width — PDR's hero
+            treatment (big image + text, pull-quote-style accent border on
+            the text column), not another card in a grid. */}
+        {lead && (
+          <div className="reveal grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 mb-16 md:mb-20">
+            <ProjectCover title={lead.title} cover={lead.cover} coverAspect={lead.coverAspect} />
+            <div className="editorial-lead-text flex flex-col justify-center">
+              <ProjectMeta project={lead} statusLabels={statusLabels} />
+              <h3 className="editorial-type" style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", fontWeight: 500, color: "var(--color-ink)", marginBottom: "0.3rem" }}>
+                {lead.title}
+              </h3>
+              <p className="editorial-type" style={{ fontStyle: "italic", fontSize: "0.95rem", color: "var(--color-ink-faded)", marginBottom: "1rem" }}>
+                {lead.role}
+              </p>
+              <div className="content-mode-text mb-5">
+                <p data-hidden={mode !== "overview"} className="editorial-type" style={{ fontSize: "1.05rem", lineHeight: 1.7, color: "var(--color-ink)" }}>
+                  {lead.summary}
+                </p>
+                <p data-hidden={mode !== "technical"} className="editorial-type" style={{ fontSize: "1.05rem", lineHeight: 1.7, color: "var(--color-ink)" }}>
+                  {lead.technical}
+                </p>
+              </div>
+              <ProjectTags stack={lead.stack} />
+              {lead.links[0] && (
+                <a
+                  href={lead.links[0].url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono mt-4 inline-flex items-center gap-2 w-fit"
+                  style={{ fontSize: "0.75rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-accent-ink)" }}
+                >
+                  {lead.links[0].label} ↗
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div>
-                    <p className="font-mono text-accent" style={{ fontSize: "0.65rem", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: "0.4rem" }}>
-                      {project.year}
-                    </p>
-                    <h3 className="font-display text-ink" style={{ fontSize: "1.35rem", fontWeight: 400 }}>
-                      {project.title}
-                    </h3>
-                    <p className="font-mono text-ink-soft" style={{ fontSize: "0.7rem", letterSpacing: "0.06em", marginTop: "0.2rem" }}>
+        {/* Remaining featured — 3 columns, own row template (PDR's "Editor's
+            Picks / Conjectures / Popular Posts" row uses exactly 3 even
+            columns; ours does too, deliberately, not a coincidence). */}
+        {featuredRest.length > 0 && (
+          <div className="editorial-rule reveal grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10 pt-10 mb-16 md:mb-20">
+            {featuredRest.map((project) => {
+              const link = project.links[0];
+              return (
+                <div key={project.slug} className="flex flex-col">
+                  <ProjectCover title={project.title} cover={project.cover} coverAspect={project.coverAspect} />
+                  <div className="mt-4">
+                    <ProjectMeta project={project} statusLabels={statusLabels} />
+                    <div className="flex items-start justify-between gap-3 mb-1">
+                      <h3 className="editorial-type" style={{ fontSize: "1.15rem", fontWeight: 500, color: "var(--color-ink)" }}>
+                        {project.title}
+                      </h3>
+                      {link && (
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-shrink-0"
+                          style={{ color: "var(--color-accent-ink)" }}
+                          aria-label={`Visit ${project.title}`}
+                        >
+                          ↗
+                        </a>
+                      )}
+                    </div>
+                    <p className="editorial-type mb-3" style={{ fontStyle: "italic", fontSize: "0.85rem", color: "var(--color-ink-faded)" }}>
                       {project.role}
                     </p>
+                    <div className="content-mode-text mb-3">
+                      <p data-hidden={mode !== "overview"} className="editorial-type" style={{ fontSize: "0.92rem", lineHeight: 1.65, color: "var(--color-ink)" }}>
+                        {project.summary}
+                      </p>
+                      <p data-hidden={mode !== "technical"} className="editorial-type" style={{ fontSize: "0.92rem", lineHeight: 1.65, color: "var(--color-ink)" }}>
+                        {project.technical}
+                      </p>
+                    </div>
+                    <ProjectTags stack={project.stack} />
                   </div>
-
-                  {link && (
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
-                      style={{ fontSize: "1.1rem" }}
-                      aria-label={`Visit ${project.title}`}
-                    >
-                      ↗
-                    </a>
-                  )}
                 </div>
+              );
+            })}
+          </div>
+        )}
 
-                <div className="mb-3">
-                  <StatusIndicator status={project.status} label={statusLabels[project.status]} />
-                </div>
-
-                <div className="content-mode-text mb-6">
-                  <p data-hidden={mode !== "overview"} className="font-body text-ink-soft" style={{ fontSize: "0.88rem", lineHeight: 1.72 }}>
-                    {project.summary}
-                  </p>
-                  <p data-hidden={mode !== "technical"} className="font-body text-ink-soft" style={{ fontSize: "0.88rem", lineHeight: 1.72 }}>
-                    {project.technical}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {project.stack.map((tag) => (
-                    <span key={tag} className="tag font-mono">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Everything else */}
-        <div className="reveal mb-12">
-          <span className="accent-line" />
+        {/* Everything else — 4 columns, text-only (PDR's "Popular Posts"
+            list has no thumbnails either), dense and compact on purpose. */}
+        <div className="reveal mb-10">
           <p className="section-label font-mono mb-3">{t.work.moreLabel}</p>
-          <h2 className="font-display text-ink" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 400, lineHeight: 1.15 }}>
+          <h2 className="editorial-type" style={{ fontSize: "clamp(1.3rem, 2.4vw, 1.7rem)", fontWeight: 500, lineHeight: 1.2, color: "var(--color-ink)" }}>
             {t.work.moreTitle}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {rest.map((project, i) => {
+        <div className="editorial-rule grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 pt-8">
+          {rest.map((project) => {
             const link = project.links[0];
             return (
-              <div key={project.slug} className="project-card reveal p-6" style={{ transitionDelay: `${i * 0.06}s` }}>
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div>
-                    <h3 className="font-display text-ink" style={{ fontSize: "1.05rem", fontWeight: 400 }}>
-                      {project.title}
-                    </h3>
-                    <p className="font-mono text-ink-soft" style={{ fontSize: "0.65rem", letterSpacing: "0.06em", marginTop: "0.15rem" }}>
-                      {project.role} · {project.year}
-                    </p>
-                  </div>
-
+              <div key={project.slug} className="reveal flex flex-col">
+                <ProjectMeta project={project} statusLabels={statusLabels} />
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <h3 className="editorial-type" style={{ fontSize: "0.98rem", fontWeight: 500, color: "var(--color-ink)" }}>
+                    {project.title}
+                  </h3>
                   {link && (
                     <a
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-accent flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
+                      className="flex-shrink-0"
+                      style={{ color: "var(--color-accent-ink)", fontSize: "0.85rem" }}
                       aria-label={`Visit ${project.title}`}
                     >
                       ↗
                     </a>
                   )}
                 </div>
-
-                <div className="mb-3">
-                  <StatusIndicator status={project.status} label={statusLabels[project.status]} />
-                </div>
-
-                <div className="content-mode-text mb-4">
-                  <p data-hidden={mode !== "overview"} className="font-body text-ink-soft" style={{ fontSize: "0.82rem", lineHeight: 1.65 }}>
+                <div className="content-mode-text mb-2">
+                  <p data-hidden={mode !== "overview"} className="editorial-type" style={{ fontSize: "0.82rem", lineHeight: 1.55, color: "var(--color-ink-faded)" }}>
                     {project.summary}
                   </p>
-                  <p data-hidden={mode !== "technical"} className="font-body text-ink-soft" style={{ fontSize: "0.82rem", lineHeight: 1.65 }}>
+                  <p data-hidden={mode !== "technical"} className="editorial-type" style={{ fontSize: "0.82rem", lineHeight: 1.55, color: "var(--color-ink-faded)" }}>
                     {project.technical}
                   </p>
                 </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {project.stack.map((tag) => (
-                    <span key={tag} className="tag font-mono">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                <ProjectTags stack={project.stack} />
               </div>
             );
           })}

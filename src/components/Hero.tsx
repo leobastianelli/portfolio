@@ -9,7 +9,7 @@ export default function Hero() {
   const lastName = rest.join(" ");
 
   return (
-    <section id="hero" className="relative px-6 md:px-10 pt-32 pb-24">
+    <section id="hero" className="relative px-6 md:px-10 pt-24 md:pt-32 pb-16 md:pb-24">
       <div className="max-w-6xl mx-auto w-full">
         {/* Label row */}
         <div className="fade-up flex items-center gap-3 mb-8 font-mono">
@@ -38,17 +38,20 @@ export default function Hero() {
         </h1>
 
         {/* Intro */}
-        <p
-          className="fade-up delay-3 font-body text-ink-soft"
-          style={{
-            fontSize: "clamp(0.95rem, 1.5vw, 1.15rem)",
-            lineHeight: 1.75,
-            maxWidth: "540px",
-            marginBottom: "2.5rem",
-          }}
-        >
-          {t.hero.intro}
-        </p>
+        <div className="fade-up delay-3 flex flex-col gap-4" style={{ maxWidth: "540px", marginBottom: "2.5rem" }}>
+          <p
+            className="editorial-type"
+            style={{ fontSize: "clamp(1rem, 1.6vw, 1.2rem)", lineHeight: 1.75, color: "var(--color-ink-faded)" }}
+          >
+            {t.hero.intro}
+          </p>
+          <p
+            className="editorial-type"
+            style={{ fontSize: "clamp(1rem, 1.6vw, 1.2rem)", lineHeight: 1.75, color: "var(--color-ink-faded)" }}
+          >
+            {t.hero.introSecondary}
+          </p>
+        </div>
 
         {/* CTA */}
         <div className="fade-up delay-4 mb-24 md:mb-32">
@@ -61,14 +64,11 @@ export default function Hero() {
         <div className="reveal border-t border-[var(--border)] pt-16 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
           <div className="flex flex-col gap-5">
             <p className="section-label font-mono mb-1">{t.hero.moreLabel}</p>
-            <p className="font-body text-ink" style={{ fontSize: "1.05rem", lineHeight: 1.8 }}>
+            <p className="editorial-type" style={{ fontSize: "1.1rem", lineHeight: 1.75, color: "var(--color-ink)" }}>
               {t.hero.bioMore.p1}
             </p>
-            <p className="font-body text-ink-soft" style={{ fontSize: "1rem", lineHeight: 1.8 }}>
-              {t.hero.bioMore.p2}
-            </p>
-            <p className="font-body text-ink-soft" style={{ fontSize: "1rem", lineHeight: 1.8 }}>
-              {t.hero.bioMore.p3pre}
+            <p className="editorial-type" style={{ fontSize: "1.05rem", lineHeight: 1.75, color: "var(--color-ink-faded)" }}>
+              {t.hero.bioMore.p2pre}
               <a
                 href="https://purpuraceniza.com"
                 target="_blank"
@@ -77,7 +77,7 @@ export default function Hero() {
               >
                 Púrpura Ceniza
               </a>
-              {t.hero.bioMore.p3post}
+              {t.hero.bioMore.p2post}
             </p>
           </div>
 

@@ -5,21 +5,25 @@ import { defaultLocale, type Locale } from "@/lib/i18n";
 export interface UiContent {
   meta: { title: string; description: string };
   nav: {
+    home: string;
     work: string;
     stack: string;
     contact: string;
     hire: string;
     language: string;
+    sections: string;
     localeNames: Record<Locale, string>;
     contentMode: { label: string; overview: string; technical: string };
+    menu: { open: string; close: string; title: string; label: string };
   };
   hero: {
     labelRole: string;
     labelCity: string;
     intro: string;
+    introSecondary: string;
     cta: string;
     moreLabel: string;
-    bioMore: { p1: string; p2: string; p3pre: string; p3post: string };
+    bioMore: { p1: string; p2pre: string; p2post: string };
     table: { label: string; value: string }[];
   };
   work: {
@@ -27,7 +31,12 @@ export interface UiContent {
     sectionTitle: string;
     moreLabel: string;
     moreTitle: string;
-    status: { live: string; building: string; archived: string };
+    status: { live: string; building: string; archived: string; experimental: string };
+  };
+  personal: {
+    sectionLabel: string;
+    sectionTitle: string;
+    subtitle: string;
   };
   stack: {
     sectionLabel: string;
@@ -41,7 +50,6 @@ export interface UiContent {
     subtitle: string;
     links: { key: string; label: string }[];
   };
-  footer: { copyright: string };
 }
 
 const UI_DIR = path.join(process.cwd(), "ui");

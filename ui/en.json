@@ -4,29 +4,37 @@
     "description": "Full-stack developer. Online stores, custom systems and automation for businesses that want to grow with the same technology large companies use."
   },
   "nav": {
+    "home": "Home",
     "work": "Work",
     "stack": "Stack",
     "contact": "Contact",
     "hire": "Hire me",
     "language": "Language",
+    "sections": "Sections",
     "localeNames": { "en": "English", "es": "Español" },
     "contentMode": {
       "label": "Switch between overview and technical detail",
       "overview": "Overview",
       "technical": "Technical"
+    },
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu",
+      "title": "Menu",
+      "label": "Contact me"
     }
   },
   "hero": {
-    "labelRole": "Software for Argentine SMEs",
+    "labelRole": "Full-stack developer",
     "labelCity": "Córdoba, Argentina",
-    "intro": "I've seen plenty of small and medium businesses here get left out of tools that large companies — often foreign ones — have used for years. I build online stores, internal systems, and automations so that access doesn't depend on company size.",
+    "intro": "I started coding after watching small businesses get shut out of tools that large companies have used for years. That hasn't changed: I still think about how a business works and where the process breaks down before I think about which technology to use.",
+    "introSecondary": "These days that means working with clients across very different scales — from a hostel chain in Europe to an AI coaching app in the US — without losing that habit of asking what's actually needed first, not what's easiest to sell.",
     "cta": "Get in touch →",
     "moreLabel": "Background",
     "bioMore": {
-      "p1": "I'm a full-stack developer, but before writing a single line of code I want to understand how your business works: what you sell, how you sell it today, and where the process breaks down. That's what defines what's worth building — not the other way around.",
-      "p2": "I've worked on e-commerce stores, internal systems, and automations for businesses of different sizes, from local SMEs to clients in Europe and the Americas. That mix is useful here: I know what technology large companies use and how to adapt it to the real scale and budget of an Argentine SME.",
-      "p3pre": "Outside of client work, I contribute to ",
-      "p3post": ", a band from Córdoba blending shoegaze, trip-hop, and Argentine folk — where I also handle the digital presence."
+      "p1": "I'm a full-stack developer focused on product: React, Next.js, TypeScript, and the subscription and AI integration work I've been building lately for clients in Europe and the US.",
+      "p2pre": "Outside of client work, I play guitar in ",
+      "p2post": ", a band from Córdoba blending shoegaze, trip-hop, and Argentine folk, and I build sim racing tools as a technical hobby — everything from race data analysis to computer-vision camera control."
     },
     "table": [
       { "label": "Experience", "value": "5+ years" },
@@ -44,8 +52,14 @@
     "status": {
       "live": "In production",
       "building": "In development",
-      "archived": "Archived"
+      "archived": "Archived",
+      "experimental": "Experimental"
     }
+  },
+  "personal": {
+    "sectionLabel": "Outside client work",
+    "sectionTitle": "Sim racing",
+    "subtitle": "Personal projects, no ship date — tools I build for my own sim racing setup."
   },
   "stack": {
     "sectionLabel": "Technical expertise",
@@ -69,8 +83,5 @@
       { "key": "linkedin", "label": "LinkedIn" },
       { "key": "github", "label": "GitHub" }
     ]
-  },
-  "footer": {
-    "copyright": "© 2025 Leo Bastianelli. Córdoba, Argentina."
   }
 }

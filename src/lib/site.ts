@@ -9,7 +9,7 @@ export const SITE = {
   author: "Leo Bastianelli",
   email: "leonelbastianelli@gmail.com",
   social: {
-    linkedin: "https://linkedin.com/in/leonelbstein",
+    linkedin: "https://www.linkedin.com/in/leo-bastianelli",
     github: "https://github.com/leobastianelli",
   },
 } as const;

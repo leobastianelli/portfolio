@@ -7,11 +7,12 @@ import type { Locale } from "@/lib/i18n";
 import type { UiContent } from "@/lib/content/ui";
 import type { Project } from "@/lib/content/types";
 import Nav from "@/components/Nav";
+import SectionIndex from "@/components/SectionIndex";
 import Hero from "@/components/Hero";
 import Work from "@/components/Work";
 import Stack from "@/components/Stack";
+import Personal from "@/components/Personal";
 import Contact from "@/components/Contact";
-import Footer from "@/components/Footer";
 
 function Sections({ projects }: { projects: Project[] }) {
   useEffect(() => {
@@ -29,14 +30,17 @@ function Sections({ projects }: { projects: Project[] }) {
     return () => observer.disconnect();
   }, []);
 
+  const hasPersonal = projects.some((project) => project.personal);
+
   return (
-    <div className="relative">
+    <div className="relative site-shell">
       <Nav />
+      <SectionIndex hasPersonal={hasPersonal} />
       <Hero />
       <Work projects={projects} />
       <Stack />
+      <Personal projects={projects} />
       <Contact />
-      <Footer />
     </div>
   );
 }
