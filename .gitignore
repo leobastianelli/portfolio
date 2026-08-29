@@ -44,3 +44,8 @@ next-env.d.ts
 
 # leftover clone from awesome-ux-skills, skills live in ~/.claude/skills/
 /awesome-ux-skills
+
+# local dev server logs
+dev-run.log
+dev-stdout.log
+dev-stderr.log

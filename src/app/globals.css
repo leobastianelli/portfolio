@@ -154,6 +154,13 @@
   width: min(320px, calc(100vw - 3rem));
   display: flex;
   flex-direction: column;
+  background: transparent;
+  transition: background-color 0.4s ease;
+}
+/* Sin borde (Leo) — abierto sólo el fondo blanco une botón + panel en una
+   caja; en reposo, sólo el ícono flotando. */
+.menu-anchor[data-open="true"] {
+  background: var(--color-paper);
 }
 .menu-toggle {
   display: flex;
@@ -163,7 +170,9 @@
   width: 100%;
   background: none;
   border: none;
-  padding: 0.85rem 1.1rem;
+  /* Padding parejo: el espacio de la X al borde de arriba tiene que ser
+     igual al del borde derecho (Leo). */
+  padding: 1.1rem;
   cursor: pointer;
   transition: background-color 0.6s ease;
 }
@@ -192,7 +201,7 @@
     transition: none;
   }
 }
-/* Ancho y alto FIJOS (52px × 23px = 3+7+3+7+3, las 3 barras + los 2 gaps)
+/* Ancho y alto FIJOS (52px × 23px; las 3 barras de 2px en top 0/10/20)
    en vez de "shrink-to-fit a la barra más ancha" — cuando la barra del
    medio crece de ancho (ver más abajo), un contenedor `flex` sin tamaño
    propio se agranda para seguirla, y como este ícono cuelga del lado
@@ -211,9 +220,22 @@
   position: absolute;
   left: 0;
   width: 52px;
+  /* Puntas rectas (sin border-radius) y 3px de grosor: la barra tiene que
+     leerse con la MISMA textura que el label "Contactame" que subraya —
+     Bricolage Grotesque 700, de trazo grueso—, no como un hairline de UI
+     ni como una píldora de extremos redondeados. El grosor iguala el peso
+     del stem de la bold; si se afina, la línea se ve más liviana que la
+     palabra (que fue justo lo que Leo marcó). Vale igual de hamburguesa y
+     de subrayado: las dos texturas iguales SIEMPRE. */
   height: 3px;
   background: var(--color-ink);
-  border-radius: 1px;
+  /* Un relleno sólido a tinta plena se lee más brillante/"perlado" que el
+     texto de al lado: los glifos a 16px tienen un montón de píxeles de
+     borde a cobertura parcial (antialiasing), así que su luminancia media
+     es menor que el #fafafa puro. Bajar la opacidad acerca la densidad
+     óptica de la barra a la de la palabra — misma textura, no un rule más
+     limpio. Aplica también a la hamburguesa cerrada (Leo: iguales SIEMPRE). */
+  opacity: 0.82;
   transform-origin: center;
   transition: transform 1.1s ease, width 1.1s ease, opacity 1.1s ease, background-color 0.6s ease;
 }
@@ -222,17 +244,27 @@
 }
 .menu-toggle-bar:nth-child(2) {
   top: 10px;
+  /* Esta barra viaja hasta MUY abajo (subraya el label abierto y, en
+     hover, cada link del panel). Sobre el panel — que es opaco — tiene
+     que pintarse por encima: es descendiente posicionado de
+     `.menu-toggle-icon`, así que ya pinta después del `.menu-panel` sin
+     posicionar, pero el z-index lo deja explícito. */
+  z-index: 1;
+  /* Una vez "pineada", esta barra se posiciona con `top`/`left` (relativo
+     al ícono, que no tiene transform ni transición — rect estable) y
+     transiciona esos, no `transform`. Más rápida que la base de 1.1s: la
+     de 1.1s se sentía pesada saltando de link en link. El keyframe de
+     apertura sí usa `transform` (no está acá), así que no hay conflicto. */
+  transition: top 0.5s ease, left 0.5s ease, width 0.5s ease, height 0.5s ease, background-color 0.6s ease;
 }
 .menu-toggle-bar:nth-child(3) {
   top: 20px;
 }
+/* Abierto, todo el cuadro es blanco (`.menu-anchor[data-open]` + este
+   fondo paper en el botón). Ni el label ni las barras se invierten ya:
+   quedan a tinta sobre blanco igual que el panel de abajo — un solo
+   bloque, no un encabezado oscuro pegado a un cuerpo claro. */
 .menu-toggle[aria-expanded="true"] {
-  background: var(--color-ink);
-}
-.menu-toggle[aria-expanded="true"] .menu-toggle-label {
-  color: var(--color-paper);
-}
-.menu-toggle[aria-expanded="true"] .menu-toggle-bar {
   background: var(--color-paper);
 }
 /* Hamburguesa → cruz. Las barras 1 y 3 viajan los 10px que las separaban
@@ -264,6 +296,7 @@
   0% {
     transform: translate(0, 0);
     width: 52px;
+    height: 3px;
     /* Acelera como si cayera (gravedad), no un ease-in/out parejo. */
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
@@ -273,13 +306,17 @@
   20% {
     transform: translate(0, var(--underline-dy, 0px));
     width: 52px;
+    height: 3px;
     animation-timing-function: ease-in-out;
   }
   100% {
     /* Crece hasta el ancho de la palabra MIENTRAS se desliza en X (Leo) —
-       no antes (durante la caída) ni después. */
+       no antes (durante la caída) ni después. El adelgazamiento de 3px→2px
+       es PARTE de la animación (se afina mientras se estira), no un salto
+       al final. */
     transform: translate(var(--underline-dx, 0px), var(--underline-dy, 0px));
     width: var(--underline-width, 52px);
+    height: 2px;
   }
 }
 .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(2) {
@@ -288,7 +325,11 @@
 @media (prefers-reduced-motion: reduce) {
   .menu-toggle,
   .menu-toggle-label,
-  .menu-toggle-bar {
+  .menu-toggle-bar,
+  /* Same specificity as the opening-animation rule above, or it would
+     keep animating under reduced motion (and `Nav.tsx` would wait on an
+     `animationend` that never fires). */
+  .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(2) {
     transition: none;
     animation: none;
   }
@@ -303,9 +344,15 @@
   background: color-mix(in srgb, var(--color-ink) 45%, transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
+  /* Cerrado, el overlay sigue montado (para poder animar) y cubre todo el
+     viewport — sin esto se come TODOS los clicks de la página (el índice
+     lateral, los links, todo). Sólo captura el click-afuera cuando el
+     menú está abierto. */
+  pointer-events: none;
 }
 .menu-overlay[data-open="true"] {
   opacity: 1;
+  pointer-events: auto;
 }
 @media (prefers-reduced-motion: reduce) {
   .menu-overlay {
@@ -343,21 +390,34 @@
   display: flex;
   flex-direction: column;
 }
-.menu-panel-links li {
-  border-top: 1px solid var(--color-stain);
-}
-.menu-panel-links li:last-child {
-  border-bottom: 1px solid var(--color-stain);
-}
+/* Sin hairlines arriba/abajo de cada fila (Leo). Sin `gap` en la lista a
+   propósito: si las cajas de los `<a>` no se tocan, el hueco entre ellas
+   es "nada" y el subrayado tendría que volver al label ahí — al barrer
+   rápido con el cursor eso se ve como que la línea salta. Con las cajas
+   pegadas, `mouseleave` de una y `mouseenter` de la otra caen en el mismo
+   frame y sólo se renderiza el destino final. El aire entre filas lo da
+   el padding de cada link. */
 .menu-panel-link {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 0.3rem;
-  padding: 0.85rem 0;
+  padding: 0.7rem 0;
   transition: opacity 0.2s ease;
 }
 .menu-panel-link:hover {
   opacity: 0.6;
+}
+/* `align-items: flex-start` arriba deja que estos spans se ajusten a su
+   texto en vez de estirarse a lo ancho de la fila — así medir su caja con
+   `getBoundingClientRect()` da el ancho REAL del texto, que es lo que el
+   subrayado tiene que copiar. `max-width: 100%` para que una URL larga
+   corte con puntos suspensivos en lugar de desbordar el panel. */
+.menu-panel-value {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /*
