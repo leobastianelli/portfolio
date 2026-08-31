@@ -35,7 +35,13 @@ export default function Hero() {
         >
           <span
             className="fade-up delay-1 block"
-            style={{ marginBottom: "0.15em", color: "var(--color-ink)", opacity: 0.55 }}
+            style={{
+              marginBottom: "0.15em",
+              /* Negro atenuado por alfa en el color, NO por `opacity`: el
+                 `.fade-up` anima opacity 0→1 con fill-mode both, así que su
+                 keyframe final pisa cualquier `opacity` inline. */
+              color: "color-mix(in srgb, var(--color-ink) 55%, transparent)",
+            }}
           >
             Fullstack
           </span>
