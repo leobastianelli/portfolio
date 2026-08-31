@@ -22,10 +22,10 @@ export default function Hero() {
         <h1
           className="font-display"
           style={{
-            fontSize: "clamp(3.5rem, 10vw, 9rem)",
-            lineHeight: 0.92,
-            letterSpacing: "-0.02em",
-            fontWeight: 400,
+            fontSize: "clamp(3.5rem, 10vw, 7rem)",
+            lineHeight: 0.6,
+            letterSpacing: "-0.08em",
+            fontWeight: 900,
             textTransform: "uppercase",
             /* Compensa el side-bearing izquierdo del glifo a este tamaño:
                con la caja alineada al label de arriba, el display se ve
@@ -35,7 +35,7 @@ export default function Hero() {
         >
           <span
             className="fade-up delay-1 block"
-            style={{ marginBottom: "0.15em", color: "var(--color-ink-faded)" }}
+            style={{ marginBottom: "0.15em", color: "var(--color-ink)", opacity: 0.55 }}
           >
             Fullstack
           </span>
