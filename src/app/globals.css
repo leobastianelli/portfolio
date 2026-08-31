@@ -42,6 +42,12 @@
      hueso real, va acá. */
   --color-paper: #fafafa;
   --color-paper-deep: #f0f0f0;
+  /* Fondo del área de contenido (todo lo que NO es navegación). Un gris
+     claro neutro (R=G=B), deliberadamente por debajo de `--color-paper`
+     para que el contenido se distinga a simple vista del blanco de la
+     columna lateral (`.site-shell::before`) y de la caja del menú
+     hamburguesa (`.menu-anchor`/`.menu-panel`), que siguen en paper. */
+  --color-canvas: #ececec;
   /* Decorative dividers/hairlines only, never text (2.79:1 / 2.34:1 — fails AA
      on purpose, it's a stain, not a message). */
   --color-stain: #6f6f6f;
@@ -95,7 +101,7 @@
   }
 
   body {
-    background-color: var(--color-paper);
+    background-color: var(--color-canvas);
     color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
   }
@@ -440,6 +446,24 @@
     --rail-width: 14rem;
     padding-left: var(--rail-width);
   }
+  /* La columna lateral en blanco (paper), a todo lo alto del viewport,
+     detrás del contenido y del índice de secciones. Es lo que le da al
+     rail su superficie propia — antes era sólo el body asomando, así que
+     al pasar el body a `--color-canvas` el rail habría quedado gris
+     también. `z-index: -1`: por encima del fondo canvas del body, por
+     debajo de las secciones (sin posicionar) y de `.section-index`
+     (z-index 40). */
+  .site-shell::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--rail-width);
+    background: var(--color-paper);
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 /*
@@ -682,7 +706,10 @@
    corre en todo el sitio). La separación es un borde superior con
    propósito, no una caja alrededor de cada item. */
 .project-card {
-  background: var(--color-paper);
+  /* Sin fondo propio — es contenido, va sobre `--color-canvas` como el
+     resto (Leo: todo lo que no es navegación en gris claro). La
+     separación la sigue cargando el borde superior, no una caja. */
+  background: transparent;
   border-top: 1px solid var(--color-stain);
   transition: border-color 0.2s ease;
 }
@@ -864,7 +891,10 @@
  * ============================================================ */
 
 .work-section {
-  background: var(--color-paper-deep);
+  /* Sin fondo propio — va sobre `--color-canvas` como el resto del
+     contenido. La separación de "Selected work" / "Everything else" y de
+     cada fila la carga `.editorial-rule`, no el fondo de sección. */
+  background: transparent;
 }
 
 /* La voz de headline + body en todo el sitio (ver la nota junto a
