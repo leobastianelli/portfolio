@@ -980,3 +980,14 @@
   color: var(--color-ink);
 }
 } /* @layer components */
+
+/* Leo: "pasá todo en el primer bloque a la sans serif" — el hero entero
+   en Bricolage, incluidos los elementos que por defecto van en mono (el
+   label de rol/ciudad, el CTA, el "MÁS", la tabla de info via
+   `.label-engraved`) o en la body serif (`.font-body`). Sin `@layer`
+   a propósito: tiene que ganarle a las utilities `.font-mono`/`.font-body`
+   de Tailwind, que se resuelven después de la capa `components`. */
+#hero,
+#hero * {
+  font-family: var(--font-bricolage);
+}
