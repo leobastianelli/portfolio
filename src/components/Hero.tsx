@@ -11,7 +11,9 @@ export default function Hero() {
       <div className="max-w-6xl mx-auto w-full">
         {/* Label row — sólo el nombre */}
         <div className="fade-up mb-8">
-          <span className="section-label">{SITE.author}</span>
+          <span className="section-label" style={{ textTransform: "none" }}>
+            {SITE.author}
+          </span>
         </div>
 
         {/* Rótulo grande — one h1, styled as two lines (R-A: two <h1>s read as
@@ -24,6 +26,11 @@ export default function Hero() {
             lineHeight: 0.92,
             letterSpacing: "-0.02em",
             fontWeight: 400,
+            textTransform: "uppercase",
+            /* Compensa el side-bearing izquierdo del glifo a este tamaño:
+               con la caja alineada al label de arriba, el display se ve
+               igual metido hacia adentro. */
+            marginLeft: "-0.05em",
           }}
         >
           <span
