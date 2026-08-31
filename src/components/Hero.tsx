@@ -5,23 +5,20 @@ import { SITE } from "@/lib/site";
 
 export default function Hero() {
   const { t } = useLang();
-  const [firstName, ...rest] = SITE.author.split(" ");
-  const lastName = rest.join(" ");
 
   return (
     <section id="hero" className="relative px-6 md:px-10 pt-24 md:pt-32 pb-16 md:pb-24">
       <div className="max-w-6xl mx-auto w-full">
-        {/* Label row */}
-        <div className="fade-up flex items-center gap-3 mb-8 font-mono">
-          <span className="section-label">{t.hero.labelRole}</span>
-          <span className="inline-block h-px w-8 bg-accent" />
-          <span className="section-label">{t.hero.labelCity}</span>
+        {/* Label row — sólo el nombre */}
+        <div className="fade-up mb-8">
+          <span className="section-label">{SITE.author}</span>
         </div>
 
-        {/* Display name — one h1, styled as two lines (R-A: two <h1>s read as
-            two top-level headings to a screen reader; this is one name). */}
+        {/* Rótulo grande — one h1, styled as two lines (R-A: two <h1>s read as
+            two top-level headings to a screen reader; this is one title).
+            "Fullstack" en gris oscuro, "Developer" en negro, mismo tamaño. */}
         <h1
-          className="font-display text-ink"
+          className="font-display"
           style={{
             fontSize: "clamp(3.5rem, 10vw, 9rem)",
             lineHeight: 0.92,
@@ -29,11 +26,17 @@ export default function Hero() {
             fontWeight: 400,
           }}
         >
-          <span className="fade-up delay-1 block" style={{ marginBottom: "0.15em" }}>
-            {firstName} /
+          <span
+            className="fade-up delay-1 block"
+            style={{ marginBottom: "0.15em", color: "var(--color-ink-faded)" }}
+          >
+            Fullstack
           </span>
-          <span className="fade-up delay-2 block text-accent italic" style={{ marginBottom: "2.5rem" }}>
-            {lastName}
+          <span
+            className="fade-up delay-2 block"
+            style={{ marginBottom: "2.5rem", color: "var(--color-ink)" }}
+          >
+            Developer
           </span>
         </h1>
 
