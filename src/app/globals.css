@@ -185,8 +185,8 @@
    del propio `aria-label` del botón, no información nueva para un lector
    de pantalla. */
 .menu-toggle-label {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-ink);
@@ -227,7 +227,7 @@
      del stem de la bold; si se afina, la línea se ve más liviana que la
      palabra (que fue justo lo que Leo marcó). Vale igual de hamburguesa y
      de subrayado: las dos texturas iguales SIEMPRE. */
-  height: 3px;
+  height: 2px;
   background: var(--color-ink);
   /* Un relleno sólido a tinta plena se lee más brillante/"perlado" que el
      texto de al lado: los glifos a 16px tienen un montón de píxeles de
@@ -235,7 +235,7 @@
      es menor que el #fafafa puro. Bajar la opacidad acerca la densidad
      óptica de la barra a la de la palabra — misma textura, no un rule más
      limpio. Aplica también a la hamburguesa cerrada (Leo: iguales SIEMPRE). */
-  opacity: 0.82;
+  opacity: 1;
   transform-origin: center;
   transition: transform 1.1s ease, width 1.1s ease, opacity 1.1s ease, background-color 0.6s ease;
 }
@@ -296,7 +296,7 @@
   0% {
     transform: translate(0, 0);
     width: 52px;
-    height: 3px;
+    height: 2px;
     /* Acelera como si cayera (gravedad), no un ease-in/out parejo. */
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
@@ -306,7 +306,7 @@
   20% {
     transform: translate(0, var(--underline-dy, 0px));
     width: 52px;
-    height: 3px;
+    height: 2px;
     animation-timing-function: ease-in-out;
   }
   100% {
@@ -743,7 +743,7 @@
 .label-engraved {
   color: var(--color-engrave);
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
