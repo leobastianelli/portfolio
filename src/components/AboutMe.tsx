@@ -69,12 +69,10 @@ export default function AboutMe() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] gap-8 lg:gap-9 items-start">
           {/* Izquierda: título + descripción */}
           <div ref={descRef} className="lg:sticky lg:top-24">
-            <p
-              key={active?.id ?? "root"}
-              className="section-label font-mono mb-5 about-desc"
-            >
-              {heading}
-            </p>
+            {/* Sin `key` acá: el texto cambia en el lugar. Un `key` igual al
+                del `<div>` de abajo daba dos hermanos con la misma key y React
+                dejaba nodos huérfanos (un rótulo viejo por cada etapa tocada). */}
+            <p className="section-label font-mono mb-5">{heading}</p>
 
             {/* Desktop: general ↔ detalle de la entrada activa */}
             <div className="hidden lg:block about-desc" key={active?.id ?? "root"}>
