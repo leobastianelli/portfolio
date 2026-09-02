@@ -57,7 +57,7 @@
         "period": "2024–presente",
         "role": "Desarrollador full-stack",
         "org": "Onefam Hostels",
-        "detail": "Responsable técnico de la presencia digital de una cadena europea de hostels: mantenimiento y desarrollo de sus tres sitios en WordPress, gestión de dominios e infraestructura, y desarrollo de sus dos productos nuevos —un portal de membresía y una plataforma interna de gestión— con Next.js, Supabase y Stripe.",
+        "detail": "Responsable técnico de la presencia digital de una cadena europea de hostels: mantenimiento y desarrollo de sus tres sitios en WordPress, más gestión de dominios e infraestructura.",
         "links": [
           { "label": "Onefam Hostels", "href": "https://onefamhostels.com" },
           { "label": "Topdown Apartments", "href": "https://topdownapartments.com" },
@@ -69,17 +69,16 @@
         "period": "2026",
         "role": "Desarrollador (ad honorem)",
         "org": "Secretaría de Asuntos Estudiantiles, FCS – UNC",
-        "detail": "Desarrollé sin cargo la plataforma de inscripción al Régimen de Estudiante Trabajador —el régimen que reconoce condiciones especiales de cursada y examen a quienes estudian y trabajan a la vez—, reemplazando un circuito que hasta entonces era engorroso tanto para estudiantes como para docentes."
+        "detail": "Desarrollador ad honorem para la Secretaría de Asuntos Estudiantiles de la FCS – UNC: desarrollo de la plataforma de inscripción online al Régimen de Estudiante Trabajador de la facultad."
       },
       {
         "id": "mully",
         "period": "2024–2025",
         "role": "Desarrollador",
         "org": "Mully Group",
-        "detail": "Mantenimiento y desarrollo de la tienda Shopify de Mully Group: temas a medida, desarrollo en Liquid, A/B testing para el equipo de marketing y un quiz de onboarding que personaliza las cajas de suscripción de cada usuario. Migré la tienda a un modelo headless y construí y mantuve Greens Club —una app de coaching de golf con IA— hasta mi salida de la empresa.",
+        "detail": "Desarrollador en Mully Group, con foco en la tienda Shopify de la empresa y sus dos productos de golf en Estados Unidos.",
         "links": [
-          { "label": "mymully.com", "href": "https://mymully.com" },
-          { "label": "Greens Club", "href": "https://greensclub.ai" }
+          { "label": "mymully.com", "href": "https://mymully.com" }
         ]
       },
       {

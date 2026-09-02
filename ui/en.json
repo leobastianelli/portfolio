@@ -57,7 +57,7 @@
         "period": "2024–present",
         "role": "Full-stack developer",
         "org": "Onefam Hostels",
-        "detail": "Technical lead for the digital presence of a European hostel chain: maintenance and development of their three sites on WordPress, domain and infrastructure management, and development of their two new products —a membership portal and an internal management platform— with Next.js, Supabase and Stripe.",
+        "detail": "Technical lead for the digital presence of a European hostel chain: maintenance and development of their three WordPress sites, plus domain and infrastructure management.",
         "links": [
           { "label": "Onefam Hostels", "href": "https://onefamhostels.com" },
           { "label": "Topdown Apartments", "href": "https://topdownapartments.com" },
@@ -69,17 +69,16 @@
         "period": "2026",
         "role": "Developer (pro bono)",
         "org": "Student Affairs Office, FCS – UNC",
-        "detail": "Built the enrollment platform, free of charge, for the Working Student regime — the arrangement that grants special class and exam conditions to students who also hold a job — replacing a process that until then was clumsy for students and faculty alike."
+        "detail": "Developer, free of charge, for the Student Affairs Office at FCS – UNC, building the online enrollment platform for the faculty's Working Student regime."
       },
       {
         "id": "mully",
         "period": "2024–2025",
         "role": "Developer",
         "org": "Mully Group",
-        "detail": "Maintenance and development of Mully Group's Shopify store: custom themes, Liquid development, A/B testing for the marketing team, and an onboarding quiz that tailors each user's subscription boxes. I moved the store to a headless setup and built and maintained Greens Club —an AI golf-coaching app— until I left the company.",
+        "detail": "Developer at Mully Group, focused on the company's Shopify store and its two golf products in the United States.",
         "links": [
-          { "label": "mymully.com", "href": "https://mymully.com" },
-          { "label": "Greens Club", "href": "https://greensclub.ai" }
+          { "label": "mymully.com", "href": "https://mymully.com" }
         ]
       },
       {

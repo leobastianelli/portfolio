@@ -1363,9 +1363,10 @@
 }
 
 /* "Acerca de mí" — timeline tipo CV. La columna izquierda cambia según la
-   entrada activa (ver AboutMe.tsx); acá está la lista de la derecha y el
-   despliegue de capturas. Elevación por hairlines, como el resto del sitio
-   (nada de sombras acá). */
+   entrada activa (ver AboutMe.tsx); acá está la lista de la derecha. En
+   desktop el detalle vive en la izquierda; el panel desplegable (abajo) es
+   sólo mobile. Sin capturas ni tilt — la obra y las fotos viven en Work.
+   Elevación por hairlines, como el resto del sitio (nada de sombras acá). */
 .about-desc {
   animation: aboutFade 240ms ease-out;
 }
@@ -1451,148 +1452,8 @@
   overflow: hidden;
   min-height: 0;
 }
-/* Inset para que la card, al inclinarse y escalar en hover, no toque los
-   bordes del panel. Y una vez abierto del todo pasamos a `overflow: visible`
-   para que la SOMBRA de la card en hover no se recorte contra ese borde
-   (mientras se abre/cierra hay que seguir recortando por el truco de
-   `grid-template-rows: 0fr↔1fr`). `overflow` es discreta: la transición con
-   delay la cambia recién al terminar la apertura; al cerrar esta regla deja
-   de aplicar y vuelve a `hidden` de inmediato. */
 .about-entry__panel[data-open="true"] .about-entry__panel-inner {
-  padding: 1.25rem 1rem 1.5rem;
-  overflow: visible;
-  transition: overflow 0s 260ms;
-}
-
-.about-shots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
-}
-
-/* Mismo tratamiento que el retrato del hero (`.portrait-tilt`): la card se
-   inclina hacia el puntero, con un sheen especular que lo sigue y la sombra
-   que crece en hover. El wrapper aporta la `perspective`; la card, el 3D.
-   Excepción a la regla plana de v3, igual que el hero — pedido de Leo. */
-.about-shot-tilt {
-  width: clamp(170px, 44%, 290px);
-  flex: 0 0 auto;
-  perspective: 1200px;
-  isolation: isolate;
-}
-.about-shot {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--color-paper-deep);
-  color: inherit;
-  font: inherit;
-  cursor: zoom-in;
-  appearance: none;
-  /* Sin `transform-style: preserve-3d`: con él, Chrome ignora el
-     `overflow: hidden` + `border-radius` y la imagen se sale de la caja al
-     inclinarse. El tilt es un `rotate3d` de un solo elemento — no necesita
-     contexto 3D anidado. */
-  will-change: transform;
-  backface-visibility: hidden;
-  transition: transform 300ms ease-out, box-shadow 300ms ease-out,
-    border-color 160ms ease-out;
-  box-shadow:
-    0 1px 4px color-mix(in srgb, var(--color-ink) 8%, transparent),
-    0 6px 18px color-mix(in srgb, var(--color-ink) 10%, transparent);
-}
-.about-shot-tilt:hover .about-shot {
-  transition-duration: 150ms;
-  box-shadow:
-    0 5px 14px color-mix(in srgb, var(--color-ink) 12%, transparent),
-    0 18px 44px color-mix(in srgb, var(--color-ink) 16%, transparent);
-}
-.about-shot:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-}
-.about-shot img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Click: la MISMA card se fija al viewport y crece. El wrapper pasa a
-   `position: fixed` y compite contra el backdrop en la capa raíz
-   (z-index 100 > 90), por eso hay que soltar su propio `isolation`. El
-   tilt se sigue calculando sobre esta misma card mientras está ampliada. */
-.about-shot-tilt[data-zoomed="true"] {
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  width: min(94vw, 1120px);
-  aspect-ratio: 16 / 10;
-  z-index: 100;
-  isolation: auto;
-  perspective: 2600px;
-  cursor: zoom-out;
-}
-/* Sin transición en `transform`: el tilt se escribe directo en cada frame;
-   un tween sobre una card enorme se ve como parpadeo. Sin borde tampoco. */
-.about-shot-tilt[data-zoomed="true"] .about-shot {
-  cursor: zoom-out;
-  transition: box-shadow 200ms ease-out;
-  border-color: transparent;
-  box-shadow:
-    0 10px 30px color-mix(in srgb, var(--color-ink) 14%, transparent),
-    0 40px 92px color-mix(in srgb, var(--color-ink) 22%, transparent);
-}
-
-/* Ocupa el hueco de la card mientras está fija, para que la fila no salte. */
-.about-shot-tilt--spacer {
-  visibility: hidden;
-  pointer-events: none;
-}
-.about-shot-tilt--spacer::before {
-  content: "";
-  display: block;
-  padding-top: 62.5%; /* 16:10 */
-}
-
-/* Bloquea el scroll del fondo mientras hay una captura ampliada. */
-.about-zoom-lock {
-  overflow: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .about-shot {
-    transition: border-color 160ms ease-out;
-    transform: none;
-  }
-}
-
-.about-zoom-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  background: color-mix(in srgb, var(--color-ink) 42%, transparent);
-  animation: about-zoom-fade 200ms ease-out;
-  transition: opacity 240ms ease-out;
-}
-.about-zoom-backdrop[data-closing="true"] {
-  opacity: 0;
-}
-@keyframes about-zoom-fade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .about-zoom-backdrop {
-    animation: none;
-    transition: none;
-  }
+  padding: 0.25rem 0 1.35rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
