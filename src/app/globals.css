@@ -727,73 +727,15 @@
   height: 0%;
   background: var(--color-ink);
 }
-/* Switch Resumen/Técnico de Work (`WorkModeToggle.tsx`). Antes vivía acá
-   abajo, en la sidebar global; ahora es un control único para toda la
-   sección Work, fijo al viewport SÓLO mientras `#work` está en pantalla.
-   `data-visible` lo maneja el IntersectionObserver del componente; `inert`
-   (también en el componente) lo saca del tab order mientras está oculto —
-   la opacidad sola no alcanza. */
-/* Mobile: tira anclada al borde inferior (canvas + hairline), no una pastilla
-   flotando sobre un párrafo — en mobile el espacio es justo y una pastilla
-   suelta se leía cortando el texto de abajo. Entra deslizando desde abajo. */
-.work-mode-toggle {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 45;
-  display: flex;
-  justify-content: center;
-  padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
-  background: var(--color-canvas);
-  border-top: 1px solid var(--color-stain);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(100%);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-.work-mode-toggle[data-visible="true"] {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-@media (prefers-reduced-motion: reduce) {
-  .work-mode-toggle,
-  .work-mode-toggle[data-visible="true"] {
-    transition: opacity 0.25s ease;
-    transform: none;
-  }
-}
-@media (min-width: 1024px) {
-  /* Desktop: pastilla flotante centrada SOBRE el contenido de Work (a la
-     derecha del rail negro, nunca dentro de él — Leo lo quiere fuera de la
-     sidebar), abajo, sólo durante Work. Sin tira ni fondo propio: acá hay
-     lugar para que flote. */
-  .work-mode-toggle {
-    left: var(--rail-width, 14rem);
-    right: 0;
-    bottom: 2rem;
-    padding: 0;
-    background: none;
-    border-top: none;
-    transform: translateY(0.5rem);
-  }
-  .work-mode-toggle[data-visible="true"] {
-    transform: translateY(0);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .work-mode-toggle,
-    .work-mode-toggle[data-visible="true"] {
-      transform: none;
-    }
-  }
-}
+/* El switch Resumen/Técnico (`ReadingModeToggle.tsx`) — reglas más abajo,
+   después de `.content-mode-toggle`, para ganarle en orden de fuente al
+   `display` base de ese componente. */
 
 @media (max-width: 1023px) {
   /* La sidebar de secciones era, en mobile, una barra inferior cuyo único
      contenido visible era el toggle Resumen/Técnico (las etiquetas van
-     sr-only y no hay puntos). Movido el toggle a Work (`.work-mode-toggle`,
-     abajo al centro), la barra quedaría vacía — se oculta entera. La
+     sr-only y no hay puntos). Movido el toggle a `ReadingModeToggle`, la
+     barra quedaría vacía — se oculta entera. La
      navegación por secciones en mobile queda pendiente de diseño propio;
      mientras tanto se recorre por encabezados (cada sección tiene su <h2>)
      y por el menú. */
@@ -1027,6 +969,104 @@
 .content-mode-toggle-option:focus-visible {
   outline: 2px solid var(--color-ink);
   outline-offset: -2px;
+}
+
+/*
+ * `ReadingModeToggle.tsx` — el switch Resumen/Técnico. Ya no vive fijo en la
+ * sidebar global: es un control único para las dos secciones cuyo contenido
+ * cambia entre modos (Work y Sim Racing), fijo al viewport SÓLO mientras
+ * alguna ocupa la banda central de la pantalla. `data-visible` lo maneja el
+ * IntersectionObserver del componente; `inert` (también ahí) lo saca del tab
+ * order mientras está oculto — la opacidad sola no alcanza. Se renderizan las
+ * dos orientaciones y la CSS muestra la del breakpoint (`display`), así sólo
+ * una está en el árbol de accesibilidad. Estas reglas van DESPUÉS de
+ * `.content-mode-toggle` para ganarle en orden de fuente a su `display: flex`.
+ */
+.reading-mode-toggle {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  display: flex;
+  justify-content: center;
+  padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+  background: var(--color-canvas);
+  border-top: 1px solid var(--color-stain);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(100%);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.reading-mode-toggle[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.reading-mode-toggle__rail {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-mode-toggle,
+  .reading-mode-toggle[data-visible="true"] {
+    transition: opacity 0.25s ease;
+    transform: none;
+  }
+}
+
+/* Orientación vertical (columna del índice, desktop): el fill se desliza en Y. */
+.content-mode-toggle--vertical {
+  flex-direction: column;
+}
+.content-mode-toggle--vertical .content-mode-toggle-fill {
+  inset: auto;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+}
+
+@media (min-width: 1024px) {
+  /* Desktop: en la MISMA columna que el índice de secciones (`--rail-width`),
+     anclado abajo — o sea debajo del índice, que se agrupa arriba de la
+     columna. Separado por espacio + un hairline para que se lea como otra
+     cosa: navegación arriba, preferencia de lectura abajo. */
+  .reading-mode-toggle {
+    left: 0;
+    right: auto;
+    width: var(--rail-width, 14rem);
+    bottom: 2rem;
+    display: block;
+    padding: 0 0 0 1.25rem; /* mismo inset izquierdo que `.section-index-row` */
+    background: none;
+    border-top: none;
+    transform: translateY(0.5rem);
+  }
+  .reading-mode-toggle[data-visible="true"] {
+    transform: translateY(0);
+  }
+  .reading-mode-toggle::before {
+    content: "";
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    margin-bottom: 0.9rem;
+    background: var(--color-rail-border);
+  }
+  .reading-mode-toggle__rail {
+    display: flex;
+    width: 100%;
+    max-width: 8.5rem;
+  }
+  .reading-mode-toggle__bar {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reading-mode-toggle,
+    .reading-mode-toggle[data-visible="true"] {
+      transform: none;
+    }
+  }
 }
 
 /*

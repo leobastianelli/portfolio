@@ -19,11 +19,19 @@ import { useEffect, useRef } from "react";
  * (Leo: "wherever you touch, not just the deactivated one, it has to
  * change"), not be a no-op because it was already selected.
  */
-export default function ContentModeToggle() {
+export default function ContentModeToggle({
+  orientation = "horizontal",
+  className,
+}: {
+  orientation?: "horizontal" | "vertical";
+  className?: string;
+} = {}) {
   const { mode, setMode } = useContentMode();
   const { t } = useLang();
   const isTechnical = mode === "technical";
   const flip = () => setMode(isTechnical ? "overview" : "technical");
+  /* En vertical el fill se desliza en Y; en horizontal, en X. */
+  const axis = orientation === "vertical" ? "translateY" : "translateX";
 
   const technicalRef = useRef<HTMLSpanElement>(null);
   const overviewRef = useRef<HTMLSpanElement>(null);
@@ -62,11 +70,15 @@ export default function ContentModeToggle() {
   }, [t]);
 
   return (
-    <div className="content-mode-toggle" role="group" aria-label={t.nav.contentMode.label}>
+    <div
+      className={`content-mode-toggle content-mode-toggle--${orientation}${className ? ` ${className}` : ""}`}
+      role="group"
+      aria-label={t.nav.contentMode.label}
+    >
       <span
         className="content-mode-toggle-fill"
         aria-hidden="true"
-        style={{ transform: isTechnical ? "translateX(0%)" : "translateX(100%)" }}
+        style={{ transform: isTechnical ? `${axis}(0%)` : `${axis}(100%)` }}
       />
       <button type="button" aria-pressed={isTechnical} className="content-mode-toggle-option" onClick={flip}>
         <span ref={technicalRef}>{t.nav.contentMode.technical}</span>

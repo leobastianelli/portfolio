@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/context/LanguageContext";
 import { useContentMode } from "@/context/ContentModeContext";
 import { StackIcons } from "@/components/StackIcons";
-import WorkModeToggle from "@/components/WorkModeToggle";
+import ReadingModeToggle from "@/components/ReadingModeToggle";
 import type { ContentMode } from "@/context/ContentModeContext";
 import type { Project, ProjectStatus } from "@/lib/content/types";
 
@@ -177,7 +177,7 @@ export default function Work({ projects }: { projects: Project[] }) {
 
   return (
     <section id="work" className="work-section py-9 md:py-10 px-5 md:px-6">
-      <WorkModeToggle />
+      <ReadingModeToggle />
       <div className="max-w-6xl mx-auto">
         {/* Selected work */}
         <div className="reveal mb-6">
