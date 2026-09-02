@@ -31,7 +31,12 @@ export interface UiContent {
     /* Rótulo de la columna izquierda cuando hay una etapa activa: "Qué hice
        en {org}", salvo Onefam ("Qué hago en …") y Freelance ("Qué hice
        como freelance"). Ver AboutMe.tsx. */
-    activeLabel: { past: string; present: string; freelance: string };
+    activeLabel: {
+      past: string;
+      present: string;
+      as: string;
+      freelanceName: string;
+    };
     intro: string[];
     introBandPre: string;
     introBandPost: string;
@@ -40,6 +45,9 @@ export interface UiContent {
       period: string;
       role: string;
       org: string;
+      /* Forma corta del nombre para el rótulo de la columna izquierda cuando
+         `org` es muy largo (ej. "SAE (FCS-UNC)"). Ver AboutMe.tsx. */
+      shortOrg?: string;
       detail: string;
       links?: { label: string; href: string }[];
     }[];

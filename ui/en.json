@@ -49,7 +49,8 @@
     "activeLabel": {
       "past": "What I did at",
       "present": "What I do at",
-      "freelance": "What I did as a freelancer"
+      "as": "What I did as",
+      "freelanceName": "a freelancer"
     },
     "intro": [
       "I'm interested in building products that actually solve something. I work closely with teams because understanding how they operate is what lets me bring my own ideas to the table, instead of just executing decisions that were already made — often what's missing is someone who knows what's technically possible."
@@ -74,6 +75,7 @@
         "period": "2026",
         "role": "Developer (pro bono)",
         "org": "Student Affairs Office, FCS – UNC",
+        "shortOrg": "SAE (FCS-UNC)",
         "detail": "Developer, free of charge, for the Student Affairs Office at FCS – UNC, building the online enrollment platform for the faculty's Working Student regime."
       },
       {

@@ -49,7 +49,8 @@
     "activeLabel": {
       "past": "Qué hice en",
       "present": "Qué hago en",
-      "freelance": "Qué hice como freelance"
+      "as": "Qué hice como",
+      "freelanceName": "freelance"
     },
     "intro": [
       "Me interesa construir productos que resuelvan algo. Trabajo cerca de los equipos porque conocer cómo funcionan por dentro es lo que me permite proponer ideas propias, y no solo ejecutar las que ya venían decididas — muchas veces lo que falta es alguien que sepa qué se puede hacer técnicamente."
@@ -74,6 +75,7 @@
         "period": "2026",
         "role": "Desarrollador (ad honorem)",
         "org": "Secretaría de Asuntos Estudiantiles, FCS – UNC",
+        "shortOrg": "SAE (FCS-UNC)",
         "detail": "Desarrollador ad honorem para la Secretaría de Asuntos Estudiantiles de la FCS – UNC: desarrollo de la plataforma de inscripción online al Régimen de Estudiante Trabajador de la facultad."
       },
       {

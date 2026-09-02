@@ -26,14 +26,17 @@ export default function AboutMe() {
   const active = about.timeline.find((e) => e.id === activeId) ?? null;
 
   /* Rótulo de la columna izquierda: por defecto "Acerca de mí"; con una etapa
-     activa pasa a "Qué hice en {org}". Excepciones (por `id`, como las pidió
-     Leo): Onefam en presente ("Qué hago en …"), Freelance con "como
-     freelance" en vez del nombre de la organización. */
-  const heading = !active
-    ? about.label
+     activa pasa a "Qué hice en {org}", con el nombre un punto más pesado.
+     Excepciones (por `id`, como las pidió Leo): Onefam en presente ("Qué hago
+     en …"), Freelance con "como freelance" en vez del nombre de la organización. */
+  const headingParts = !active
+    ? null
     : active.id === "freelance"
-      ? about.activeLabel.freelance
-      : `${active.id === "onefam" ? about.activeLabel.present : about.activeLabel.past} ${active.org}`;
+      ? { pre: about.activeLabel.as, name: about.activeLabel.freelanceName }
+      : {
+          pre: active.id === "onefam" ? about.activeLabel.present : about.activeLabel.past,
+          name: active.shortOrg ?? active.org,
+        };
 
   const listRef = useRef<HTMLUListElement>(null);
   /* Columna izquierda (lg:sticky): en desktop muestra el detalle de la
@@ -72,7 +75,16 @@ export default function AboutMe() {
             {/* Sin `key` acá: el texto cambia en el lugar. Un `key` igual al
                 del `<div>` de abajo daba dos hermanos con la misma key y React
                 dejaba nodos huérfanos (un rótulo viejo por cada etapa tocada). */}
-            <p className="section-label font-mono mb-5">{heading}</p>
+            <p className="section-label font-mono mb-5">
+              {headingParts ? (
+                <>
+                  {headingParts.pre}{" "}
+                  <span style={{ fontWeight: 600 }}>{headingParts.name}</span>
+                </>
+              ) : (
+                about.label
+              )}
+            </p>
 
             {/* Desktop: general ↔ detalle de la entrada activa */}
             <div className="hidden lg:block about-desc" key={active?.id ?? "root"}>
