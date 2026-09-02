@@ -46,6 +46,11 @@
   },
   "about": {
     "label": "Acerca de mí",
+    "activeLabel": {
+      "past": "Qué hice en",
+      "present": "Qué hago en",
+      "freelance": "Qué hice como freelance"
+    },
     "intro": [
       "Me interesa construir productos que resuelvan algo. Trabajo cerca de los equipos porque conocer cómo funcionan por dentro es lo que me permite proponer ideas propias, y no solo ejecutar las que ya venían decididas — muchas veces lo que falta es alguien que sepa qué se puede hacer técnicamente."
     ],

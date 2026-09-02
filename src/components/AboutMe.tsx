@@ -24,6 +24,17 @@ export default function AboutMe() {
   const about = t.about;
   const [activeId, setActiveId] = useState<string | null>(null);
   const active = about.timeline.find((e) => e.id === activeId) ?? null;
+
+  /* Rótulo de la columna izquierda: por defecto "Acerca de mí"; con una etapa
+     activa pasa a "Qué hice en {org}". Excepciones (por `id`, como las pidió
+     Leo): Onefam en presente ("Qué hago en …"), Freelance con "como
+     freelance" en vez del nombre de la organización. */
+  const heading = !active
+    ? about.label
+    : active.id === "freelance"
+      ? about.activeLabel.freelance
+      : `${active.id === "onefam" ? about.activeLabel.present : about.activeLabel.past} ${active.org}`;
+
   const listRef = useRef<HTMLUListElement>(null);
   /* Columna izquierda (lg:sticky): en desktop muestra el detalle de la
      entrada activa con sus enlaces. Un click ahí NO cierra el panel — si no,
@@ -58,7 +69,12 @@ export default function AboutMe() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] gap-8 lg:gap-9 items-start">
           {/* Izquierda: título + descripción */}
           <div ref={descRef} className="lg:sticky lg:top-24">
-            <p className="section-label font-mono mb-5">{about.label}</p>
+            <p
+              key={active?.id ?? "root"}
+              className="section-label font-mono mb-5 about-desc"
+            >
+              {heading}
+            </p>
 
             {/* Desktop: general ↔ detalle de la entrada activa */}
             <div className="hidden lg:block about-desc" key={active?.id ?? "root"}>

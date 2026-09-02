@@ -28,6 +28,10 @@ export interface UiContent {
   };
   about: {
     label: string;
+    /* Rótulo de la columna izquierda cuando hay una etapa activa: "Qué hice
+       en {org}", salvo Onefam ("Qué hago en …") y Freelance ("Qué hice
+       como freelance"). Ver AboutMe.tsx. */
+    activeLabel: { past: string; present: string; freelance: string };
     intro: string[];
     introBandPre: string;
     introBandPost: string;

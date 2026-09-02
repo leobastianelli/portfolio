@@ -46,6 +46,11 @@
   },
   "about": {
     "label": "About",
+    "activeLabel": {
+      "past": "What I did at",
+      "present": "What I do at",
+      "freelance": "What I did as a freelancer"
+    },
     "intro": [
       "I'm interested in building products that actually solve something. I work closely with teams because understanding how they operate is what lets me bring my own ideas to the table, instead of just executing decisions that were already made — often what's missing is someone who knows what's technically possible."
     ],
