@@ -79,7 +79,7 @@ export default function AboutMe() {
               {headingParts ? (
                 <>
                   {headingParts.pre}{" "}
-                  <span style={{ fontWeight: 600 }}>{headingParts.name}</span>
+                  <span style={{ fontWeight: 700 }}>{headingParts.name}</span>
                 </>
               ) : (
                 about.label
