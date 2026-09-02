@@ -3,7 +3,7 @@ import type { ProjectMeta } from "@/lib/content/types";
 const meta: ProjectMeta = {
   slug: "greens-club",
   org: "Mully Group",
-  year: "2024–2025",
+  year: "2024–2026",
   status: "live",
   stack: ["Next.js", "Supabase", "Stripe", "Third-party LLM API", "AI vision API", "Vercel"],
   links: [
