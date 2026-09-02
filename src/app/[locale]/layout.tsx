@@ -1,34 +1,23 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Bricolage_Grotesque, Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import { SITE } from "@/lib/site";
 import { isLocale, locales, localizedUrl } from "@/lib/i18n";
 import { getUi } from "@/lib/content/ui";
 import "../globals.css";
 
-// The sole headline+body voice sitewide (see the note by `.editorial-type`
-// in globals.css for why it replaced Newsreader). Bricolage Grotesque has
-// no real italic face on Google Fonts (next/font only types "normal" for
-// it) — `font-style: italic` still works everywhere it's used (roles,
-// accents), the browser synthesizes an oblique, which is normal for a
-// grotesque and not a build error.
+// The ONLY typeface sitewide (2026-08-31, Leo: "reemplazá todas las fuentes
+// por la sans que estamos usando"). Display, body and everything that used
+// to be mono (labels, data, tags, CTA) all render in Bricolage Grotesque —
+// see the note by `@theme inline` in globals.css. Hierarchy comes from
+// weight / case / italic / spacing, never a family switch.
+//
+// Bricolage Grotesque has no real italic face on Google Fonts (next/font
+// only types "normal") — `font-style: italic` still works, the browser
+// synthesizes an oblique, which is normal for a grotesque and not an error.
 const display = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
-});
-
-const mono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  subsets: ["latin"],
-  // 700 added for direccion-visual-v3's grayscale pass: `.status-label--live`
-  // needs a real bold face, not the browser faux-bolding 500.
-  weight: ["400", "500", "700"],
-});
-
-const body = Instrument_Sans({
-  variable: "--font-instrument",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
 });
 
 export function generateStaticParams() {
@@ -87,7 +76,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${display.variable} ${mono.variable} ${body.variable}`}
+      className={display.variable}
     >
       <body className="min-h-screen">
         <script

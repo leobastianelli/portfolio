@@ -9,6 +9,7 @@ import type { Project } from "@/lib/content/types";
 import Nav from "@/components/Nav";
 import SectionIndex from "@/components/SectionIndex";
 import Hero from "@/components/Hero";
+import AboutMe from "@/components/AboutMe";
 import Work from "@/components/Work";
 import Stack from "@/components/Stack";
 import Personal from "@/components/Personal";
@@ -37,6 +38,7 @@ function Sections({ projects }: { projects: Project[] }) {
       <Nav />
       <SectionIndex hasPersonal={hasPersonal} />
       <Hero />
+      <AboutMe />
       <Work projects={projects} />
       <Stack />
       <Personal projects={projects} />

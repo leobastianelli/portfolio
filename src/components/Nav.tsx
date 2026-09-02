@@ -357,7 +357,7 @@ export default function Nav() {
                   <span className="label-engraved">{link.label}</span>
                   <span
                     className="menu-panel-value editorial-type"
-                    style={{ fontSize: "0.95rem", color: "var(--color-ink)" }}
+                    style={{ fontSize: "var(--text-sm)", color: "var(--color-ink)" }}
                   >
                     {link.value}
                   </span>

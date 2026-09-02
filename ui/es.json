@@ -27,10 +27,10 @@
   "hero": {
     "labelRole": "Desarrollador full-stack",
     "labelCity": "Córdoba, Argentina",
-    "intro": "Empecé a programar viendo negocios pequeños quedar excluidos de herramientas que las empresas grandes usan desde hace años. Esa mirada no cambió: sigo pensando primero en cómo funciona un negocio y dónde se traba el proceso, antes de pensar en qué tecnología usar.",
-    "introSecondary": "Hoy eso me lleva a trabajar con clientes de escalas muy distintas — desde una cadena de hostels en Europa hasta una app de coaching con IA en Estados Unidos — sin perder esa costumbre de preguntar primero qué hace falta, no qué se puede vender.",
+    "intro": "Desarrollo aplicaciones web y sistemas internos.",
+    "introSecondary": "Trabajo con clientes en Argentina, Europa y Estados Unidos.",
     "cta": "Escribime →",
-    "moreLabel": "Trayectoria",
+    "moreLabel": "Acerca de mí",
     "bioMore": {
       "p1": "Soy desarrollador full-stack con foco en producto: React, Next.js, TypeScript, y las últimas suscripciones e integraciones de IA que construí para clientes en Europa y Estados Unidos.",
       "p2pre": "Fuera del trabajo con clientes, toco la guitarra en ",
@@ -39,9 +39,74 @@
     "table": [
       { "label": "Experiencia", "value": "5+ años" },
       { "label": "Ubicación", "value": "Córdoba, Argentina" },
-      { "label": "Idiomas", "value": "Español (nativo) · Inglés (fluido)" },
-      { "label": "Disponibilidad", "value": "Disponible para freelance y contratos" },
+      { "label": "Idiomas", "value": "Español (nativo), inglés (fluido)" },
+      { "label": "Disponibilidad", "value": "Freelance y contratos" },
       { "label": "Zona horaria", "value": "GMT-3 (ART)" }
+    ]
+  },
+  "about": {
+    "label": "Acerca de mí",
+    "intro": [
+      "Me interesa construir productos que resuelvan algo. Trabajo cerca de los equipos porque conocer cómo funcionan por dentro es lo que me permite proponer ideas propias, y no solo ejecutar las que ya venían decididas — muchas veces lo que falta es alguien que sepa qué se puede hacer técnicamente."
+    ],
+    "introBandPre": "Fuera del trabajo con clientes toco la guitarra en ",
+    "introBandPost": ". También corro en simulador, y de ahí salieron un par de herramientas que construí para mí: quería ver hasta dónde se podía llegar.",
+    "timeline": [
+      {
+        "id": "onefam",
+        "period": "2024–presente",
+        "role": "Desarrollador full-stack",
+        "org": "Onefam Hostels",
+        "detail": "Responsable técnico de la presencia digital de una cadena europea de hostels: mantenimiento y desarrollo de sus tres sitios en WordPress, gestión de dominios e infraestructura, y desarrollo de sus dos productos nuevos —un portal de membresía y una plataforma interna de gestión— con Next.js, Supabase y Stripe.",
+        "links": [
+          { "label": "Onefam Hostels", "href": "https://onefamhostels.com" },
+          { "label": "Topdown Apartments", "href": "https://topdownapartments.com" },
+          { "label": "Espai Vidra", "href": "https://espaividra.com" }
+        ]
+      },
+      {
+        "id": "fcs-unc",
+        "period": "2026",
+        "role": "Desarrollador (ad honorem)",
+        "org": "Secretaría de Asuntos Estudiantiles, FCS – UNC",
+        "detail": "Desarrollé sin cargo la plataforma de inscripción al Régimen de Estudiante Trabajador —el régimen que reconoce condiciones especiales de cursada y examen a quienes estudian y trabajan a la vez—, reemplazando un circuito que hasta entonces era engorroso tanto para estudiantes como para docentes."
+      },
+      {
+        "id": "mully",
+        "period": "2024–2025",
+        "role": "Desarrollador",
+        "org": "Mully Group",
+        "detail": "Mantenimiento y desarrollo de la tienda Shopify de Mully Group: temas a medida, desarrollo en Liquid, A/B testing para el equipo de marketing y un quiz de onboarding que personaliza las cajas de suscripción de cada usuario. Migré la tienda a un modelo headless y construí y mantuve Greens Club —una app de coaching de golf con IA— hasta mi salida de la empresa.",
+        "links": [
+          { "label": "mymully.com", "href": "https://mymully.com" },
+          { "label": "Greens Club", "href": "https://greensclub.ai" }
+        ]
+      },
+      {
+        "id": "teems",
+        "period": "2025",
+        "role": "Desarrollador (contratado)",
+        "org": "Teems Agency",
+        "detail": "Contrato breve en agencia. Entre los proyectos, desarrollé un plugin de WordPress a medida para un cliente: un generador de catálogos en PDF a partir de los productos cargados en WooCommerce, con la estética de la marca y filtros por categoría configurables para armar catálogos a medida de cada cliente que los pedía."
+      },
+      {
+        "id": "cloudpro",
+        "period": "2023–2024",
+        "role": "Desarrollador (contractor)",
+        "org": "Cloudpro",
+        "detail": "Contractor en una agencia española con cartera de clientes propia. Mantenimiento de múltiples sitios en WordPress, casi todos con WooCommerce, y migración de sitios con tecnologías más viejas al ecosistema WordPress. Fue mi primer trabajo a fondo con PHP: tocaba funciones del backend de varios proyectos en paralelo."
+      },
+      {
+        "id": "freelance",
+        "period": "2021–presente",
+        "role": "Desarrollador",
+        "org": "Freelance",
+        "detail": "Proyectos para clientes directos —entre ellos la agencia Itserra y Bastian Viana— y un portal de listados inmobiliarios para el mercado andorrano. El foco estuvo en infraestructura: configuración y administración de servidores, migraciones y optimización de recursos, sobre WordPress y WooCommerce.",
+        "links": [
+          { "label": "Itserra", "href": "https://itserra.com/" },
+          { "label": "Bastian Viana", "href": "https://bastianviana.com/" }
+        ]
+      }
     ]
   },
   "work": {

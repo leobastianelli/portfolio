@@ -26,6 +26,20 @@ export interface UiContent {
     bioMore: { p1: string; p2pre: string; p2post: string };
     table: { label: string; value: string }[];
   };
+  about: {
+    label: string;
+    intro: string[];
+    introBandPre: string;
+    introBandPost: string;
+    timeline: {
+      id: string;
+      period: string;
+      role: string;
+      org: string;
+      detail: string;
+      links?: { label: string; href: string }[];
+    }[];
+  };
   work: {
     sectionLabel: string;
     sectionTitle: string;

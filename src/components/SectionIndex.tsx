@@ -42,6 +42,7 @@ export default function SectionIndex({ hasPersonal }: { hasPersonal: boolean }) 
 
   const sections = [
     { id: "hero", label: t.nav.home },
+    { id: "about", label: t.about.label },
     { id: "work", label: t.nav.work },
     { id: "stack", label: t.nav.stack },
     ...(hasPersonal ? [{ id: "personal", label: t.personal.sectionTitle }] : []),

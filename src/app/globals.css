@@ -35,19 +35,19 @@
   /* Ya no es un color propio — ver la nota de arriba sobre por qué. */
   --color-accent-ink: var(--color-ink);
 
-  /* Temporal: Leo pidió fondo blanco por ahora ("seguramente termine
-     siendo algún blanco hueso, pero algo parecido alcanza") — sigue siendo
-     un gris neutro (R=G=B), no un blanco cálido todavía, para no anticipar
-     una decisión de color que no se tomó de verdad. Cuando se elija el
-     hueso real, va acá. */
-  --color-paper: #fafafa;
-  --color-paper-deep: #f0f0f0;
-  /* Fondo del área de contenido (todo lo que NO es navegación). Un gris
-     claro neutro (R=G=B), deliberadamente por debajo de `--color-paper`
-     para que el contenido se distinga a simple vista del blanco de la
-     columna lateral (`.site-shell::before`) y de la caja del menú
-     hamburguesa (`.menu-anchor`/`.menu-panel`), que siguen en paper. */
-  --color-canvas: #ececec;
+  /* 2026-08-31 — Leo invirtió la carga de color: el main pasa a blanco
+     "apenas aperlado" (near-white neutro), y la navegación (rail izquierdo +
+     índice de secciones) y la sección Contact pasan a negro. Esto además
+     resuelve el TODO viejo del "hueso real": el main ES ahora ese blanco.
+     `--color-paper` (superficies elevadas: panel del menú, covers
+     tipográficos) queda en blanco puro, un paso por encima del canvas.
+     `--color-paper-deep` es la superficie apenas hundida de las cards. */
+  --color-paper: #ffffff;
+  --color-paper-deep: #f2f2f0;
+  /* Fondo del área de contenido — el "main" de la web. Blanco apenas
+     aperlado (near-white, R=G=B casi parejo). El rail y Contact ya no
+     salen de acá: tienen sus propios tonos oscuros (`--color-rail*`). */
+  --color-canvas: #fafaf9;
   /* Decorative dividers/hairlines only, never text (2.79:1 / 2.34:1 — fails AA
      on purpose, it's a stain, not a message). */
   --color-stain: #6f6f6f;
@@ -60,28 +60,115 @@
   --color-panel-deep: var(--color-paper-deep);
   --color-ink-soft: var(--color-ink-faded);
   --color-accent: var(--color-accent-ink);
+
+  /*
+   * Sistema de espaciado — Refactoring UI (Wathan/Schoger), cap. "Spacing".
+   * Escala NO lineal, hecha a mano, en `rem` sobre root 16px: cada peldaño
+   * salta lo suficiente como para que la diferencia se lea sin dudar (una
+   * escala lineal de 4 en 4 obliga a comparar 44 vs 48 y no comunica nada).
+   *
+   * Esto PISA los peldaños 5→12 de Tailwind (que eran lineales: 20/24/32/40/
+   * 48px…). Los peldaños 0→4 ya coincidían con la escala del libro y quedan
+   * igual. El multiplicador dinámico de Tailwind (`--spacing`) sigue vivo,
+   * así que utilities de TAMAÑO/posición sin token propio (`w-1`, `top-24`,
+   * `translate-x-1`…) no cambian — sólo cambian los peldaños redefinidos acá.
+   *
+   * Criterio de uso (del libro): elementos relacionados → poco aire; saltos
+   * de bloque → un peldaño marcado; separación de secciones → generoso.
+   * "Ante la duda, más aire del necesario y después se saca."
+   *
+   * Cada `--spacing-N` se emite como custom property en :root, así que el
+   * CSS-in-JS de los componentes puede usar `var(--spacing-6)` en vez de
+   * un número suelto.
+   */
+  --spacing-1: 0.25rem;   /*   4px — íconos, gaps mínimos            */
+  --spacing-2: 0.5rem;    /*   8px — chips, ítems de lista           */
+  --spacing-3: 0.75rem;   /*  12px — label ↔ título, filas densas    */
+  --spacing-4: 1rem;      /*  16px — texto ↔ texto relacionado       */
+  --spacing-5: 1.5rem;    /*  24px — grupo ↔ grupo dentro de un card */
+  --spacing-6: 2rem;      /*  32px — columnas de grilla, gutter md   */
+  --spacing-7: 3rem;      /*  48px — encabezado de sección ↔ cuerpo  */
+  --spacing-8: 4rem;      /*  64px — bloque ↔ bloque mayor           */
+  --spacing-9: 6rem;      /*  96px — aire vertical de sección        */
+  --spacing-10: 8rem;     /* 128px — aire vertical de sección (md)   */
+  --spacing-11: 12rem;    /* 192px — respiros extremos               */
+  --spacing-12: 16rem;    /* 256px — respiros extremos               */
+
+  /*
+   * Sistema tipográfico — mismo criterio que el espaciado (Refactoring UI,
+   * cap. "Font Size"): escala hecha a mano, NO lineal, nada de tamaños
+   * sueltos en px/rem por componente. Todo sale de estos tokens.
+   *
+   * La escala FIJA es la de Tailwind (que ES la de Refactoring UI) y se deja
+   * como viene — `text-xs`…`text-9xl` = 12 · 14 · 16 · 18 · 20 · 24 · 30 · 36
+   * · 48 · 60 · 72 · 96 · 128 px. Sólo se agrega:
+   *   · `--text-2xs` (11px) para versales muy trackeadas (tags, meta,
+   *     categorías) — el único caso donde el libro tolera bajar de 12.
+   *   · Pasos FLUIDOS con nombre para títulos y bajadas: cada uno es un
+   *     `clamp()` entre dos peldaños de la escala fija. El sitio compone en
+   *     fluido, así que estos reemplazan a los `clamp(...)` sueltos que
+   *     había repartidos por los componentes.
+   *
+   * Uso: cuerpo → `text-base`; datos/labels → `text-sm`/`text-2xs`;
+   * títulos → los tokens `--text-title`/`--text-subtitle`/`--text-heading`;
+   * el h1 del hero → `--text-display`; las dos líneas del intro →
+   * `--text-lead` y `--text-lead-sm` (un peldaño abajo).
+   */
+  --text-2xs: 0.6875rem;                                    /* 11 */
+  /* Peldaños fijos = valores por defecto de Tailwind (redeclarados acá sólo
+     para que `var(--text-*)` resuelva en el CSS-in-JS y en globals.css, que
+     el scanner de Tailwind no ve). */
+  --text-xs:   0.75rem;                                     /* 12 */
+  --text-sm:   0.875rem;                                    /* 14 */
+  --text-base: 1rem;                                        /* 16 - cuerpo   */
+  --text-lg:   1.125rem;                                    /* 18 */
+  --text-xl:   1.25rem;                                     /* 20 */
+  --text-2xl:  1.5rem;                                      /* 24 */
+  --text-3xl:  1.875rem;                                    /* 30 */
+  --text-4xl:  2.25rem;                                     /* 36 */
+  --text-5xl:  3rem;                                        /* 48 */
+
+  --text-display:  clamp(2.75rem, min(7vw, 9dvh), 5.5rem);  /* h1 hero  44→88 */
+  --text-title:    clamp(2rem, 4vw, 3rem);                  /* h2       32→48 */
+  --text-subtitle: clamp(1.5rem, 3vw, 2.2rem);              /* h3 grande 24→35 */
+  --text-heading:  clamp(1.3rem, 2.4vw, 1.7rem);            /* h4       21→27 */
+  --text-lead:     clamp(1.15rem, 1.7vw, 1.35rem);          /* intro         */
+  --text-lead-sm:  clamp(1.05rem, 1.5vw, 1.2rem);           /* intro −1 paso  */
 }
 
 
-/* `inline`: these reference the CSS vars next/font sets on <html>, not literal values. */
+/* `inline`: these reference the CSS var next/font sets on <html>, not a
+   literal value.
+
+   2026-08-31 — Leo: "reemplazá todas las fuentes por la sans que estamos
+   usando". Bricolage Grotesque es AHORA la única familia del sitio: display,
+   cuerpo (`.editorial-type`) y lo que antes era mono (labels, datos, tags,
+   CTA). Los tres tokens apuntan al mismo `--font-bricolage` — así cada
+   `var(--font-mono)` / `var(--font-body)` / utility `.font-mono` / `.font-body`
+   ya existente resuelve a Bricolage sin tocar cada call site. Instrument Sans
+   e IBM Plex Mono se sacaron de `layout.tsx` (ya no se cargan). La jerarquía
+   la carga peso / caja / itálica / espaciado, nunca un salto de familia. */
 @theme inline {
+  --font-sans: var(--font-bricolage);
   --font-display: var(--font-bricolage);
-  --font-body: var(--font-instrument);
-  --font-mono: var(--font-plex-mono);
+  --font-body: var(--font-bricolage);
+  --font-mono: var(--font-bricolage);
 }
-
-/* 2026-08-28 — Leo sacó el serif del todo: "la voz del sitio es sans, no
-   serif". `.editorial-type` (antes `.editorial-serif`, con Newsreader) pasa
-   a usar `--font-bricolage` — la misma sans con carácter que ya cargaba el
-   nombre en el hero, mostrada en pantalla antes de aplicarla a todo el
-   sitio (incluido Work, que hasta ahora era el único en serif). La
-   jerarquía la sigue cargando peso/caja/itálica/espaciado, no un salto de
-   familia (la lección medida de PDR no cambió, sólo la familia elegida).
-   `--font-mono` sigue siendo la voz de UI/datos, sin tocar. */
 
 @layer base {
   :root {
     --border: color-mix(in srgb, var(--color-ink) 14%, transparent);
+
+    /* Superficies invertidas (rail izquierdo + índice de secciones +
+       Contact). El contraste se calcula contra `--color-rail`, igual que la
+       paleta clara se calculó contra `--color-paper`. Se aplican
+       re-scopeando los tokens de tinta sobre `.section-index` y `#contact`
+       (abajo), así los componentes que ya leen `var(--color-ink)` etc. se
+       invierten solos sin tocar cada call site. */
+    --color-rail: #141414;
+    --color-rail-ink: #f4f4f3;        /* texto principal sobre negro */
+    --color-rail-ink-faded: #a1a1a1;  /* texto secundario sobre negro */
+    --color-rail-border: color-mix(in srgb, #f4f4f3 15%, transparent);
   }
 
   * {
@@ -103,6 +190,15 @@
   body {
     background-color: var(--color-canvas);
     color: var(--color-ink);
+    /* La franja negra del rail izquierdo. Se pinta acá como un gradiente
+       fijo al viewport (hard-stop, se ve como un bloque sólido) en vez de
+       un `::before` posicionado — evita cualquier ambigüedad de stacking
+       con el fondo del canvas. Sólo en desktop; en mobile no hay rail.
+       `--rail-width` se define en `.site-shell` (≥1024) — acá se repite el
+       valor porque `body` no lo hereda de un descendiente. */
+    /* Bricolage como default heredable — cualquier texto sin clase de
+       familia explícita también sale en la sans del sitio. */
+    font-family: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -191,7 +287,7 @@
    del propio `aria-label` del botón, no información nueva para un lector
    de pantalla. */
 .menu-toggle-label {
-  font-size: 1.3rem;
+  font-size: var(--text-xl);
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -436,33 +532,34 @@
  * superposición en ningún ancho, no sólo en mobile.
  */
 @media (min-width: 1024px) {
-  .site-shell {
-    /* Custom property (not a literal `11rem` repeated below) so the
-       reserved column and `.section-index`'s own width — which centers
-       itself inside that column — can never drift out of sync. */
-    /* Was 11rem — the English toggle labels ("TECHNICAL"/"OVERVIEW", 178px
-       measured) overflow that. 14rem clears it with room for centering
-       margin on both sides. */
+  /* Ancho de la columna reservada: en `:root` (no en `.site-shell`) para
+     que el padding del shell, el ancho de `.section-index` y el gradiente
+     del rail en `body` lean todos el mismo valor y no puedan desincronizar.
+     Fue 11rem — los labels del toggle en inglés ("TECHNICAL"/"OVERVIEW",
+     178px medidos) lo desbordaban; 14rem los limpia con margen de centrado
+     a ambos lados. */
+  :root {
     --rail-width: 14rem;
+  }
+  .site-shell {
     padding-left: var(--rail-width);
   }
-  /* La columna lateral en blanco (paper), a todo lo alto del viewport,
-     detrás del contenido y del índice de secciones. Es lo que le da al
-     rail su superficie propia — antes era sólo el body asomando, así que
-     al pasar el body a `--color-canvas` el rail habría quedado gris
-     también. `z-index: -1`: por encima del fondo canvas del body, por
-     debajo de las secciones (sin posicionar) y de `.section-index`
-     (z-index 40). */
-  .site-shell::before {
-    content: "";
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: var(--rail-width);
-    background: var(--color-paper);
-    z-index: -1;
-    pointer-events: none;
+  /* La franja negra del rail izquierdo. Se pinta acá como un gradiente fijo
+     al viewport (hard-stop, se ve como un bloque sólido) en vez de un
+     `::before` con `z-index: -1` — que quedaba tapado por el canvas del body
+     en algunos scroll positions. Cuando Contact entra en viewport, su fondo
+     negro se alinea con esta franja y se lee como una banda a todo el ancho. */
+  body {
+    background-image: linear-gradient(
+      to right,
+      var(--color-rail) 0 var(--rail-width),
+      transparent var(--rail-width)
+    );
+    background-repeat: no-repeat;
+    /* Sin `background-attachment: fixed` — el gradiente es horizontal (no
+       varía en vertical), así que pintándolo sobre toda la caja de `body`
+       (alto de toda la página) la franja izquierda queda negra a cualquier
+       scroll, sin el quirk de compositing del fixed. */
   }
 }
 
@@ -475,6 +572,22 @@
  * mismo nombre accesible, sólo sin el texto visible) — ver el media query
  * más abajo.
  */
+/* El índice vive sobre el rail negro: se re-scopean los tokens de tinta a
+   sus equivalentes claros, así `.section-index-label`, el progress fill y
+   demás (que ya leen `var(--color-ink)` etc.) se invierten sin tocarlos.
+   `--color-stain` NO se toca: el progress track gris (`#6f6f6f`) se lee bien
+   sobre negro. El segmented control es una pieza autónoma en grises — se
+   resetea `--color-ink` para que su fill siga siendo oscuro con texto claro
+   encima, igual que en el resto del sitio. */
+.section-index {
+  --color-ink: var(--color-rail-ink);
+  --color-ink-faded: var(--color-rail-ink-faded);
+  --color-accent-ink: var(--color-rail-ink);
+}
+.section-index .content-mode-toggle {
+  --color-ink: #171717; /* = valor de :root, el toggle no se invierte */
+}
+
 .section-index {
   position: fixed;
   left: 0;
@@ -561,7 +674,7 @@
   position: relative;
   display: inline-block;
   font-family: var(--font-bricolage);
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -663,7 +776,9 @@
     justify-content: center;
     gap: 1.25rem;
     padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
-    background: var(--color-paper);
+    /* En mobile no hay rail (`.site-shell::before`), así que la barra
+       inferior lleva el negro directamente. */
+    background: var(--color-rail);
     border-top: 1px solid var(--color-stain);
   }
   /* The progress rail only makes sense as a vertical read of the side
@@ -732,7 +847,7 @@
   padding: 0.8rem 2.2rem;
   border: 1.5px solid var(--color-ink);
   color: var(--color-ink);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   transition: background-color 0.22s ease, color 0.22s ease;
@@ -742,21 +857,107 @@
   color: var(--color-paper);
 }
 
+/* Contact invertido (2026-08-31, Leo): fondo negro, tinta clara. Mismo
+   mecanismo que `.section-index` — se re-scopean los tokens y todo lo que
+   hay dentro (headline, subtítulo, las tarjetas de link `.project-card`,
+   las utilities `text-ink`/`text-accent`) se invierte solo. El fondo del
+   rail (`.site-shell::before`) ya es negro, así que en desktop la franja de
+   la izquierda y esta sección se leen como una sola banda. */
+#contact {
+  background: var(--color-rail);
+  --color-ink: var(--color-rail-ink);
+  --color-ink-faded: var(--color-rail-ink-faded);
+  --color-accent-ink: var(--color-rail-ink);
+  --border: var(--color-rail-border);
+}
+#contact .project-card {
+  border-top-color: var(--color-rail-border);
+}
+#contact .project-card:hover {
+  border-top-color: var(--color-rail-ink);
+}
+
 .section-label {
-  font-size: 1.3rem;
+  font-size: var(--text-xl);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-accent-ink);
+  /* Renglón único de versales: sin `line-height` propio hereda `normal`
+     (~1.4) y mete medio-interlineado de aire fantasma arriba y abajo que se
+     suma a cualquier `margin` — el espacio Córdoba→rol se veía el doble de
+     lo que decía el `mb`. A 1 el margen es lo único que separa. */
+  line-height: 1;
 }
 
-.tag {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid var(--border);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
+/* Stack de un proyecto como iconos (ver StackIcons.tsx). Monocromos, toman
+   el color del contexto vía `currentColor`; el nombre aparece en un tooltip
+   al hover / focus / tap. */
+.stack-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.stack-icon {
+  position: relative;
+  width: 1.15rem;
+  height: 1.15rem;
   color: var(--color-ink-faded);
-  text-transform: uppercase;
+  cursor: help;
+  transition: color 140ms ease-out;
+}
+.stack-icon:hover,
+.stack-icon:focus-visible {
+  color: var(--color-ink);
+  outline: none;
+}
+.stack-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+.stack-icon__tip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(0.15rem);
+  padding: 0.2rem 0.45rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  white-space: nowrap;
+  border-radius: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease-out, transform 140ms ease-out;
+  z-index: 6;
+}
+.stack-icon__tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--color-ink);
+}
+.stack-icon:hover .stack-icon__tip,
+.stack-icon:focus .stack-icon__tip,
+.stack-icon:focus-visible .stack-icon__tip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack-icon,
+  .stack-icon__tip {
+    transition: none;
+  }
 }
 
 /*
@@ -770,7 +971,7 @@
 .label-engraved {
   color: var(--color-engrave);
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -831,7 +1032,7 @@
   color: var(--color-paper);
   font-family: var(--font-bricolage);
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-align: center;
@@ -924,7 +1125,7 @@
    racing (`Personal.tsx` reusa el mismo componente `StatusLabel`). */
 .status-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: var(--text-2xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -979,15 +1180,429 @@
   line-height: 1.15;
   color: var(--color-ink);
 }
-} /* @layer components */
 
-/* Leo: "pasá todo en el primer bloque a la sans serif" — el hero entero
-   en Bricolage, incluidos los elementos que por defecto van en mono (el
-   label de rol/ciudad, el CTA, el "MÁS", la tabla de info via
-   `.label-engraved`) o en la body serif (`.font-body`). Sin `@layer`
-   a propósito: tiene que ganarle a las utilities `.font-mono`/`.font-body`
-   de Tailwind, que se resuelven después de la capa `components`. */
-#hero,
-#hero * {
-  font-family: var(--font-bricolage);
+/* Los cuatro principales: acordeón con la misma mecánica de despliegue que
+   "Acerca de mí" (`grid-template-rows: 0fr↔1fr` + inner con overflow:hidden).
+   Ver FeaturedAccordion en Work.tsx — el panel abierto sigue al scroll. */
+.work-accordion {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
 }
+.work-accordion__item {
+  border-bottom: 1px solid var(--border);
+}
+.work-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  padding: 1.4rem 0.25rem 1.4rem 0;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink);
+  transition: padding-left 180ms ease-out;
+}
+.work-entry:hover,
+.work-entry[data-open="true"] {
+  padding-left: 0.6rem;
+}
+.work-entry:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+.work-entry__meta {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.9rem;
+}
+@media (min-width: 768px) {
+  .work-entry {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    grid-template-areas:
+      "meta title"
+      "meta role";
+    column-gap: 1.5rem;
+    row-gap: 0.2rem;
+  }
+  .work-entry__meta {
+    grid-area: meta;
+    align-self: start;
+    padding-top: 0.35rem;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}
+.work-entry__title {
+  grid-area: title;
+  font-size: var(--text-xl);
+  font-weight: 500;
+  line-height: 1.2;
+  transition: font-weight 120ms ease-out;
+}
+.work-entry[data-open="true"] .work-entry__title {
+  font-weight: 700;
+}
+.work-entry__role {
+  grid-area: role;
+  font-style: italic;
+  font-size: var(--text-sm);
+  color: var(--color-ink-faded);
+}
+
+.work-entry__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease-out;
+}
+.work-entry__panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.work-entry__panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.work-entry__panel[data-open="true"] .work-entry__panel-inner {
+  padding-bottom: 1.9rem;
+}
+.work-entry__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  padding-left: 0.6rem;
+}
+@media (min-width: 768px) {
+  .work-entry__body {
+    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
+    gap: 2.25rem;
+    align-items: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-entry,
+  .work-entry__panel {
+    transition: none;
+  }
+}
+
+/* Retrato del hero. Ver HeroPortrait.tsx para el porqué (única superficie
+   con 3D real del sitio, excepción deliberada a v3, sobre la referencia
+   rotate-to-mouse del JWT Handbook). Elevación: acá SÍ va sombra — el
+   resto del sitio estructura con hairlines planas, pero esta card
+   literalmente se inclina y "flota", así que la sombra es el lenguaje
+   correcto (R10). Suave, en capas, alfa baja, tinte del propio ink; se
+   agranda en hover como en la referencia. */
+.portrait-tilt {
+  perspective: 1400px;
+  isolation: isolate;
+}
+.portrait-tilt__card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 300ms ease-out, box-shadow 300ms ease-out;
+  box-shadow:
+    0 1px 4px color-mix(in srgb, var(--color-ink) 8%, transparent),
+    0 8px 24px color-mix(in srgb, var(--color-ink) 10%, transparent);
+}
+.portrait-tilt:hover .portrait-tilt__card {
+  transition-duration: 150ms;
+  box-shadow:
+    0 6px 16px color-mix(in srgb, var(--color-ink) 12%, transparent),
+    0 24px 60px color-mix(in srgb, var(--color-ink) 16%, transparent);
+}
+.portrait-tilt__img {
+  object-fit: cover;
+  /* Recorta el aire de arriba y deja el rostro en el tercio superior. */
+  object-position: 50% 22%;
+  /* A color por pedido de Leo (excepción a la escala de grises de v3, junto
+     con el 3D y el sheen — ya van tres). */
+}
+.portrait-tilt__placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* Brillo especular que sigue al puntero (el "glow" de la referencia, acá
+   monocromo y tenue). `overlay` sobre una imagen en grises sólo aclara —
+   no introduce color. Sólo visible en hover. */
+.portrait-tilt__glow {
+  --gx: 50%;
+  --gy: 50%;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: overlay;
+  transition: opacity 200ms ease-out;
+  background-image: radial-gradient(
+    circle at var(--gx) var(--gy),
+    rgba(255, 255, 255, 0.32),
+    rgba(255, 255, 255, 0) 55%
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .portrait-tilt__card {
+    transition: none;
+    transform: none;
+  }
+  .portrait-tilt__glow {
+    display: none;
+  }
+}
+
+/* "Acerca de mí" — timeline tipo CV. La columna izquierda cambia según la
+   entrada activa (ver AboutMe.tsx); acá está la lista de la derecha y el
+   despliegue de capturas. Elevación por hairlines, como el resto del sitio
+   (nada de sombras acá). */
+.about-desc {
+  animation: aboutFade 240ms ease-out;
+}
+@keyframes aboutFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.about-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+.about-timeline__item {
+  border-bottom: 1px solid var(--border);
+}
+
+.about-entry {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  grid-template-areas:
+    "period role"
+    "period org";
+  column-gap: 1.25rem;
+  row-gap: 0.15rem;
+  width: 100%;
+  padding: 1.15rem 0.25rem 1.15rem 0;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink);
+  transition: padding-left 180ms ease-out;
+}
+.about-entry:hover,
+.about-entry[data-open="true"] {
+  padding-left: 0.6rem;
+}
+.about-entry:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+.about-entry__period {
+  grid-area: period;
+  align-self: start;
+  padding-top: 0.15rem;
+}
+.about-entry__role {
+  grid-area: role;
+  font-family: var(--font-bricolage);
+  font-size: var(--text-base);
+  font-weight: 500;
+  transition: font-weight 120ms ease-out;
+}
+.about-entry[data-open="true"] .about-entry__role {
+  font-weight: 700;
+}
+.about-entry__org {
+  grid-area: org;
+  font-family: var(--font-bricolage);
+  font-size: var(--text-sm);
+  color: var(--color-ink-faded);
+}
+
+/* Despliegue: grid-template-rows 0fr → 1fr (el inner lleva overflow:hidden
+   y min-height:0, que es lo que hace que el truco anime). */
+.about-entry__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms ease-out;
+}
+.about-entry__panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.about-entry__panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+/* Inset para que la card, al inclinarse y escalar en hover, no toque los
+   bordes del panel. Y una vez abierto del todo pasamos a `overflow: visible`
+   para que la SOMBRA de la card en hover no se recorte contra ese borde
+   (mientras se abre/cierra hay que seguir recortando por el truco de
+   `grid-template-rows: 0fr↔1fr`). `overflow` es discreta: la transición con
+   delay la cambia recién al terminar la apertura; al cerrar esta regla deja
+   de aplicar y vuelve a `hidden` de inmediato. */
+.about-entry__panel[data-open="true"] .about-entry__panel-inner {
+  padding: 1.25rem 1rem 1.5rem;
+  overflow: visible;
+  transition: overflow 0s 260ms;
+}
+
+.about-shots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+/* Mismo tratamiento que el retrato del hero (`.portrait-tilt`): la card se
+   inclina hacia el puntero, con un sheen especular que lo sigue y la sombra
+   que crece en hover. El wrapper aporta la `perspective`; la card, el 3D.
+   Excepción a la regla plana de v3, igual que el hero — pedido de Leo. */
+.about-shot-tilt {
+  width: clamp(170px, 44%, 290px);
+  flex: 0 0 auto;
+  perspective: 1200px;
+  isolation: isolate;
+}
+.about-shot {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--color-paper-deep);
+  color: inherit;
+  font: inherit;
+  cursor: zoom-in;
+  appearance: none;
+  /* Sin `transform-style: preserve-3d`: con él, Chrome ignora el
+     `overflow: hidden` + `border-radius` y la imagen se sale de la caja al
+     inclinarse. El tilt es un `rotate3d` de un solo elemento — no necesita
+     contexto 3D anidado. */
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: transform 300ms ease-out, box-shadow 300ms ease-out,
+    border-color 160ms ease-out;
+  box-shadow:
+    0 1px 4px color-mix(in srgb, var(--color-ink) 8%, transparent),
+    0 6px 18px color-mix(in srgb, var(--color-ink) 10%, transparent);
+}
+.about-shot-tilt:hover .about-shot {
+  transition-duration: 150ms;
+  box-shadow:
+    0 5px 14px color-mix(in srgb, var(--color-ink) 12%, transparent),
+    0 18px 44px color-mix(in srgb, var(--color-ink) 16%, transparent);
+}
+.about-shot:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+.about-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Click: la MISMA card se fija al viewport y crece. El wrapper pasa a
+   `position: fixed` y compite contra el backdrop en la capa raíz
+   (z-index 100 > 90), por eso hay que soltar su propio `isolation`. El
+   tilt se sigue calculando sobre esta misma card mientras está ampliada. */
+.about-shot-tilt[data-zoomed="true"] {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(94vw, 1120px);
+  aspect-ratio: 16 / 10;
+  z-index: 100;
+  isolation: auto;
+  perspective: 2600px;
+  cursor: zoom-out;
+}
+/* Sin transición en `transform`: el tilt se escribe directo en cada frame;
+   un tween sobre una card enorme se ve como parpadeo. Sin borde tampoco. */
+.about-shot-tilt[data-zoomed="true"] .about-shot {
+  cursor: zoom-out;
+  transition: box-shadow 200ms ease-out;
+  border-color: transparent;
+  box-shadow:
+    0 10px 30px color-mix(in srgb, var(--color-ink) 14%, transparent),
+    0 40px 92px color-mix(in srgb, var(--color-ink) 22%, transparent);
+}
+
+/* Ocupa el hueco de la card mientras está fija, para que la fila no salte. */
+.about-shot-tilt--spacer {
+  visibility: hidden;
+  pointer-events: none;
+}
+.about-shot-tilt--spacer::before {
+  content: "";
+  display: block;
+  padding-top: 62.5%; /* 16:10 */
+}
+
+/* Bloquea el scroll del fondo mientras hay una captura ampliada. */
+.about-zoom-lock {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-shot {
+    transition: border-color 160ms ease-out;
+    transform: none;
+  }
+}
+
+.about-zoom-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: color-mix(in srgb, var(--color-ink) 42%, transparent);
+  animation: about-zoom-fade 200ms ease-out;
+  transition: opacity 240ms ease-out;
+}
+.about-zoom-backdrop[data-closing="true"] {
+  opacity: 0;
+}
+@keyframes about-zoom-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-zoom-backdrop {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-desc {
+    animation: none;
+  }
+  .about-entry,
+  .about-entry__role,
+  .about-entry__panel {
+    transition: none;
+  }
+}
+} /* @layer components */
