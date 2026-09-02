@@ -5,7 +5,7 @@ const meta: ProjectMeta = {
   org: "Mully Group / NewReserve",
   year: "2024–2025",
   status: "archived",
-  stack: ["Shopify Plus", "Next.js", "Firebase", "n8n", "Impact.com"],
+  stack: ["Shopify Plus", "Liquid", "Next.js", "Firebase", "n8n", "Impact.com"],
   links: [],
   featured: true,
   cover: "/covers/golf-membership-platform.webp",

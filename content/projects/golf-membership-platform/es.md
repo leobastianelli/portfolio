@@ -2,7 +2,7 @@ title: Golf Membership Platform
 role: Lead developer
 
 ## Summary
-Plataforma de membresías de golf en Estados Unidos, con suscripciones recurrentes y tienda propia. Varios años a cargo del desarrollo.
+Tienda de membresías de golf de Mully Group, en Estados Unidos, con suscripciones recurrentes. Varios años a cargo del desarrollo.
 
 ## Technical
-Shopify Plus headless con frontend en Next.js y Firebase, suscripciones mediante Loop, un pipeline de contenido SEO automatizado en n8n y una integración con Impact.com para la atribución de afiliados.
+Migré la tienda a un modelo Shopify headless (mymully.com), con frontend en Next.js. Antes de eso la mantuve sobre el tema nativo: temas personalizados, desarrollo en Liquid, A/B testing y un quiz de onboarding para personalizar la experiencia de suscripción.
