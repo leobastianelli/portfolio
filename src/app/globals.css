@@ -765,13 +765,14 @@
   }
 }
 @media (min-width: 1024px) {
-  /* Desktop: pastilla, centrada en la columna del rail negro (vacía ahora que
-     el índice de secciones no la usa), abajo — sólo durante Work. Acá sí hay
-     lugar para que flote, sin tira ni fondo propio. */
+  /* Desktop: pastilla flotante centrada SOBRE el contenido de Work (a la
+     derecha del rail negro, nunca dentro de él — Leo lo quiere fuera de la
+     sidebar), abajo, sólo durante Work. Sin tira ni fondo propio: acá hay
+     lugar para que flote. */
   .work-mode-toggle {
-    right: auto;
-    width: var(--rail-width, 14rem);
-    bottom: 2.5rem;
+    left: var(--rail-width, 14rem);
+    right: 0;
+    bottom: 2rem;
     padding: 0;
     background: none;
     border-top: none;
