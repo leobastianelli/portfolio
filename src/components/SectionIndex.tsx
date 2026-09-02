@@ -2,10 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/context/LanguageContext";
-import ContentModeToggle from "@/components/ContentModeToggle";
-
-/** Sections whose content actually changes between Overview/Technical — the toggle only makes sense here. */
-const CONTENT_MODE_SECTIONS = new Set(["work", "personal"]);
 
 /**
  * Replaces the old top-bar section links. Fixed to the side on desktop
@@ -53,7 +49,6 @@ export default function SectionIndex({ hasPersonal }: { hasPersonal: boolean }) 
     0,
     sections.findIndex((s) => s.id === active)
   );
-  const showToggle = CONTENT_MODE_SECTIONS.has(active);
 
   useEffect(() => {
     activeRef.current = active;
@@ -221,16 +216,6 @@ export default function SectionIndex({ hasPersonal }: { hasPersonal: boolean }) 
             })}
           </ul>
         </nav>
-      </div>
-      {/*
-       * Always mounted (never conditionally rendered) so it can fade
-       * in/out instead of popping — `inert` is what actually pulls it out
-       * of tab order and blocks interaction while hidden, not just the
-       * opacity. Space stays reserved either way, so the links above never
-       * shift.
-       */}
-      <div className="section-index-toggle" aria-hidden={!showToggle} inert={!showToggle || undefined}>
-        <ContentModeToggle />
       </div>
     </div>
   );

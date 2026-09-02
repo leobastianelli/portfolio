@@ -584,9 +584,6 @@
   --color-ink-faded: var(--color-rail-ink-faded);
   --color-accent-ink: var(--color-rail-ink);
 }
-.section-index .content-mode-toggle {
-  --color-ink: #171717; /* = valor de :root, el toggle no se invierte */
-}
 
 .section-index {
   position: fixed;
@@ -730,89 +727,77 @@
   height: 0%;
   background: var(--color-ink);
 }
-/* Only shown on sections whose content actually has an overview/technical
-   split (see `CONTENT_MODE_SECTIONS` in `SectionIndex.tsx`) — stays
-   mounted and keeps its space either way (no layout shift in the links
-   above/beside it), just fades. `inert` (set in the component) is what
-   actually pulls it out of tab order while hidden; opacity alone wouldn't. */
-.section-index-toggle {
-  margin-top: 1.5rem;
-  opacity: 1;
-  transition: opacity 0.25s ease;
-  /* Centered in the FULL reserved rail column (`--rail-width`), not in
-     the row's own (narrower) rendered width — a previous version tried
-     measuring and centering against the row specifically, but the
-     segmented control is wider than the row, so that math produced a
-     negative margin that pushed it left, off past the edge of the
-     column. `.section-index` itself left-aligns everything else
-     (`align-items: flex-start`) so the row/list stay flush with
-     "TÉCNICO" above — this is the one child that overrides that to
-     center within the full column instead. */
-  align-self: center;
-}
-.section-index-toggle[aria-hidden="true"] {
+/* Switch Resumen/Técnico de Work (`WorkModeToggle.tsx`). Antes vivía acá
+   abajo, en la sidebar global; ahora es un control único para toda la
+   sección Work, fijo al viewport SÓLO mientras `#work` está en pantalla.
+   `data-visible` lo maneja el IntersectionObserver del componente; `inert`
+   (también en el componente) lo saca del tab order mientras está oculto —
+   la opacidad sola no alcanza. */
+/* Mobile: tira anclada al borde inferior (canvas + hairline), no una pastilla
+   flotando sobre un párrafo — en mobile el espacio es justo y una pastilla
+   suelta se leía cortando el texto de abajo. Entra deslizando desde abajo. */
+.work-mode-toggle {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  display: flex;
+  justify-content: center;
+  padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+  background: var(--color-canvas);
+  border-top: 1px solid var(--color-stain);
   opacity: 0;
+  pointer-events: none;
+  transform: translateY(100%);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.work-mode-toggle[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 @media (prefers-reduced-motion: reduce) {
-  .section-index-toggle {
-    transition: none;
+  .work-mode-toggle,
+  .work-mode-toggle[data-visible="true"] {
+    transition: opacity 0.25s ease;
+    transform: none;
+  }
+}
+@media (min-width: 1024px) {
+  /* Desktop: pastilla, centrada en la columna del rail negro (vacía ahora que
+     el índice de secciones no la usa), abajo — sólo durante Work. Acá sí hay
+     lugar para que flote, sin tira ni fondo propio. */
+  .work-mode-toggle {
+    right: auto;
+    width: var(--rail-width, 14rem);
+    bottom: 2.5rem;
+    padding: 0;
+    background: none;
+    border-top: none;
+    transform: translateY(0.5rem);
+  }
+  .work-mode-toggle[data-visible="true"] {
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .work-mode-toggle,
+    .work-mode-toggle[data-visible="true"] {
+      transform: none;
+    }
   }
 }
 
 @media (max-width: 1023px) {
+  /* La sidebar de secciones era, en mobile, una barra inferior cuyo único
+     contenido visible era el toggle Resumen/Técnico (las etiquetas van
+     sr-only y no hay puntos). Movido el toggle a Work (`.work-mode-toggle`,
+     abajo al centro), la barra quedaría vacía — se oculta entera. La
+     navegación por secciones en mobile queda pendiente de diseño propio;
+     mientras tanto se recorre por encabezados (cada sección tiene su <h2>)
+     y por el menú. */
   .section-index {
-    left: 0;
-    right: 0;
-    /* Desktop sets an explicit `width` to center inside the reserved rail
-       column — with `left`/`right` both set too that would out-constrain
-       CSS's box math and win over `right`, so it needs resetting back to
-       `auto` here or the bottom bar stops spanning the full width. */
-    width: auto;
-    top: auto;
-    bottom: 0;
-    height: auto;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
-    /* En mobile no hay rail (`.site-shell::before`), así que la barra
-       inferior lleva el negro directamente. */
-    background: var(--color-rail);
-    border-top: 1px solid var(--color-stain);
-  }
-  /* The progress rail only makes sense as a vertical read of the side
-     list — no room/no design for it in the bottom dot bar yet ("después
-     vemos cómo lo resolvemos en mobile", Leo). */
-  .section-index-progress {
     display: none;
-  }
-  .section-index-row {
-    margin-left: 0;
-  }
-  .section-index-list {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1.1rem;
-  }
-  /* El texto se esconde visualmente, no del árbol de accesibilidad — el
-     link sigue teniendo el mismo nombre accesible que en desktop. */
-  .section-index-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-  .section-index-toggle {
-    margin-top: 0;
-    padding-left: 1.1rem;
-    border-left: 1px solid var(--color-stain);
   }
 }
 
