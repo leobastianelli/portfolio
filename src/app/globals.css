@@ -1210,6 +1210,13 @@
 }
 .content-mode-toggle--vertical {
   flex-direction: column;
+  /* Ancho explícito: WebKit (Safari iOS, visto en iPhone 13 Pro Max) no
+     suma el inline-size de un hijo con `writing-mode` vertical al calcular
+     el max-content del flex item, y con `min-width: 0` en la opción el
+     control colapsaba al ancho del padding (~10px) y `overflow: hidden`
+     recortaba el texto contra el borde derecho. Chromium sí lo calcula,
+     por eso no salió en el test de 320px. */
+  width: 2.75rem;
 }
 .content-mode-toggle--vertical .content-mode-toggle-fill {
   inset: auto;
@@ -1221,6 +1228,7 @@
 .content-mode-toggle--vertical .content-mode-toggle-option {
   min-height: 5.5rem;
   padding: 0.55rem;
+  width: 100%;
 }
 .content-mode-toggle--vertical .content-mode-toggle-option > span {
   display: block;
