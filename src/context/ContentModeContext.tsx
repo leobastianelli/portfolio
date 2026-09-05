@@ -1,10 +1,28 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useSyncExternalStore, type ReactNode } from "react";
 
 export type ContentMode = "overview" | "technical";
 
 const STORAGE_KEY = "contentMode";
+let fallbackMode: ContentMode = "overview";
+const listeners = new Set<() => void>();
+function readMode(): ContentMode {
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return stored === "technical" || stored === "overview" ? stored : fallbackMode;
+  } catch { return fallbackMode; }
+}
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => { listeners.delete(listener); window.removeEventListener("storage", listener); };
+}
+function setMode(next: ContentMode) {
+  fallbackMode = next;
+  try { window.localStorage.setItem(STORAGE_KEY, next); } catch { /* Keep the control usable without storage. */ }
+  listeners.forEach((listener) => listener());
+}
 
 interface ContentModeContextValue {
   mode: ContentMode;
@@ -19,20 +37,7 @@ const ContentModeContext = createContext<ContentModeContextValue | null>(null);
  * whatever was saved in localStorage once mounted.
  */
 export function ContentModeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ContentMode>("overview");
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "overview" || stored === "technical") setModeState(stored);
-  }, []);
-
-  // The segmented-control redesign has two independently clickable
-  // options ("Técnico" / "Resumen"), not a single flip switch — each sets
-  // the mode it names directly.
-  const setMode = (next: ContentMode) => {
-    window.localStorage.setItem(STORAGE_KEY, next);
-    setModeState(next);
-  };
+  const mode = useSyncExternalStore(subscribe, readMode, (): ContentMode => "overview");
 
   return (
     <ContentModeContext.Provider value={{ mode, setMode }}>

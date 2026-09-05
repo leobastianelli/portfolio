@@ -12,28 +12,15 @@
  * se replantearon planos, sin sombra ni relieve, para no tener que tocar
  * cada componente que los referencia.
  *
- * 2026-08-28 — pasada a escala de grises (Refactoring UI: armar la
- * jerarquía con espaciado/tamaño/peso/contraste antes de apoyarse en
- * color; si funciona en grises, funciona). Cada tono de acá es la versión
- * SIN saturación del tono anterior con la misma luminancia relativa WCAG
- * (no un gris cualquiera "parecido") — así los ratios de contraste ya
- * verificados (AA) en los comentarios de abajo siguen valiendo tal cual,
- * el contraste no depende del matiz. `--color-accent-ink` dejó de ser un
- * tono propio: es un alias directo a `--color-ink` — ya no hay un color de
- * "acento", el énfasis que antes cargaba el violeta ahora lo carga el
- * ink más oscuro disponible, usado con el mismo criterio (poco, con
- * propósito), y el resto de la jerarquía la cargan peso/itálica/tamaño.
- * `--color-led-on`/`--color-led-work` se borraron: el status ya no se
- * distingue por matiz (ver `.status-label--*` más abajo), sólo por peso.
+ * La base vuelve a ser monocroma. El violeta se reserva para el nombre del
+ * hero, links, estados interactivos y el switch Overview/Technical.
  */
 @theme {
   --color-ink: #171717;
-  /* AA-verified against BOTH paper tones (5.89:1 / 4.93:1) — luminancia sin
-     cambios respecto de la versión con matiz, ver nota arriba. */
   --color-ink-faded: #3e3e3e;
   --color-engrave: #3b3b3b;
-  /* Ya no es un color propio — ver la nota de arriba sobre por qué. */
-  --color-accent-ink: var(--color-ink);
+  --color-accent-ink: #523a9e;
+  --color-accent-on-dark: #8d73e6;
 
   /* 2026-08-31 — Leo invirtió la carga de color: el main pasa a blanco
      "apenas aperlado" (near-white neutro), y la navegación (rail izquierdo +
@@ -131,7 +118,10 @@
   --text-display:  clamp(2.75rem, min(7vw, 9dvh), 5.5rem);  /* h1 hero  44→88 */
   --text-title:    clamp(2rem, 4vw, 3rem);                  /* h2       32→48 */
   --text-subtitle: clamp(1.5rem, 3vw, 2.2rem);              /* h3 grande 24→35 */
-  --text-heading:  clamp(1.3rem, 2.4vw, 1.7rem);            /* h4       21→27 */
+  /* Piso subido de 1.3 a 1.5rem: en mobile los otros títulos tocan su
+     propio piso (title 32, subtitle 24) y este quedaba en 21px, más chico
+     que los títulos de proyecto que agrupa. Arriba de ~1125px no cambia. */
+  --text-heading:  clamp(1.5rem, 2.4vw, 1.7rem);            /* h4       24→27 */
   --text-lead:     clamp(1.15rem, 1.7vw, 1.35rem);          /* intro         */
   --text-lead-sm:  clamp(1.05rem, 1.5vw, 1.2rem);           /* intro −1 paso  */
 }
@@ -166,8 +156,8 @@
        (abajo), así los componentes que ya leen `var(--color-ink)` etc. se
        invierten solos sin tocar cada call site. */
     --color-rail: #141414;
-    --color-rail-ink: #f4f4f3;        /* texto principal sobre negro */
-    --color-rail-ink-faded: #a1a1a1;  /* texto secundario sobre negro */
+    --color-rail-ink: #f4f4f3;
+    --color-rail-ink-faded: #a1a1a1;
     --color-rail-border: color-mix(in srgb, #f4f4f3 15%, transparent);
   }
 
@@ -203,7 +193,7 @@
   }
 
   ::selection {
-    background: var(--color-accent-ink);
+    background: var(--color-ink);
     color: var(--color-paper);
   }
 }
@@ -219,6 +209,25 @@
  * layered `.hidden`'s `display: none`.
  */
 @layer components {
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 120;
+    padding: 0.7rem 1rem;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 2px solid var(--color-accent-ink);
+    font-family: var(--font-bricolage);
+    font-weight: 700;
+    transform: translateY(calc(-100% - 1rem));
+    transition: transform 160ms ease-out;
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+    outline: none;
+  }
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -238,6 +247,22 @@
 .reveal.visible {
   opacity: 1;
   transform: none;
+}
+
+/* `.fade-up` (Hero, corre al cargar la página, sin scroll de por medio) y
+   `.reveal` (Hero/About/Work/Stack/Personal/Contact, on-scroll vía
+   IntersectionObserver) eran los dos únicos mecanismos de entrada del sitio
+   sin cobertura de `prefers-reduced-motion` — todo lo demás (menú, tooltip,
+   lightbox, tilt del retrato, timeline) ya la tenía. El contenido sigue
+   apareciendo en el mismo momento (scroll o carga), solo que sin animar. */
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    animation: none;
+    opacity: 1;
+  }
+  .reveal {
+    transition: none;
+  }
 }
 
 /*
@@ -523,6 +548,84 @@
 }
 
 /*
+ * MOBILE — el menú deja de ser un cuadro flotante arriba a la derecha y pasa
+ * a ser una barra fija abajo (donde está el pulgar). Al tocarla, el panel
+ * sube desde ahí como una hoja a pantalla completa; la misma barra queda por
+ * encima de la hoja y su ícono ya es la cruz que la cierra.
+ *
+ * La hoja es `position: fixed; inset: 0` y se desplaza con `translateY`, no
+ * con `max-height`: así sube completa y sin depender de medir el alto de la
+ * barra desde JS. La barra se dibuja arriba de ella con `z-index`, y la hoja
+ * lleva `padding-bottom` suficiente para que su contenido nunca quede tapado.
+ */
+@media (max-width: 767.98px) {
+  .menu-anchor,
+  .menu-anchor[data-open="true"] {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    /* El fondo lo pinta la barra, no el ancla: si lo pintara el ancla, al
+       abrir se blanqueaba toda la pantalla de golpe antes de que la hoja
+       terminara de subir. */
+    background: transparent;
+  }
+  .menu-toggle {
+    position: relative;
+    z-index: 2;
+    padding: 0.95rem 1.25rem;
+    background: var(--color-paper);
+    border-top: 1px solid var(--border);
+  }
+  /* Como barra a todo el ancho necesita leerse como barra: con el ícono
+     solo contra el borde derecho y el resto vacío parecía un botón suelto.
+     En desktop sigue apareciendo sólo al abrir. */
+  .menu-toggle-label {
+    opacity: 1;
+  }
+  .menu-panel {
+    position: fixed;
+    inset: 0;
+    max-height: none;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem 1.25rem 6rem;
+    overflow-y: auto;
+    /* Que el scroll de la hoja no se encadene al de la página de atrás. */
+    overscroll-behavior: contain;
+    opacity: 1;
+    transform: translateY(100%);
+    transition: transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .menu-panel[data-open="true"] {
+    max-height: none;
+    padding: 2rem 1.25rem 6rem;
+    transform: translateY(0);
+  }
+  /* Objetivos de toque más grandes y valor legible en una hoja de pantalla
+     completa (venían dimensionados para un panel de 320px). */
+  .menu-panel-link {
+    padding: 1rem 0;
+  }
+  .menu-panel-value {
+    font-size: var(--text-base) !important;
+  }
+  /* La barra taparía el final de la página si nadie le reserva sitio. Lo
+     reserva Contact (la última sección) con su propio padding, y no el
+     shell: así el negro de la sección llega hasta la barra en vez de dejar
+     una franja clara huérfana entre las dos. */
+  #contact {
+    padding-bottom: 5.5rem;
+  }
+}
+@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+  .menu-panel {
+    transition: none;
+  }
+}
+
+/*
  * `max-w-6xl` (1152px) centrado sólo deja gutter libre a los costados en
  * pantallas MUY anchas (>1500px aprox) — en la mayoría de las laptops
  * (1024–1440px) el contenido real (`px-6 md:px-10`) empieza mucho antes de
@@ -685,19 +788,28 @@
    parent's 0.35 regardless. Siblings, not parent/child, so each opacity
    is independent. */
 .section-index-label-base {
-  opacity: 0.35;
+  opacity: 0.56;
 }
 .section-index-label-fill {
   position: absolute;
   inset: 0;
   opacity: 1;
   clip-path: inset(0 100% 0 0);
+  transition-property: clip-path;
+  transition-duration: 120ms;
+  transition-timing-function: linear;
+  will-change: clip-path;
 }
 .section-index-link[data-state="passed"] .section-index-label-fill {
   clip-path: inset(0 0 0 0);
 }
 .section-index-link[data-state="current"] .section-index-label-fill {
   clip-path: inset(0 calc(100% - var(--index-fill, 0%)) 0 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-index-label-fill {
+    transition: none;
+  }
 }
 
 /* Progress rail — starts exactly at the first label's top and ends
@@ -727,18 +839,9 @@
   height: 0%;
   background: var(--color-ink);
 }
-/* El switch Resumen/Técnico (`ReadingModeToggle.tsx`) — reglas más abajo,
-   después de `.content-mode-toggle`, para ganarle en orden de fuente al
-   `display` base de ese componente. */
-
 @media (max-width: 1023px) {
-  /* La sidebar de secciones era, en mobile, una barra inferior cuyo único
-     contenido visible era el toggle Resumen/Técnico (las etiquetas van
-     sr-only y no hay puntos). Movido el toggle a `ReadingModeToggle`, la
-     barra quedaría vacía — se oculta entera. La
-     navegación por secciones en mobile queda pendiente de diseño propio;
-     mientras tanto se recorre por encabezados (cada sección tiene su <h2>)
-     y por el menú. */
+  /* La navegación por secciones se oculta en mobile: se recorre por los
+     encabezados de cada sección y por el menú. */
   .section-index {
     display: none;
   }
@@ -760,12 +863,23 @@
   border-top-color: var(--color-accent-ink);
 }
 
-.stack-card {
-  border-top: 2px solid var(--color-accent-ink);
-  transition: opacity 0.2s ease;
+/* Regla horizontal sólo entre filas de la grilla de Stack — nunca en la
+   primera fila. El corte de fila cambia con el breakpoint (1/2/3
+   columnas), así que el umbral de :nth-child va con cada uno. */
+@media (max-width: 639.98px) {
+  .stack-card:not(:first-child) {
+    border-top: 1px solid var(--border);
+  }
 }
-.stack-card:hover {
-  opacity: 0.85;
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .stack-card:nth-child(n + 3) {
+    border-top: 1px solid var(--border);
+  }
+}
+@media (min-width: 1024px) {
+  .stack-card:nth-child(n + 4) {
+    border-top: 1px solid var(--border);
+  }
 }
 
 .cta-btn {
@@ -795,21 +909,37 @@
   background: var(--color-rail);
   --color-ink: var(--color-rail-ink);
   --color-ink-faded: var(--color-rail-ink-faded);
-  --color-accent-ink: var(--color-rail-ink);
+  --color-accent-ink: var(--color-accent-on-dark);
+  /* Tailwind's `text-accent` / `text-ink-soft` resolve these compatibility
+     aliases directly, so they must be inverted alongside the base tokens. */
+  --color-accent: var(--color-accent-ink);
+  --color-ink-soft: var(--color-rail-ink-faded);
   --border: var(--color-rail-border);
 }
 #contact .project-card {
   border-top-color: var(--color-rail-border);
 }
 #contact .project-card:hover {
-  border-top-color: var(--color-rail-ink);
+  border-top-color: var(--color-accent-ink);
+}
+/* La flecha sólo aparece en hover, pero ocupaba su alto siempre: en touch,
+   donde nunca se muestra, eran ~60px de hueco muerto bajo cada dato. */
+@media (hover: none) {
+  .contact-card__arrow {
+    display: none;
+  }
 }
 
 .section-label {
-  font-size: var(--text-xl);
+  /* Fluido, no fijo: los títulos que presenta SÍ lo son (`--text-title`
+     32→48, `--text-heading` 21→27), así que con un tamaño fijo de 20px el
+     rótulo terminaba pesando igual que su propio título en mobile — y
+     "Proyectos Seleccionados" partido en dos renglones. Arriba de ~1250px
+     resuelve en los mismos 20px de antes. */
+  font-size: clamp(0.8125rem, 1.6vw, 1.25rem);
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-accent-ink);
+  color: var(--color-ink-faded);
   /* Renglón único de versales: sin `line-height` propio hereda `normal`
      (~1.4) y mete medio-interlineado de aire fantasma arriba y abajo que se
      suma a cualquier `margin` — el espacio Córdoba→rol se veía el doble de
@@ -829,6 +959,13 @@
   padding: 0;
 }
 .stack-icon {
+  /* Explícito porque ahora es un `<span>` (ver StackIcons.tsx) anidado
+     dentro del `<li>` que es el hijo directo del flex container — antes
+     este mismo nombre de clase vivía en el `<li>` y heredaba el
+     blockificado que le daba `.stack-icons { display: flex }` gratis. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   width: 1.15rem;
   height: 1.15rem;
@@ -838,7 +975,7 @@
 }
 .stack-icon:hover,
 .stack-icon:focus-visible {
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
   outline: none;
 }
 .stack-icon svg {
@@ -846,6 +983,38 @@
   width: 100%;
   height: 100%;
   fill: currentColor;
+}
+.stack-icons--labeled {
+  display: grid;
+  gap: 0.75rem;
+}
+.stack-icons--labeled .stack-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: auto;
+  height: auto;
+  color: var(--color-ink);
+  cursor: default;
+}
+.stack-icons--labeled .stack-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  color: var(--color-ink-faded);
+}
+.stack-icons--labeled .stack-icon:hover,
+.stack-icons--labeled .stack-icon:focus-visible {
+  color: var(--color-accent-ink);
+}
+.stack-icons--labeled .stack-icon:hover svg,
+.stack-icons--labeled .stack-icon:focus-visible svg {
+  color: var(--color-accent-ink);
+}
+.stack-icon__label {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.2;
 }
 .stack-icon__tip {
   position: absolute;
@@ -925,17 +1094,54 @@
    `--color-paper` (near-white) per Leo's spec — the gray/black
    difference is carried entirely by the segment backgrounds, not by
    dimming inactive text like the index does. */
+/* Envoltorio SIN `overflow: hidden` (a diferencia de `.content-mode-toggle`,
+   que lo necesita para el fill deslizante) — es donde vive el tooltip que
+   explica el alcance del control, para que no quede recortado por ese
+   overflow. */
+.content-mode-toggle-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.content-mode-toggle__tip {
+  position: absolute;
+  right: calc(100% + 0.6rem);
+  top: 50%;
+  transform: translateY(-50%) translateX(0.15rem);
+  padding: 0.35rem 0.6rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+  white-space: nowrap;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease-out, transform 140ms ease-out;
+  z-index: 6;
+}
+.content-mode-toggle-wrap:hover .content-mode-toggle__tip,
+.content-mode-toggle-wrap:focus-within .content-mode-toggle__tip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .content-mode-toggle__tip {
+    transition: none;
+  }
+}
 .content-mode-toggle {
   position: relative;
   display: flex;
   overflow: hidden;
-  background: var(--color-stain);
+  background: color-mix(in srgb, var(--color-accent-ink) 78%, var(--color-paper));
 }
 .content-mode-toggle-fill {
   position: absolute;
   inset: 0;
   width: 50%;
-  background: var(--color-ink);
+  background: var(--color-accent-ink);
   transition: transform 0.3s ease;
   pointer-events: none;
 }
@@ -967,54 +1173,40 @@
   cursor: pointer;
 }
 .content-mode-toggle-option:focus-visible {
-  outline: 2px solid var(--color-ink);
-  outline-offset: -2px;
+  outline: 2px solid var(--color-paper);
+  outline-offset: -4px;
 }
 
-/*
- * `ReadingModeToggle.tsx` — el switch Resumen/Técnico. Ya no vive fijo en la
- * sidebar global: es un control único para las dos secciones cuyo contenido
- * cambia entre modos (Work y Sim Racing), fijo al viewport SÓLO mientras
- * alguna ocupa la banda central de la pantalla. `data-visible` lo maneja el
- * IntersectionObserver del componente; `inert` (también ahí) lo saca del tab
- * order mientras está oculto — la opacidad sola no alcanza. Se renderizan las
- * dos orientaciones y la CSS muestra la del breakpoint (`display`), así sólo
- * una está en el árbol de accesibilidad. Estas reglas van DESPUÉS de
- * `.content-mode-toggle` para ganarle en orden de fuente a su `display: flex`.
- */
-.reading-mode-toggle {
+/* El control acompaña a Work y Personal sin ocupar su encabezado: queda fijo
+   al borde derecho mientras se recorre la sección que modifica. */
+.section-mode-toggle {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 50%;
+  right: 1.25rem;
   z-index: 45;
-  display: flex;
-  justify-content: center;
-  padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
-  background: var(--color-canvas);
-  border-top: 1px solid var(--color-stain);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(100%);
+  transform: translate(1rem, -50%);
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
-.reading-mode-toggle[data-visible="true"] {
+.section-mode-toggle[data-visible="true"] {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
-}
-.reading-mode-toggle__rail {
-  display: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .reading-mode-toggle,
-  .reading-mode-toggle[data-visible="true"] {
-    transition: opacity 0.25s ease;
-    transform: none;
-  }
+  transform: translate(0, -50%);
 }
 
-/* Orientación vertical (columna del índice, desktop): el fill se desliza en Y. */
+/* El selector es deliberadamente flotante, pero el contenido reserva el
+   ancho exacto que ocupa cuando el viewport no deja un margen exterior. */
+.mode-section {
+  padding-left: 1.25rem;
+  padding-right: 3.25rem;
+}
+@media (min-width: 768px) {
+  .mode-section {
+    padding-left: 1.5rem;
+    padding-right: 5rem;
+  }
+}
 .content-mode-toggle--vertical {
   flex-direction: column;
 }
@@ -1025,66 +1217,42 @@
   width: 100%;
   height: 50%;
 }
-
-@media (min-width: 1024px) {
-  /* Desktop: en la MISMA columna que el índice de secciones (`--rail-width`),
-     anclado abajo — o sea debajo del índice, que se agrupa arriba de la
-     columna. Separado por espacio + un hairline para que se lea como otra
-     cosa: navegación arriba, preferencia de lectura abajo. */
-  .reading-mode-toggle {
-    left: 0;
-    right: auto;
-    width: var(--rail-width, 14rem);
-    bottom: 2rem;
-    display: block;
-    padding: 0 0 0 1.25rem; /* mismo inset izquierdo que `.section-index-row` */
-    background: none;
-    border-top: none;
-    transform: translateY(0.5rem);
+.content-mode-toggle--vertical .content-mode-toggle-option {
+  min-height: 5.5rem;
+  padding: 0.55rem;
+}
+.content-mode-toggle--vertical .content-mode-toggle-option > span {
+  display: block;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+@media (max-width: 639px) {
+  .section-mode-toggle {
+    right: 0.5rem;
   }
-  .reading-mode-toggle[data-visible="true"] {
-    transform: translateY(0);
+  /* Flotando sobre una columna de ~21rem, la pastilla de 11rem de alto se
+     comía media pantalla y se apoyaba encima de las capturas. Misma
+     mecánica, mitad de cuerpo. */
+  .section-mode-toggle .content-mode-toggle-option {
+    min-height: 3.25rem;
+    padding: 0.4rem 0.3rem;
   }
-  .reading-mode-toggle::before {
-    content: "";
-    display: block;
-    width: 2.5rem;
-    height: 1px;
-    margin-bottom: 0.9rem;
-    background: var(--color-rail-border);
+  .section-mode-toggle .content-mode-toggle-option > span {
+    font-size: var(--text-2xs);
   }
-  .reading-mode-toggle__rail {
-    display: flex;
-    width: 100%;
-    max-width: 8.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
   }
-  .reading-mode-toggle__bar {
-    display: none;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .reading-mode-toggle,
-    .reading-mode-toggle[data-visible="true"] {
-      transform: none;
-    }
+  .section-mode-toggle,
+  .section-mode-toggle[data-visible="true"] {
+    transition: none;
+    transform: translate(0, -50%);
   }
 }
 
-/*
- * Both variants render stacked in the same grid cell so the container's
- * height is always the taller of the two — toggling crossfades instead of
- * shifting layout.
- */
-.content-mode-text {
-  display: grid;
-}
-.content-mode-text > * {
-  grid-area: 1 / 1;
-  transition: opacity 0.2s ease;
-}
-.content-mode-text > [data-hidden="true"] {
-  opacity: 0;
-  pointer-events: none;
-}
 
 /*
  * R-A: un borde de 1px ya es la única señal de borde en todos lados (no
@@ -1099,9 +1267,16 @@
     border: 1px solid CanvasText;
   }
 
-  .editorial-rule,
   .cover-frame {
     border: 1px solid CanvasText;
+  }
+
+  .more-project-list > * + * {
+    border-top: 1px solid CanvasText;
+  }
+
+  .more-project-pair__item + .more-project-pair__item {
+    border-left-color: CanvasText;
   }
 }
 
@@ -1118,9 +1293,6 @@
  * ============================================================ */
 
 .work-section {
-  /* Sin fondo propio — va sobre `--color-canvas` como el resto del
-     contenido. La separación de "Selected work" / "Everything else" y de
-     cada fila la carga `.editorial-rule`, no el fondo de sección. */
   background: transparent;
 }
 
@@ -1130,17 +1302,18 @@
   font-family: var(--font-bricolage);
 }
 
-/* La única regla horizontal: separa "Selected work" de "Everything else",
-   y cada fila entre sí. Nada de caja por card (ver nota arriba). */
-.editorial-rule {
-  border-top: 1px solid var(--color-stain);
+/* Regla horizontal sólo entre filas de "Everything else" (fila normal o el
+   bloque emparejado sin capturas) — nunca antes de la primera ni después de
+   la última. Nada de caja por card (ver nota arriba). */
+.more-project-list > * + * {
+  border-top: 1px solid var(--border);
 }
 
 /* Acento vertical tipo pull-quote — medido en PDR (su cita destacada usa
    exactamente este recurso). Reservado para el featured principal, no para
    todas las cards: gastar la variación tipográfica en un solo lugar. */
 .editorial-lead-text {
-  border-left: 3px solid var(--color-accent-ink);
+  border-left: 3px solid var(--color-stain);
   padding-left: 1.5rem;
 }
 
@@ -1155,19 +1328,19 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-/* Sin color por estado (escala de grises): la diferencia la carga el peso,
-   no el matiz — live es el más marcado, archived el más apagado. El texto
-   real ("Live"/"Building"/"Archived") sigue siendo la fuente de verdad,
-   nunca sólo esto (R-A). */
+/* El texto sigue siendo la fuente de verdad; sólo "live" usa el acento, y
+   los demás estados se distinguen por su etiqueta y peso. */
 .status-label--live { color: var(--color-ink); font-weight: 700; }
 .status-label--building,
-.status-label--experimental { color: var(--color-ink); font-weight: 400; }
+.status-label--experimental { color: var(--color-ink); font-weight: 600; }
 .status-label--archived { color: var(--color-ink-faded); font-weight: 400; }
+/* Reutilizado en Notes/Log para distinguir nota corta de post largo. */
+.status-label--post { color: var(--color-ink); font-weight: 700; }
+.status-label--note { color: var(--color-ink-faded); font-weight: 400; }
 
-/* Covers: a color y nítidas, sin tratamiento — son la fuente de color del
-   sitio (lección medida de PDR: su color sale de las imágenes, no de una
-   marca). Cada una a su aspect ratio real (`coverAspect`, default 16:9),
-   nunca forzada a un molde parejo. */
+/* Covers: a color y nítidas, salvo las capturas internas que se muestran
+   deliberadamente difuminadas para preservar información sensible. Cada una
+   conserva su aspect ratio real (`coverAspect`, default 16:9). */
 .cover-frame {
   position: relative;
   overflow: hidden;
@@ -1178,6 +1351,127 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.cover-frame--blurred img {
+  filter: blur(8px);
+  transform: scale(1.025);
+}
+.more-project-list {
+  margin-top: 0.5rem;
+}
+.more-project-row {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.4rem 0;
+}
+.more-project-row__cover {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.more-project-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.more-project-row__meta,
+.more-project-row__title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+.more-project-row__meta {
+  flex-wrap: wrap;
+}
+.more-project-row__title h3 {
+  margin: 0;
+}
+.more-project-row__title-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  color: var(--color-accent-ink);
+  transition: opacity 0.2s ease;
+}
+.more-project-row__title-link:hover,
+.more-project-row__title-link:focus-visible {
+  opacity: 0.65;
+}
+.more-project-row__summary p {
+  margin: 0;
+}
+.more-project-row__stack .stack-icons {
+  gap: 0.55rem;
+}
+@media (min-width: 768px) {
+  .more-project-row {
+    grid-template-columns: minmax(8rem, 10rem) minmax(10rem, 0.75fr) minmax(14rem, 1.4fr) minmax(7rem, 0.55fr);
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.65rem 0;
+  }
+  .more-project-row__stack {
+    justify-self: end;
+    width: 100%;
+  }
+  .more-project-row__stack .stack-icons {
+    justify-content: flex-end;
+  }
+}
+
+/* Los dos proyectos de sim racing: sin capturas, así que en vez de dos
+   filas angostas y vacías se emparejan en un único bloque que ocupa el
+   ancho de la sección, cada uno en vertical (meta → título → resumen →
+   stack), como una mini-card sin caja. */
+.more-project-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+  padding: 2.5rem 0 1.4rem;
+}
+.more-project-pair__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.more-project-pair__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.more-project-pair__title {
+  margin: 0;
+}
+.more-project-pair__summary p {
+  margin: 0;
+}
+.more-project-pair__stack {
+  margin-top: 0.25rem;
+}
+/* Apilados en mobile, sin la línea vertical que los separa en desktop, los
+   dos se leían como un solo bloque largo. */
+@media (max-width: 767.98px) {
+  .more-project-pair__item + .more-project-pair__item {
+    border-top: 1px solid var(--border);
+    padding-top: 1.75rem;
+  }
+}
+@media (min-width: 768px) {
+  .more-project-pair {
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 3rem 0 1.65rem;
+  }
+  .more-project-pair__item {
+    padding-right: 1.75rem;
+  }
+  .more-project-pair__item + .more-project-pair__item {
+    border-left: 1px solid var(--border);
+    padding-left: 1.75rem;
+  }
 }
 
 /*
@@ -1197,7 +1491,7 @@
   display: flex;
   align-items: center;
   background: var(--color-paper);
-  border-left: 3px solid var(--color-accent-ink);
+  border-left: 3px solid var(--color-stain);
   padding: 1.5rem;
 }
 .cover-typographic__title {
@@ -1207,114 +1501,93 @@
   color: var(--color-ink);
 }
 
-/* Los cuatro principales: acordeón con la misma mecánica de despliegue que
-   "Acerca de mí" (`grid-template-rows: 0fr↔1fr` + inner con overflow:hidden).
-   Ver FeaturedAccordion en Work.tsx — el panel abierto sigue al scroll. */
-.work-accordion {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--border);
-}
-.work-accordion__item {
-  border-bottom: 1px solid var(--border);
-}
-.work-entry {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  width: 100%;
-  padding: 1.4rem 0.25rem 1.4rem 0;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-ink);
-  transition: padding-left 180ms ease-out;
-}
-.work-entry:hover,
-.work-entry[data-open="true"] {
-  padding-left: 0.6rem;
-}
-.work-entry:focus-visible {
-  outline: 2px solid var(--color-ink);
-  outline-offset: 3px;
-}
-.work-entry__meta {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: baseline;
-  gap: 0.35rem 0.9rem;
-}
-@media (min-width: 768px) {
-  .work-entry {
-    display: grid;
-    grid-template-columns: 9rem 1fr;
-    grid-template-areas:
-      "meta title"
-      "meta role";
-    column-gap: 1.5rem;
-    row-gap: 0.2rem;
-  }
-  .work-entry__meta {
-    grid-area: meta;
-    align-self: start;
-    padding-top: 0.35rem;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-}
-.work-entry__title {
-  grid-area: title;
-  font-size: var(--text-xl);
-  font-weight: 500;
-  line-height: 1.2;
-  transition: font-weight 120ms ease-out;
-}
-.work-entry[data-open="true"] .work-entry__title {
-  font-weight: 700;
-}
-.work-entry__role {
-  grid-area: role;
-  font-style: italic;
-  font-size: var(--text-sm);
-  color: var(--color-ink-faded);
-}
-
-.work-entry__panel {
+/* Capturas de prueba locales: conservan la geometría de una interfaz sin
+   simular un proyecto real ni repetir la captura existente. */
+.cover-preview {
+  position: relative;
   display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 300ms ease-out;
-}
-.work-entry__panel[data-open="true"] {
-  grid-template-rows: 1fr;
-}
-.work-entry__panel-inner {
+  align-content: end;
+  gap: 0.7rem;
   overflow: hidden;
-  min-height: 0;
+  padding: 1.25rem;
+  background: var(--color-paper-deep);
 }
-.work-entry__panel[data-open="true"] .work-entry__panel-inner {
-  padding-bottom: 1.9rem;
+.cover-preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-paper) 78%, transparent), transparent 58%);
 }
-.work-entry__body {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-  padding-left: 0.6rem;
-}
+.cover-preview__eyebrow, .cover-preview__line, .cover-preview__window { position: relative; display: block; }
+.cover-preview__eyebrow { color: var(--color-ink-faded); font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: 0.14em; text-transform: uppercase; }
+.cover-preview__window { min-height: 48%; border: 1px solid color-mix(in srgb, var(--color-ink) 17%, transparent); border-radius: 6px; background: color-mix(in srgb, var(--color-paper) 72%, transparent); }
+.cover-preview__line { width: 66%; height: 0.45rem; background: color-mix(in srgb, var(--color-ink) 22%, transparent); }
+.cover-preview__line--short { width: 38%; }
+
+/* Los cuatro principales. Ver FeaturedCards en Work.tsx. */
+.featured-deck { position: relative; }
+.featured-project { display: grid; gap: 1.75rem; padding: 2rem 0 3rem; border-top: 1px solid var(--border); }
+.featured-project:first-child { padding-top: 0; border-top: 0; }
+.featured-project__header { max-width: 38rem; }
+/* El padding de `.featured-card__details` existe para el mazo y el lightbox,
+   donde el texto va dentro de una caja. Acá el header NO es una caja: ese
+   padding sólo metía el título y el resumen 19px a la derecha del resto de
+   la columna (h2 de sección, filas, capturas). Estaba anulado únicamente en
+   ≥768px, así que la línea izquierda se rompía sólo en mobile. */
+.featured-project__header .featured-card__details { padding: 0; }
+/* Los valores base son los de mobile: ahí el aire lateral es ancho de
+   captura que se pierde (con 2rem por lado las cards quedaban en 172px,
+   ilegibles). Sin padding izquierdo, la primera captura arranca en la misma
+   línea que el texto. El breakpoint de 768px vuelve a abrirlo. */
+.screenshot-deck { display: flex; align-items: center; width: 100%; padding: 1rem 1rem 2rem 0; overflow-x: auto; overflow-y: hidden; cursor: grab; overscroll-behavior-x: contain; overscroll-behavior-y: auto; scrollbar-width: none; touch-action: pan-y; }
+.screenshot-deck::-webkit-scrollbar { display: none; }
+.screenshot-deck:active { cursor: grabbing; }
+.screenshot-deck__card { position: relative; z-index: var(--shot-layer); flex: 0 0 min(84%, 31rem); margin-left: -6%; overflow: hidden; padding: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--color-paper); cursor: zoom-in; transition: margin 240ms ease-out, transform 240ms ease-out; }
+.screenshot-deck__card:first-child { margin-left: 0; }
+.screenshot-deck__card:hover, .screenshot-deck__card:focus-visible { outline: 2px solid var(--color-accent-ink); outline-offset: 4px; }
 @media (min-width: 768px) {
-  .work-entry__body {
-    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
-    gap: 2.25rem;
-    align-items: center;
-  }
+  .featured-project { grid-template-columns: minmax(0, 1.2fr) minmax(17rem, 0.8fr); align-items: start; gap: 2rem; padding: 3rem 0 4.5rem; }
+  .featured-project__header { grid-column: 2; grid-row: 1; padding-top: 0.75rem; }
+  .featured-project--text-only { grid-template-columns: minmax(0, 38rem); }
+  .featured-project--text-only .featured-project__header { grid-column: 1; }
+  .screenshot-deck { grid-column: 1; grid-row: 1; padding: 1rem 1.5rem 3rem; }
+  /* Cinco vistas de prueba entran dentro de la columna: el mazo no termina
+     contra el borde del viewport de scroll, por lo que sus sombras y bordes
+     quedan completos. Con más capturas, la rueda/arrastre sigue recorriendo
+     el excedente horizontal. */
+  .screenshot-deck__card { flex-basis: min(78%, 24rem); margin-left: -10%; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .work-entry,
-  .work-entry__panel {
-    transition: none;
-  }
+.project-lightbox__active .cover-frame, .project-lightbox__active .cover-typographic, .project-lightbox__active .cover-preview { border-bottom: 1px solid var(--border); }
+.featured-card__caption { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 0.75rem; padding: 0.8rem 1rem 0.9rem; }
+.featured-card__caption .font-mono { color: var(--color-ink-faded); font-size: var(--text-2xs); letter-spacing: 0.1em; }
+.featured-card__caption h3 { margin: 0; color: var(--color-ink); font-size: var(--text-base); font-weight: 600; }
+.featured-card__caption > span:last-child { color: var(--color-ink); font-size: var(--text-lg); }
+.featured-card__details { display: flex; flex-direction: column; gap: 0.65rem; padding: 1.2rem; }
+.featured-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; }
+.featured-card__title { margin: 0; color: var(--color-ink); font-size: var(--text-subtitle); font-weight: 600; line-height: 1.05; }
+.featured-card__role { margin: -0.3rem 0 0; color: var(--color-ink-faded); font-size: var(--text-sm); font-style: italic; }
+.featured-card__summary { margin: 0.5rem 0 0; max-width: 62ch; color: var(--color-ink); font-size: var(--text-base); line-height: 1.65; }
+.featured-card__link { margin-top: 0.45rem; width: fit-content; color: var(--color-accent-ink); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase; }
+.project-lightbox { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; overflow: hidden; padding: 1rem; background: color-mix(in srgb, var(--color-rail) 92%, transparent); backdrop-filter: blur(12px); }
+.project-lightbox__dialog { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); width: min(56rem, 100%); max-height: calc(100dvh - 2rem); }
+.project-lightbox__active { position: relative; z-index: 2; overflow: auto; border: 1px solid color-mix(in srgb, var(--color-rail-ink) 22%, transparent); border-radius: 12px; background: var(--color-paper); box-shadow: 0 24px 90px rgba(0, 0, 0, 0.42); }
+.project-lightbox__active { animation: project-lightbox-swap 320ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes project-lightbox-swap { from { opacity: 0; transform: translateX(1.5rem) scale(0.985); } to { opacity: 1; transform: translateX(0) scale(1); } }
+.project-lightbox__side { display: none; }
+.project-lightbox__close, .project-lightbox__controls button { border: 1px solid color-mix(in srgb, var(--color-rail-ink) 30%, transparent); background: color-mix(in srgb, var(--color-rail) 88%, transparent); color: var(--color-rail-ink); cursor: pointer; }
+.project-lightbox__close { position: absolute; top: -0.35rem; right: -0.35rem; z-index: 5; width: 2.5rem; height: 2.5rem; border-radius: 50%; font-size: 1.7rem; line-height: 1; }
+.project-lightbox__controls { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.9rem; color: var(--color-rail-ink); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; }
+.project-lightbox__controls button { width: 2.4rem; height: 2.4rem; border-radius: 50%; font-size: 1.1rem; }
+.project-lightbox__close:hover, .project-lightbox__controls button:hover, .project-lightbox__close:focus-visible, .project-lightbox__controls button:focus-visible { border-color: var(--color-accent-ink); outline: 2px solid var(--color-accent-ink); outline-offset: 2px; }
+@media (min-width: 1000px) {
+  .project-lightbox__dialog { grid-template-columns: minmax(11rem, 15rem) minmax(32rem, 52rem) minmax(11rem, 15rem); align-items: center; width: min(86rem, 100%); }
+  .project-lightbox__side { display: block; overflow: hidden; padding: 0; border: 0; background: none; cursor: pointer; filter: blur(1.5px) saturate(0.78); opacity: 0.68; transform: scale(0.9); transition: filter 260ms ease, opacity 260ms ease, transform 260ms ease; }
+  .project-lightbox__side:hover, .project-lightbox__side:focus-visible { filter: blur(0) saturate(0.94); opacity: 0.92; outline: 2px solid var(--color-accent-ink); outline-offset: 4px; transform: scale(0.96); }
+  .project-lightbox__side--previous { transform-origin: right center; }
+  .project-lightbox__side--next { transform-origin: left center; }
+  .project-lightbox__controls { grid-column: 2; }
 }
+@media (prefers-reduced-motion: reduce) { .project-lightbox__side { transition: none; } .project-lightbox__active { animation: none; } }
 
 /* Retrato del hero. Ver HeroPortrait.tsx para el porqué (única superficie
    con 3D real del sitio, excepción deliberada a v3, sobre la referencia
@@ -1442,6 +1715,19 @@
   outline: 2px solid var(--color-ink);
   outline-offset: 3px;
 }
+/* En mobile la columna del período se comía 8.5rem de los ~21rem de ancho
+   útil y partía los nombres largos en tres renglones. Ahí el año pasa
+   arriba, en su propia línea, y la organización se queda con todo el ancho. */
+@media (max-width: 639.98px) {
+  .about-entry {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "period"
+      "org"
+      "role";
+    row-gap: 0.3rem;
+  }
+}
 .about-entry__period {
   grid-area: period;
   align-self: start;
@@ -1500,4 +1786,108 @@
     transition: none;
   }
 }
+/* Shared editorial rhythm: enough separation without an extra screen of whitespace. */
+.site-section { padding-block: clamp(3.5rem, 6vw, 5.5rem); }
+.featured-project, .featured-project__header, .more-project-row > *, .more-project-pair__item { min-width: 0; }
+.featured-card__title { line-height: 1.12; text-wrap: balance; }
+.featured-card__summary { text-wrap: pretty; }
+.featured-card__link { display: inline-flex; align-items: center; min-height: 2.75rem; text-underline-offset: 0.25em; }
+.featured-card__link:hover, .featured-card__link:focus-visible { text-decoration: underline; }
+.screenshot-deck { touch-action: pan-x pan-y; }
+.screenshot-deck__card:only-child { flex-basis: 100%; }
+.section-index-link:focus-visible { outline: 2px solid var(--color-rail-ink); outline-offset: 5px; }
+.about-entry__org::after { content: "+"; float: right; margin-left: 0.75rem; color: var(--color-accent-ink); }
+.about-entry[data-open="true"] .about-entry__org::after { content: "−"; }
+.project-lightbox__dialog { grid-template-rows: minmax(0, 1fr) auto; }
+.project-lightbox__active { min-height: 0; max-height: calc(100dvh - 7rem); overscroll-behavior: contain; }
+.project-lightbox__close, .project-lightbox__controls button { min-width: 2.75rem; min-height: 2.75rem; }
+.project-lightbox__dialog[data-multiple="false"] { grid-template-columns: minmax(0, 1fr); width: min(56rem, 100%); }
+.project-lightbox__dialog[data-multiple="false"] .project-lightbox__active { grid-column: 1; }
+@media (min-width: 768px) {
+  .featured-project { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
+  .screenshot-deck { padding: 0.75rem 0.5rem 1.5rem 0; position: sticky; top: 5rem; }
+  .screenshot-deck__card { flex-basis: 88%; }
+  .more-project-row { grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); align-items: start; }
+  .more-project-row__summary { grid-column: 2; }
+  .more-project-row__stack { grid-column: 2; justify-self: start; }
+  .more-project-row__stack .stack-icons { justify-content: flex-start; }
+}
+@media (min-width: 1440px) {
+  .more-project-row { grid-template-columns: minmax(0, 9rem) minmax(0, 0.85fr) minmax(0, 1.4fr); align-items: start; }
+  .more-project-row__summary { grid-column: 3; grid-row: 1 / span 2; }
+  .more-project-row__stack { grid-column: 2; }
+}
+@media (max-width: 767.98px) {
+  .screenshot-deck { padding-right: 0; }
+  .more-project-row__summary p, .more-project-pair__summary p { font-size: 0.9375rem; line-height: 1.65; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .screenshot-deck__card { transition: none; }
+}
+
+/* Notes/Log — listado cronológico simple, mismo lenguaje que
+   `.more-project-list` (hairline entre filas, nada de caja por fila). */
+.notes-list { border-top: 1px solid var(--border); }
+.notes-list > * + * { border-top: 1px solid var(--border); }
+.notes-row { display: flex; flex-direction: column; gap: 0.35rem; padding-block: 1.15rem; }
+.notes-row__meta { display: flex; align-items: center; gap: 0.6rem; }
+.notes-row__title-link { text-decoration: none; }
+.notes-row__title-link:hover, .notes-row__title-link:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
+.notes-row__tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* Cuerpo de una nota/post MDX: ritmo vertical entre bloques (la tipografía
+   de cada elemento vive en `mdx-components.tsx`, no acá). */
+.note-body > * + * { margin-top: 1.25em; }
+.note-body > ul > li + li, .note-body > ol > li + li { margin-top: 0.4em; }
 } /* @layer components */
+
+/* Comparador temporal de paletas: fuera de las capas de Tailwind para que la
+   herramienta de desarrollo no participe de la cascada del sitio. */
+.accent-lab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 120;
+  width: min(22rem, calc(100vw - 2rem));
+  padding: 0.85rem;
+  border: 1px solid var(--color-stain);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-paper) 94%, transparent);
+  color: var(--color-ink);
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--color-ink) 18%, transparent);
+  backdrop-filter: blur(12px);
+  font-family: var(--font-bricolage);
+}
+.accent-lab__heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.65rem;
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.accent-lab__heading span:last-child { color: var(--color-ink-faded); font-weight: 500; }
+.accent-lab__options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.35rem; }
+.accent-lab__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  text-align: left;
+}
+.accent-lab__option:hover,
+.accent-lab__option:focus-visible,
+.accent-lab__option[data-active="true"] { border-color: var(--color-accent-ink); }
+.accent-lab__option:focus-visible { outline: 2px solid var(--color-accent-ink); outline-offset: 2px; }
+.accent-lab__option[data-active="true"] { font-weight: 700; }
+.accent-lab__swatch { width: 0.75rem; height: 0.75rem; flex: 0 0 auto; border: 1px solid color-mix(in srgb, var(--color-ink) 20%, transparent); border-radius: 50%; }
+.accent-lab > p { margin: 0.65rem 0 0; color: var(--color-ink-faded); font-size: var(--text-xs); line-height: 1.35; }

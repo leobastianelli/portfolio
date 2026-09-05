@@ -4,6 +4,7 @@
     "description": "Desarrollador full-stack. Tiendas online, sistemas a medida y automatización para negocios que quieren crecer con la misma tecnología que usan las empresas grandes."
   },
   "nav": {
+    "skipToContent": "Saltar al contenido",
     "home": "Inicio",
     "work": "Trabajo",
     "stack": "Stack",
@@ -56,7 +57,7 @@
       "Me interesa construir productos que resuelvan algo. Trabajo cerca de los equipos porque conocer cómo funcionan por dentro es lo que me permite proponer ideas propias, y no solo ejecutar las que ya venían decididas — muchas veces lo que falta es alguien que sepa qué se puede hacer técnicamente."
     ],
     "introBandPre": "Fuera del trabajo con clientes toco la guitarra en ",
-    "introBandPost": ". También corro en simulador, y de ahí salieron un par de herramientas que construí para mí: quería ver hasta dónde se podía llegar.",
+    "introBandPost": ". También corro en simulador, y de ahí salieron un par de herramientas que construí para mí.",
     "timeline": [
       {
         "id": "onefam",
@@ -64,6 +65,10 @@
         "role": "Desarrollador full-stack",
         "org": "Onefam Hostels",
         "detail": "Responsable técnico de la presencia digital de una cadena europea de hostels: mantenimiento y desarrollo de sus tres sitios en WordPress, gestión de dominios e infraestructura, y desarrollo de sus dos productos nuevos — el portal de membresía y la plataforma interna de gestión.",
+        "projectLinks": [
+          { "label": "portal de membresía", "href": "#project-onefam-community-portal" },
+          { "label": "plataforma interna de gestión", "href": "#project-onefam-platform" }
+        ],
         "links": [
           { "label": "Onefam Hostels", "href": "https://onefamhostels.com" },
           { "label": "Topdown Apartments", "href": "https://topdownapartments.com" },
@@ -76,7 +81,10 @@
         "role": "Desarrollador (ad honorem)",
         "org": "Secretaría de Asuntos Estudiantiles, FCS – UNC",
         "shortOrg": "SAE (FCS-UNC)",
-        "detail": "Desarrollador ad honorem para la Secretaría de Asuntos Estudiantiles de la FCS – UNC: desarrollo de la plataforma de inscripción online al Régimen de Estudiante Trabajador de la facultad."
+        "detail": "Desarrollador ad honorem para la Secretaría de Asuntos Estudiantiles de la FCS – UNC: desarrollo de la plataforma de inscripción online al Régimen de Estudiante Trabajador de la facultad.",
+        "projectLinks": [
+          { "label": "plataforma de inscripción online", "href": "#project-ret-enrollment-system" }
+        ]
       },
       {
         "id": "mully",
@@ -84,6 +92,10 @@
         "role": "Desarrollador",
         "org": "Mully Group",
         "detail": "Desarrollador en Mully Group, con foco en la tienda Shopify de la empresa y sus dos productos de golf en Estados Unidos, Greens Club y la plataforma de membresías.",
+        "projectLinks": [
+          { "label": "Greens Club", "href": "#project-greens-club" },
+          { "label": "plataforma de membresías", "href": "#project-golf-membership-platform" }
+        ],
         "links": [
           { "label": "mymully.com", "href": "https://mymully.com" }
         ]
@@ -143,6 +155,19 @@
       { "category": "Infraestructura", "items": ["Vercel", "Git / GitHub", "Google Cloud Run", "Linux / SSH"] },
       { "category": "IA & Herramientas", "items": ["Claude API", "Google Places API", "SerpAPI", "Gemini AI"] }
     ]
+  },
+  "notFound": {
+    "title": "404",
+    "message": "No encontramos esta página.",
+    "backHome": "← Volver al inicio"
+  },
+  "notes": {
+    "sectionLabel": "Log",
+    "sectionTitle": "Notas",
+    "backHome": "← Inicio",
+    "backToNotes": "← Notas",
+    "empty": "Todavía no hay nada acá.",
+    "kind": { "note": "Nota", "post": "Post" }
   },
   "contact": {
     "sectionLabel": "Hablemos",

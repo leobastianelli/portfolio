@@ -11,6 +11,13 @@ export interface ProjectLink {
   url: string;
 }
 
+export interface ProjectScreenshot {
+  title: string;
+  cover: string;
+  coverAspect?: number;
+  blurred?: boolean;
+}
+
 export interface ProjectMeta {
   slug: string;
   org?: string;
@@ -21,6 +28,11 @@ export interface ProjectMeta {
   links: ProjectLink[];
   featured: boolean;
   cover?: string;
+  /** Applies a visual blur without altering the original source asset. */
+  coverBlurred?: boolean;
+  /** Optional focal point for screenshots whose useful information is off-center. */
+  coverPosition?: string;
+  screenshots?: ProjectScreenshot[];
   /**
    * width/height of `cover`, e.g. `586 / 675` for a mobile-app screenshot.
    * Defaults to 16/9 (a desktop screenshot's real shape) when omitted —
@@ -41,3 +53,27 @@ export interface ProjectLocaleContent {
 }
 
 export interface Project extends ProjectMeta, ProjectLocaleContent {}
+
+/**
+ * Shared shapes for `content/notes/*`. Same split as projects: `NoteMeta` is
+ * locale-agnostic (a date or a tag list doesn't get translated), the title
+ * lives in each locale's `.mdx` (`export const metadata = { title }`) since
+ * that's what actually changes per language.
+ */
+export type NoteKind = "note" | "post";
+
+export interface NoteMeta {
+  slug: string;
+  /** ISO "YYYY-MM-DD" — sorts the chronological listing. */
+  date: string;
+  /** Short note vs. long post — drives the listing's visual treatment. */
+  kind: NoteKind;
+  /** Not used to filter yet, just displayed. */
+  tags?: string[];
+}
+
+export interface NoteLocaleContent {
+  title: string;
+}
+
+export interface Note extends NoteMeta, NoteLocaleContent {}

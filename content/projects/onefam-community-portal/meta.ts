@@ -8,6 +8,9 @@ const meta: ProjectMeta = {
   stack: ["Next.js", "Supabase", "Stripe", "Cloudbeds API", "Vercel"],
   links: [],
   featured: true,
+  cover: "/covers/onefam-community-portal.png",
+  coverAspect: 16 / 10,
+  coverBlurred: true,
 };
 
 export default meta;

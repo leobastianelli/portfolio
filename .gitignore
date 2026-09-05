@@ -49,3 +49,6 @@ next-env.d.ts
 dev-run.log
 dev-stdout.log
 dev-stderr.log
+# High-resolution source captures are local working files. Only optimized
+# portfolio assets belong in public/covers.
+/captures/

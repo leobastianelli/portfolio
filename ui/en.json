@@ -4,6 +4,7 @@
     "description": "Full-stack developer. Online stores, custom systems and automation for businesses that want to grow with the same technology large companies use."
   },
   "nav": {
+    "skipToContent": "Skip to content",
     "home": "Home",
     "work": "Work",
     "stack": "Stack",
@@ -64,6 +65,10 @@
         "role": "Full-stack developer",
         "org": "Onefam Hostels",
         "detail": "Technical lead for the digital presence of a European hostel chain: maintaining and developing their three WordPress sites, managing domains and infrastructure, and building their two new products — the membership portal and the internal management platform.",
+        "projectLinks": [
+          { "label": "membership portal", "href": "#project-onefam-community-portal" },
+          { "label": "internal management platform", "href": "#project-onefam-platform" }
+        ],
         "links": [
           { "label": "Onefam Hostels", "href": "https://onefamhostels.com" },
           { "label": "Topdown Apartments", "href": "https://topdownapartments.com" },
@@ -76,7 +81,10 @@
         "role": "Developer (pro bono)",
         "org": "Student Affairs Office, FCS – UNC",
         "shortOrg": "SAE (FCS-UNC)",
-        "detail": "Developer, free of charge, for the Student Affairs Office at FCS – UNC, building the online enrollment platform for the faculty's Working Student regime."
+        "detail": "Developer, free of charge, for the Student Affairs Office at FCS – UNC, building the online enrollment platform for the faculty's Working Student regime.",
+        "projectLinks": [
+          { "label": "online enrollment platform", "href": "#project-ret-enrollment-system" }
+        ]
       },
       {
         "id": "mully",
@@ -84,6 +92,10 @@
         "role": "Developer",
         "org": "Mully Group",
         "detail": "Developer at Mully Group, focused on the company's Shopify store and its two US golf products, Greens Club and the membership platform.",
+        "projectLinks": [
+          { "label": "Greens Club", "href": "#project-greens-club" },
+          { "label": "membership platform", "href": "#project-golf-membership-platform" }
+        ],
         "links": [
           { "label": "mymully.com", "href": "https://mymully.com" }
         ]
@@ -143,6 +155,19 @@
       { "category": "Infrastructure", "items": ["Vercel", "Git / GitHub", "Google Cloud Run", "Linux / SSH"] },
       { "category": "AI & Tooling", "items": ["Claude API", "Google Places API", "SerpAPI", "Gemini AI"] }
     ]
+  },
+  "notFound": {
+    "title": "404",
+    "message": "This page could not be found.",
+    "backHome": "← Back to home"
+  },
+  "notes": {
+    "sectionLabel": "Log",
+    "sectionTitle": "Notes",
+    "backHome": "← Home",
+    "backToNotes": "← Notes",
+    "empty": "Nothing here yet.",
+    "kind": { "note": "Note", "post": "Post" }
   },
   "contact": {
     "sectionLabel": "Get in touch",

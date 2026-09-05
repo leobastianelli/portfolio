@@ -2,8 +2,10 @@
 
 import { useLang } from "@/context/LanguageContext";
 import { useContentMode } from "@/context/ContentModeContext";
+import ContentModeText from "@/components/ContentModeText";
 import { ProjectCover, StatusLabel } from "@/components/Work";
 import { StackIcons } from "@/components/StackIcons";
+import SectionContentModeToggle from "@/components/SectionContentModeToggle";
 import type { Project } from "@/lib/content/types";
 
 export default function Personal({ projects }: { projects: Project[] }) {
@@ -17,10 +19,11 @@ export default function Personal({ projects }: { projects: Project[] }) {
   return (
     <section
       id="personal"
-      className="py-9 md:py-10 px-5 md:px-6"
+      className="mode-section site-section"
       style={{ borderTop: "1px solid var(--border)", marginTop: "var(--spacing-6)" }}
     >
       <div className="max-w-6xl mx-auto">
+        <SectionContentModeToggle sectionId="personal" />
         <div className="reveal mb-7">
           <p className="section-label font-mono mb-3">{t.personal.sectionLabel}</p>
           <h2 className="editorial-type" style={{ fontSize: "var(--text-title)", fontWeight: 500, lineHeight: 1.15, color: "var(--color-ink)" }}>
@@ -50,14 +53,13 @@ export default function Personal({ projects }: { projects: Project[] }) {
                 {project.role}
               </p>
 
-              <div className="content-mode-text mb-5">
-                <p data-hidden={mode !== "overview"} className="editorial-type" style={{ fontSize: "var(--text-base)", lineHeight: 1.7, color: "var(--color-ink)" }}>
-                  {project.summary}
-                </p>
-                <p data-hidden={mode !== "technical"} className="editorial-type" style={{ fontSize: "var(--text-base)", lineHeight: 1.7, color: "var(--color-ink)" }}>
-                  {project.technical}
-                </p>
-              </div>
+              <ContentModeText
+                overview={project.summary}
+                technical={project.technical}
+                mode={mode}
+                className="editorial-type mb-5"
+                style={{ fontSize: "var(--text-base)", lineHeight: 1.7, color: "var(--color-ink)" }}
+              />
 
               <StackIcons stack={project.stack} />
             </div>

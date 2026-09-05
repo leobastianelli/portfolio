@@ -70,22 +70,32 @@ export default function ContentModeToggle({
   }, [t]);
 
   return (
-    <div
-      className={`content-mode-toggle content-mode-toggle--${orientation}${className ? ` ${className}` : ""}`}
-      role="group"
-      aria-label={t.nav.contentMode.label}
-    >
-      <span
-        className="content-mode-toggle-fill"
-        aria-hidden="true"
-        style={{ transform: isTechnical ? `${axis}(0%)` : `${axis}(100%)` }}
-      />
-      <button type="button" aria-pressed={isTechnical} className="content-mode-toggle-option" onClick={flip}>
-        <span ref={technicalRef}>{t.nav.contentMode.technical}</span>
-      </button>
-      <button type="button" aria-pressed={!isTechnical} className="content-mode-toggle-option" onClick={flip}>
-        <span ref={overviewRef}>{t.nav.contentMode.overview}</span>
-      </button>
+    // `.content-mode-toggle-wrap` (not `.content-mode-toggle` itself, which
+    // has `overflow: hidden` for the sliding fill) hosts the tooltip that
+    // explains the control's scope — R-B (ux-heuristics-review, etapa 8)
+    // flagged that the floating pill has no label saying it re-styles the
+    // WHOLE section, not just the card under the cursor.
+    <div className="content-mode-toggle-wrap">
+      <span className="content-mode-toggle__tip" aria-hidden="true">
+        {t.nav.contentMode.label}
+      </span>
+      <div
+        className={`content-mode-toggle content-mode-toggle--${orientation}${className ? ` ${className}` : ""}`}
+        role="group"
+        aria-label={t.nav.contentMode.label}
+      >
+        <span
+          className="content-mode-toggle-fill"
+          aria-hidden="true"
+          style={{ transform: isTechnical ? `${axis}(0%)` : `${axis}(100%)` }}
+        />
+        <button type="button" aria-pressed={isTechnical} className="content-mode-toggle-option" onClick={flip}>
+          <span ref={technicalRef}>{t.nav.contentMode.technical}</span>
+        </button>
+        <button type="button" aria-pressed={!isTechnical} className="content-mode-toggle-option" onClick={flip}>
+          <span ref={overviewRef}>{t.nav.contentMode.overview}</span>
+        </button>
+      </div>
     </div>
   );
 }

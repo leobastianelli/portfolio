@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { SITE } from "@/lib/site";
 
 /*
@@ -67,22 +68,14 @@ export default function HeroPortrait() {
       onPointerLeave={handleLeave}
     >
       <div ref={cardRef} className="portrait-tilt__card">
-        {/* Placeholder provisorio — la foto definitiva de Leo va acá.
-            Silueta genérica hombros-para-arriba para no condicionar el
-            encuadre ni el tono de la foto real. */}
-        <svg
-          className="portrait-tilt__placeholder"
-          viewBox="0 0 300 400"
-          role="img"
-          aria-label={`Retrato de ${SITE.author} (placeholder)`}
-          preserveAspectRatio="xMidYMid slice"
-        >
-          <rect width="300" height="400" fill="var(--surface, #ececec)" />
-          <g fill="var(--border, #c4c4c4)">
-            <circle cx="150" cy="150" r="66" />
-            <path d="M150 232c-62 0-112 44-112 98v70h224v-70c0-54-50-98-112-98z" />
-          </g>
-        </svg>
+        <Image
+          src="/leo-portrait.png"
+          alt={`Retrato de ${SITE.author}`}
+          fill
+          preload
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 38vw, 70vw"
+          className="portrait-tilt__img"
+        />
         <div ref={glowRef} className="portrait-tilt__glow" aria-hidden="true" />
       </div>
     </div>

@@ -51,6 +51,13 @@ export default function Nav() {
 
   const round = (n: number) => Math.round(n * 100) / 100;
 
+  // En mobile el menú es una barra fija abajo y el panel una hoja a pantalla
+  // completa POR ENCIMA de ella (ver globals.css). Ahí el subrayado no puede
+  // seguir a los links: quedan fuera de la caja del ícono y la línea saldría
+  // volando con un `top` negativo. Se queda bajo el label y listo.
+  const isBottomBar = () =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 767.98px)").matches;
+
   // Move the bar to whatever `activeTargetRef` points at, positioning it
   // with `top`/`left` relative to its containing block — the hamburger
   // icon box, which has no transform and no transition, so its rect is
@@ -65,7 +72,7 @@ export default function Nav() {
     const icon = bar?.parentElement;
     if (!bar || !icon || !pinnedRef.current) return;
 
-    const el = activeTargetRef.current;
+    const el = isBottomBar() ? null : activeTargetRef.current;
     // The value span (`.menu-panel-value`) and the toggle label both
     // shrink-wrap their text (never stretch), so their border box IS the
     // text box.
@@ -341,6 +348,7 @@ export default function Nav() {
           aria-label={t.nav.menu.title}
           className="menu-panel"
           data-open={open}
+          aria-hidden={!open}
           inert={!open || undefined}
         >
           <ul className="menu-panel-links">

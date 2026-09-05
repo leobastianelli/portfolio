@@ -9,13 +9,13 @@ export default function Contact() {
   const contactLinks = getContactLinks(t);
 
   return (
-    <section id="contact" className="py-9 md:py-10 px-5 md:px-6" style={{ borderTop: "1px solid var(--border)" }}>
+    <section id="contact" className="site-section px-5 md:px-6" style={{ borderTop: "1px solid var(--border)" }}>
       <div className="max-w-6xl mx-auto">
         {/* Headline */}
         <div className="reveal mb-6 text-center">
           <p className="section-label font-mono mb-3">{c.sectionLabel}</p>
           <h2 className="editorial-type" style={{ fontSize: "var(--text-display)", fontWeight: 500, lineHeight: 1.1, letterSpacing: "-0.01em", color: "var(--color-ink)" }}>
-            {c.headlineMain} <span className="italic" style={{ color: "var(--color-accent-ink)" }}>{c.headlineItalic}</span>
+            {c.headlineMain} <span className="italic">{c.headlineItalic}</span>
           </h2>
         </div>
 
@@ -46,7 +46,7 @@ export default function Contact() {
               >
                 {link.value}
               </span>
-              <span className="mt-auto pt-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-70 group-hover:translate-x-0 transition-all" style={{ fontSize: "var(--text-lg)" }}>
+              <span className="contact-card__arrow mt-auto pt-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-70 group-hover:translate-x-0 transition-all" style={{ fontSize: "var(--text-lg)" }} aria-hidden="true">
                 ↗
               </span>
             </a>

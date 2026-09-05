@@ -3,7 +3,6 @@ import greensClub from "./greens-club/meta";
 import onefamCommunityPortal from "./onefam-community-portal/meta";
 import golfMembershipPlatform from "./golf-membership-platform/meta";
 import retEnrollmentSystem from "./ret-enrollment-system/meta";
-import scout from "./scout/meta";
 import purpuraCeniza from "./purpura-ceniza/meta";
 import victoriapp from "./victoriapp/meta";
 import onefamPlatform from "./onefam-platform/meta";
@@ -21,7 +20,6 @@ export const projectMetas: ProjectMeta[] = [
   golfMembershipPlatform,
   retEnrollmentSystem,
   onefamPlatform,
-  scout,
   purpuraCeniza,
   victoriapp,
   pitEngineer,

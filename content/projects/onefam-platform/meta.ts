@@ -10,6 +10,10 @@ const meta: ProjectMeta = {
   stack: ["Next.js", "Supabase", "Vercel"],
   links: [],
   featured: false,
+  cover: "/covers/onefam-platform.png",
+  coverAspect: 16 / 10,
+  coverBlurred: true,
+  coverPosition: "left center",
 };
 
 export default meta;

@@ -11,10 +11,25 @@ const meta: ProjectMeta = {
     { label: "app.greensclub.ai", url: "https://app.greensclub.ai" },
   ],
   featured: true,
-  cover: "/covers/greens-club.webp",
-  // Mobile-app screenshot, cropped to its real content (586×675) — see the
-  // `coverAspect` doc comment on ProjectMeta.
-  coverAspect: 586 / 675,
+  cover: "/covers/greens-club-home-startup.webp",
+  coverAspect: 16 / 10,
+  screenshots: [
+    {
+      title: "Product onboarding",
+      cover: "/covers/greens-club-onboarding-01-startup.webp",
+      coverAspect: 16 / 10,
+    },
+    {
+      title: "Tempo AI caddie",
+      cover: "/covers/greens-club-onboarding-02-startup.webp",
+      coverAspect: 16 / 10,
+    },
+    {
+      title: "Course GPS",
+      cover: "/covers/greens-club-onboarding-03-startup.webp",
+      coverAspect: 16 / 10,
+    },
+  ],
 };
 
 export default meta;

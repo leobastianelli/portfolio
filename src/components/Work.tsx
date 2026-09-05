@@ -1,19 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { useLang } from "@/context/LanguageContext";
-import { useContentMode } from "@/context/ContentModeContext";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
+import ContentModeText from "@/components/ContentModeText";
+import SectionContentModeToggle from "@/components/SectionContentModeToggle";
 import { StackIcons } from "@/components/StackIcons";
-import ReadingModeToggle from "@/components/ReadingModeToggle";
 import type { ContentMode } from "@/context/ContentModeContext";
+import { useContentMode } from "@/context/ContentModeContext";
+import { useLang } from "@/context/LanguageContext";
 import type { Project, ProjectStatus } from "@/lib/content/types";
 
-/*
- * direccion-visual-v3.md: status reads as a colored category label (PDR's
- * "Art & Illustration" pattern), not a panel LED. The real text label is
- * still what carries the status — color alone is never the only cue.
- */
 export function StatusLabel({ status, label }: { status: ProjectStatus; label: string }) {
   return <span className={`status-label status-label--${status}`}>{label}</span>;
 }
@@ -22,150 +19,309 @@ export function ProjectCover({
   title,
   cover,
   coverAspect = 16 / 9,
+  blurred = false,
+  coverPosition = "center",
 }: {
   title: string;
   cover?: string;
   coverAspect?: number;
+  blurred?: boolean;
+  coverPosition?: string;
 }) {
   if (cover) {
     return (
-      <div className="cover-frame" style={{ aspectRatio: coverAspect }}>
-        <Image src={cover} alt={title} fill sizes="(min-width: 768px) 50vw, 100vw" style={{ objectFit: "cover" }} />
+      <div className={`cover-frame${blurred ? " cover-frame--blurred" : ""}`} style={{ aspectRatio: coverAspect }}>
+        <Image
+          src={cover}
+          alt={title}
+          fill
+          draggable={false}
+          sizes="(min-width: 768px) 50vw, 100vw"
+          style={{ objectFit: "cover", objectPosition: coverPosition, pointerEvents: "none", userSelect: "none" }}
+        />
       </div>
     );
   }
 
   return (
     <div className="cover-typographic" style={{ aspectRatio: coverAspect }}>
-      <span className="editorial-type cover-typographic__title" style={{ fontSize: "var(--text-heading)" }}>
+      <span
+        className="editorial-type cover-typographic__title"
+        style={{ fontSize: "var(--text-heading)" }}
+      >
         {title}
       </span>
     </div>
   );
 }
 
-/*
- * Los cuatro principales van en un acordeón con la MISMA mecánica que la
- * columna derecha de "Acerca de mí" (`grid-template-rows: 0fr↔1fr`), con dos
- * diferencias: el primero arranca abierto, y el panel abierto sigue al scroll
- * — el que queda más cerca de la línea de anclaje (~30% del viewport) se abre
- * y el anterior se cierra. Un click fija esa entrada; el siguiente scroll
- * vuelve a mandar. Siempre hay exactamente una abierta.
- */
-function FeaturedAccordion({
-  projects,
+function ProjectCardDetails({
+  project,
   statusLabels,
   mode,
 }: {
-  projects: Project[];
+  project: Project;
   statusLabels: Record<ProjectStatus, string>;
   mode: ContentMode;
 }) {
-  const [activeSlug, setActiveSlug] = useState<string | null>(projects[0]?.slug ?? null);
-  const headers = useRef<Map<string, HTMLButtonElement>>(new Map());
-  const clickedAt = useRef(0);
-
-  const slugs = projects.map((p) => p.slug);
-
-  useEffect(() => {
-    let raf = 0;
-    const sync = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        if (Date.now() - clickedAt.current < 700) return;
-        /* La activa es la ÚLTIMA entrada cuyo header cruzó la línea de
-           anclaje hacia arriba — monotónico con el scroll, no salta entradas
-           al contrario de "la más cercana". Antes de que la primera cruce,
-           gana la primera (arranca abierta). */
-        const anchor = window.innerHeight * 0.38;
-        let pick: string | null = null;
-        for (const slug of slugs) {
-          const el = headers.current.get(slug);
-          if (el && el.getBoundingClientRect().top <= anchor) pick = slug;
-        }
-        pick = pick ?? slugs[0] ?? null;
-        if (pick) setActiveSlug((cur) => (cur === pick ? cur : pick));
-      });
-    };
-    window.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync);
-    sync();
-    return () => {
-      window.removeEventListener("scroll", sync);
-      window.removeEventListener("resize", sync);
-      cancelAnimationFrame(raf);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slugs.join(",")]);
-
+  const link = project.links[0];
   return (
-    <ul className="work-accordion reveal">
-      {projects.map((project) => {
-        const open = project.slug === activeSlug;
-        const link = project.links[0];
-        return (
-          <li key={project.slug} className="work-accordion__item">
-            <button
-              type="button"
-              className="work-entry"
-              data-open={open}
-              aria-expanded={open}
-              ref={(el) => {
-                if (el) headers.current.set(project.slug, el);
-                else headers.current.delete(project.slug);
-              }}
-              onClick={(e) => {
-                clickedAt.current = Date.now();
-                setActiveSlug(project.slug);
-                /* Acerca el header a la línea de anclaje para que el próximo
-                   scroll no la desactive de golpe. */
-                const top = e.currentTarget.getBoundingClientRect().top - window.innerHeight * 0.38;
-                window.scrollBy({ top, behavior: "smooth" });
-              }}
-            >
-              <span className="work-entry__meta">
-                <span className="font-mono" style={{ fontSize: "var(--text-2xs)", letterSpacing: "0.1em", color: "var(--color-ink-faded)" }}>
-                  {project.year}
-                </span>
-                <StatusLabel status={project.status} label={statusLabels[project.status]} />
-              </span>
-              <span className="work-entry__title editorial-type">{project.title}</span>
-              <span className="work-entry__role editorial-type">{project.role}</span>
-            </button>
-
-            <div className="work-entry__panel" data-open={open}>
-              <div className="work-entry__panel-inner">
-                <div className="work-entry__body">
-                  <ProjectCover title={project.title} cover={project.cover} coverAspect={16 / 9} />
-                  <div className="flex flex-col max-w-2xl">
-                    {/* Sólo el modo activo — nada de overlay que reserve el alto
-                       del texto más largo: el panel ya anima su propia altura y
-                       acá el gap "en blanco" se notaba demasiado. */}
-                    <p className="editorial-type mb-5" style={{ fontSize: "var(--text-base)", lineHeight: 1.7, color: "var(--color-ink)" }}>
-                      {mode === "overview" ? project.summary : project.technical}
-                    </p>
-                    <StackIcons stack={project.stack} />
-                    {link && (
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-mono mt-5 inline-flex items-center gap-2 w-fit"
-                        style={{ fontSize: "var(--text-xs)", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-accent-ink)" }}
-                      >
-                        {link.label} ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+    <div className="featured-card__details">
+      <div className="featured-card__meta">
+        <span className="font-mono" style={{ fontSize: "var(--text-2xs)", letterSpacing: "0.1em", color: "var(--color-ink-faded)" }}>
+          {project.year}
+        </span>
+        <StatusLabel status={project.status} label={statusLabels[project.status]} />
+      </div>
+      <h3 className="editorial-type featured-card__title">{project.title}</h3>
+      <p className="editorial-type featured-card__role">{project.role}</p>
+      <ContentModeText
+        overview={project.summary}
+        technical={project.technical}
+        mode={mode}
+        className="editorial-type featured-card__summary"
+      />
+      <StackIcons stack={project.stack} />
+      {link && (
+        <a href={link.url} target="_blank" rel="noopener noreferrer" className="font-mono featured-card__link">
+          {link.label} &rarr;
+        </a>
+      )}
+    </div>
   );
 }
+
+type ProjectScreenshot = { id: string; title: string; cover: string; coverAspect?: number; blurred?: boolean };
+
+function ScreenshotDeck({ project, screenshots, onOpen }: { project: Project; screenshots: ProjectScreenshot[]; onOpen: (index: number) => void }) {
+  const deckRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false, pointerId: 0 });
+  const suppressClickUntil = useRef(0);
+
+  useEffect(() => {
+    const deck = deckRef.current;
+    if (!deck) return;
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      const maxScroll = deck.scrollWidth - deck.clientWidth;
+      if (maxScroll <= 1 || (event.deltaY < 0 && deck.scrollLeft <= 1) ||
+        (event.deltaY > 0 && deck.scrollLeft >= maxScroll - 1)) return;
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? deck.clientWidth : 1;
+      event.preventDefault();
+      deck.scrollLeft = Math.max(0, Math.min(maxScroll, deck.scrollLeft + event.deltaY * unit));
+    };
+    deck.addEventListener("wheel", onWheel, { passive: false });
+    return () => deck.removeEventListener("wheel", onWheel);
+  }, []);
+
+  return (
+    <div
+      ref={deckRef}
+      className="screenshot-deck"
+      role="group"
+      aria-label={`Capturas de ${project.title}`}
+      onPointerDown={(event) => {
+        if (event.pointerType === "touch" || event.button !== 0) return;
+        const deck = event.currentTarget;
+        drag.current = { active: true, startX: event.clientX, scrollLeft: deck.scrollLeft, moved: false, pointerId: event.pointerId };
+      }}
+      onPointerMove={(event) => {
+        if (!drag.current.active) return;
+        const distance = event.clientX - drag.current.startX;
+        if (Math.abs(distance) > 4) {
+          if (!drag.current.moved) event.currentTarget.setPointerCapture(event.pointerId);
+          drag.current.moved = true;
+        }
+        event.currentTarget.scrollLeft = drag.current.scrollLeft - distance;
+      }}
+      onPointerUp={(event) => {
+        const moved = drag.current.moved;
+        drag.current.active = false;
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+        if (moved) suppressClickUntil.current = Date.now() + 180;
+      }}
+      onPointerCancel={() => {
+        drag.current.active = false;
+        drag.current.moved = false;
+      }}
+    >
+      {screenshots.map((screenshot, index) => (
+        <button
+          key={screenshot.id}
+          type="button"
+          className="screenshot-deck__card"
+          style={{ "--shot-index": index, "--shot-layer": screenshots.length - index } as CSSProperties}
+          aria-label={`Ver ${screenshot.title}`}
+          onClick={() => {
+            if (Date.now() < suppressClickUntil.current) return;
+            onOpen(index);
+          }}
+        >
+          <ProjectCover title={screenshot.title} cover={screenshot.cover} coverAspect={screenshot.coverAspect ?? 16 / 10} blurred={screenshot.blurred} />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ProjectLightbox({
+  project,
+  screenshots,
+  index,
+  statusLabels,
+  mode,
+  onClose,
+  onSelect,
+}: {
+  project: Project;
+  screenshots: ProjectScreenshot[];
+  index: number;
+  statusLabels: Record<ProjectStatus, string>;
+  mode: ContentMode;
+  onClose: () => void;
+  onSelect: (index: number) => void;
+}) {
+  const previous = (index - 1 + screenshots.length) % screenshots.length;
+  const next = (index + 1) % screenshots.length;
+  const screenshot = screenshots[index];
+  const hasMultiple = screenshots.length > 1;
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+
+      const focusable = Array.from(
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      ).filter((element) => element.getClientRects().length > 0);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    // El diálogo se porta a `document.body` (ver el `createPortal` más abajo)
+    // para poder dejar `#site-shell` (todo lo demás) fuera del árbol de
+    // accesibilidad mientras está abierto — si el diálogo quedara anidado
+    // dentro de `#site-shell`, `inert` también lo desactivaría a él.
+    const shell = document.getElementById("site-shell");
+    shell?.setAttribute("inert", "");
+    shell?.setAttribute("aria-hidden", "true");
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      shell?.removeAttribute("inert");
+      shell?.removeAttribute("aria-hidden");
+      previouslyFocused?.focus();
+    };
+  }, []);
+
+  return createPortal(
+    <div className="project-lightbox" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <section
+        ref={dialogRef}
+        className="project-lightbox__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${project.title}: ${screenshot.title}`}
+        data-multiple={hasMultiple}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") { event.preventDefault(); onClose(); }
+          if (hasMultiple && event.key === "ArrowLeft") { event.preventDefault(); onSelect(previous); }
+          if (hasMultiple && event.key === "ArrowRight") { event.preventDefault(); onSelect(next); }
+        }}
+      >
+        <button ref={closeRef} type="button" className="project-lightbox__close" onClick={onClose} aria-label="Cerrar visor">&times;</button>
+        {hasMultiple && (
+          <button type="button" className="project-lightbox__side project-lightbox__side--previous" onClick={() => onSelect(previous)} aria-label={`Ver ${screenshots[previous].title}`}>
+            <ProjectCover title={screenshots[previous].title} cover={screenshots[previous].cover} coverAspect={screenshots[previous].coverAspect ?? 16 / 10} blurred={screenshots[previous].blurred} />
+          </button>
+        )}
+        <article className="project-lightbox__active">
+          <ProjectCover title={screenshot.title} cover={screenshot.cover} coverAspect={screenshot.coverAspect ?? 16 / 10} blurred={screenshot.blurred} />
+          <ProjectCardDetails project={project} statusLabels={statusLabels} mode={mode} />
+        </article>
+        {hasMultiple && (
+          <>
+            <button type="button" className="project-lightbox__side project-lightbox__side--next" onClick={() => onSelect(next)} aria-label={`Ver ${screenshots[next].title}`}>
+              <ProjectCover title={screenshots[next].title} cover={screenshots[next].cover} coverAspect={screenshots[next].coverAspect ?? 16 / 10} blurred={screenshots[next].blurred} />
+            </button>
+            <div className="project-lightbox__controls" aria-label="Navegacion de capturas">
+              <button type="button" onClick={() => onSelect(previous)} aria-label="Captura anterior">&larr;</button>
+              <span>{index + 1} / {screenshots.length}</span>
+              <button type="button" onClick={() => onSelect(next)} aria-label="Captura siguiente">&rarr;</button>
+            </div>
+          </>
+        )}
+      </section>
+    </div>,
+    document.body
+  );
+}
+
+function FeaturedCards({ projects, statusLabels, mode }: { projects: Project[]; statusLabels: Record<ProjectStatus, string>; mode: ContentMode }) {
+  const [open, setOpen] = useState<{ project: Project; screenshots: ProjectScreenshot[]; index: number } | null>(null);
+  const screenshotsFor = (project: Project): ProjectScreenshot[] => {
+    if (!project.cover) return [];
+    return [
+      { id: `${project.slug}-cover`, title: project.title, cover: project.cover, coverAspect: project.coverAspect, blurred: project.coverBlurred },
+      ...(project.screenshots ?? []).map((screenshot, index) => ({ id: `${project.slug}-screenshot-${index + 1}`, ...screenshot })),
+    ];
+  };
+
+  return (
+    <>
+      <div className="featured-deck reveal">
+        {projects.map((project) => {
+          const screenshots = screenshotsFor(project);
+          const textOnly = screenshots.length === 0;
+          return (
+            <article
+              key={project.slug}
+              id={`project-${project.slug}`}
+              className={`featured-project scroll-mt-24${textOnly ? " featured-project--text-only" : ""}`}
+            >
+              <div className="featured-project__header">
+                <ProjectCardDetails project={project} statusLabels={statusLabels} mode={mode} />
+              </div>
+              {!textOnly && <ScreenshotDeck project={project} screenshots={screenshots} onOpen={(index) => setOpen({ project, screenshots, index })} />}
+            </article>
+          );
+        })}
+      </div>
+      {open && (
+        <ProjectLightbox
+          project={open.project}
+          screenshots={open.screenshots}
+          index={open.index}
+          statusLabels={statusLabels}
+          mode={mode}
+          onClose={() => setOpen(null)}
+          onSelect={(index) => setOpen({ ...open, index })}
+        />
+      )}
+    </>
+  );
+}
+
+// Sin capturas propias: en vez de dejarlas como dos filas angostas y vacías
+// en "todo lo demás", se emparejan en un único bloque de dos columnas que
+// ocupa el ancho de la sección entre las dos, cada una en vertical.
+const PAIRED_SLUGS = ["pit-engineer", "ac-head-tracking"];
 
 export default function Work({ projects }: { projects: Project[] }) {
   const { t } = useLang();
@@ -173,73 +329,103 @@ export default function Work({ projects }: { projects: Project[] }) {
   const clientProjects = projects.filter((project) => !project.personal);
   const featured = clientProjects.filter((project) => project.featured);
   const rest = clientProjects.filter((project) => !project.featured);
+  const restRows = rest.filter((project) => !PAIRED_SLUGS.includes(project.slug));
+  const restPaired = PAIRED_SLUGS.map((slug) => rest.find((project) => project.slug === slug)).filter(
+    (project): project is Project => Boolean(project)
+  );
   const statusLabels = t.work.status;
-
   return (
-    <section id="work" className="work-section py-9 md:py-10 px-5 md:px-6">
-      <ReadingModeToggle />
+    <section id="work" className="work-section mode-section site-section">
       <div className="max-w-6xl mx-auto">
-        {/* Selected work */}
+        <SectionContentModeToggle sectionId="work" />
         <div className="reveal mb-6">
           <p className="section-label font-mono mb-3">{t.work.sectionLabel}</p>
-          <h2 className="editorial-type" style={{ fontSize: "var(--text-title)", fontWeight: 500, lineHeight: 1.15, color: "var(--color-ink)" }}>
-            {t.work.sectionTitle}
-          </h2>
+          <h2 className="editorial-type" style={{ fontSize: "var(--text-title)", fontWeight: 500, lineHeight: 1.15, color: "var(--color-ink)" }}>{t.work.sectionTitle}</h2>
         </div>
-
-        {featured.length > 0 && (
-          <FeaturedAccordion projects={featured} statusLabels={statusLabels} mode={mode} />
-        )}
-
-        {/* Everything else — 4 columns, text-only (PDR's "Popular Posts"
-            list has no thumbnails either), dense and compact on purpose. */}
+        {featured.length > 0 && <FeaturedCards projects={featured} statusLabels={statusLabels} mode={mode} />}
         <div className="reveal mb-7 mt-9 md:mt-10">
           <p className="section-label font-mono mb-3">{t.work.moreLabel}</p>
-          <h2 className="editorial-type" style={{ fontSize: "var(--text-heading)", fontWeight: 500, lineHeight: 1.2, color: "var(--color-ink)" }}>
-            {t.work.moreTitle}
-          </h2>
+          <h2 className="editorial-type" style={{ fontSize: "var(--text-heading)", fontWeight: 500, lineHeight: 1.2, color: "var(--color-ink)" }}>{t.work.moreTitle}</h2>
         </div>
-
-        <div className="editorial-rule grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-6 pt-6">
-          {rest.map((project) => {
+        <div className="more-project-list">
+          {restRows.map((project) => {
             const link = project.links[0];
             return (
-              <div key={project.slug} className="reveal flex flex-col">
-                <div className="flex items-center gap-3 flex-wrap mb-2">
-                  <span className="font-mono" style={{ fontSize: "var(--text-2xs)", letterSpacing: "0.1em", color: "var(--color-ink-faded)" }}>
-                    {project.year}
-                  </span>
-                  <StatusLabel status={project.status} label={statusLabels[project.status]} />
+              <article
+                key={project.slug}
+                id={`project-${project.slug}`}
+                className="reveal more-project-row scroll-mt-24"
+              >
+                {project.cover && (
+                  <div className="more-project-row__cover">
+                    <ProjectCover title={project.title} cover={project.cover} coverAspect={project.coverAspect ?? 16 / 10} blurred={project.coverBlurred} coverPosition={project.coverPosition} />
+                  </div>
+                )}
+                <div className="more-project-row__info">
+                  <div className="more-project-row__meta">
+                    <span className="font-mono" style={{ fontSize: "var(--text-2xs)", letterSpacing: "0.1em", color: "var(--color-ink-faded)" }}>{project.year}</span>
+                    <StatusLabel status={project.status} label={statusLabels[project.status]} />
+                  </div>
+                  <div className="more-project-row__title">
+                    <h3 className="editorial-type" style={{ fontSize: "var(--text-base)", fontWeight: 500, color: "var(--color-ink)" }}>
+                      {link ? (
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="more-project-row__title-link">
+                          {project.title} <span aria-hidden="true">&rarr;</span>
+                        </a>
+                      ) : project.title}
+                    </h3>
+                  </div>
                 </div>
-                <div className="flex items-start justify-between gap-2 mb-1">
-                  <h3 className="editorial-type" style={{ fontSize: "var(--text-base)", fontWeight: 500, color: "var(--color-ink)" }}>
-                    {project.title}
-                  </h3>
-                  {link && (
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-shrink-0"
-                      style={{ color: "var(--color-accent-ink)", fontSize: "var(--text-sm)" }}
-                      aria-label={`Visit ${project.title}`}
-                    >
-                      ↗
-                    </a>
-                  )}
+                <div className="more-project-row__summary">
+                  <ContentModeText
+                    overview={project.summary}
+                    technical={project.technical}
+                    mode={mode}
+                    className="editorial-type"
+                    style={{ fontSize: "var(--text-xs)", lineHeight: 1.55, color: "var(--color-ink-faded)" }}
+                  />
                 </div>
-                <div className="content-mode-text mb-2">
-                  <p data-hidden={mode !== "overview"} className="editorial-type" style={{ fontSize: "var(--text-xs)", lineHeight: 1.55, color: "var(--color-ink-faded)" }}>
-                    {project.summary}
-                  </p>
-                  <p data-hidden={mode !== "technical"} className="editorial-type" style={{ fontSize: "var(--text-xs)", lineHeight: 1.55, color: "var(--color-ink-faded)" }}>
-                    {project.technical}
-                  </p>
-                </div>
-                <StackIcons stack={project.stack} />
-              </div>
+                <div className="more-project-row__stack"><StackIcons stack={project.stack} /></div>
+              </article>
             );
           })}
+
+          {restPaired.length > 0 && (
+            <div className="more-project-pair">
+              {restPaired.map((project) => {
+                const link = project.links[0];
+                return (
+                  <article
+                    key={project.slug}
+                    id={`project-${project.slug}`}
+                    className="reveal more-project-pair__item scroll-mt-24"
+                  >
+                    <div className="more-project-pair__meta">
+                      <span className="font-mono" style={{ fontSize: "var(--text-2xs)", letterSpacing: "0.1em", color: "var(--color-ink-faded)" }}>{project.year}</span>
+                      <StatusLabel status={project.status} label={statusLabels[project.status]} />
+                    </div>
+                    <h3 className="editorial-type more-project-pair__title" style={{ fontSize: "var(--text-base)", fontWeight: 500, color: "var(--color-ink)" }}>
+                      {link ? (
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="more-project-row__title-link">
+                          {project.title} <span aria-hidden="true">&rarr;</span>
+                        </a>
+                      ) : project.title}
+                    </h3>
+                    <div className="more-project-pair__summary">
+                      <ContentModeText
+                        overview={project.summary}
+                        technical={project.technical}
+                        mode={mode}
+                        className="editorial-type"
+                        style={{ fontSize: "var(--text-xs)", lineHeight: 1.55, color: "var(--color-ink-faded)" }}
+                      />
+                    </div>
+                    <div className="more-project-pair__stack"><StackIcons stack={project.stack} /></div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </section>

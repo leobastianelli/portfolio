@@ -7,7 +7,6 @@ const meta: ProjectMeta = {
   stack: ["Python", "OpenCV", "MediaPipe", "FreeTrack / TrackIR"],
   links: [],
   featured: false,
-  personal: true,
 };
 
 export default meta;

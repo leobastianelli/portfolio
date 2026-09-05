@@ -7,7 +7,6 @@ const meta: ProjectMeta = {
   stack: ["Python", "PyQt6", "iRacing SDK", "Claude API", "pytest"],
   links: [],
   featured: false,
-  personal: true,
 };
 
 export default meta;

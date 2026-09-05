@@ -61,17 +61,36 @@ export default function SectionIndex({ hasPersonal }: { hasPersonal: boolean }) 
       .filter((el): el is HTMLElement => el !== null);
     if (els.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
-        });
-      },
-      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
-    );
+    let ticking = false;
+    const applyActive = () => {
+      ticking = false;
+      const markerY = window.scrollY + window.innerHeight * 0.5;
+      let nextActive = els[0].id;
 
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+      for (const el of els) {
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        if (top > markerY) break;
+        nextActive = el.id;
+      }
+
+      if (nextActive !== activeRef.current) {
+        activeRef.current = nextActive;
+        setActive(nextActive);
+      }
+    };
+    const onPositionChange = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(applyActive);
+    };
+
+    applyActive();
+    window.addEventListener("scroll", onPositionChange, { passive: true });
+    window.addEventListener("resize", onPositionChange);
+    return () => {
+      window.removeEventListener("scroll", onPositionChange);
+      window.removeEventListener("resize", onPositionChange);
+    };
   }, [sectionIds]);
 
   // The progress rail has to start exactly at the top of the first label's
@@ -131,34 +150,26 @@ export default function SectionIndex({ hasPersonal }: { hasPersonal: boolean }) 
       );
       if (sectionEl && fillLabel) {
         const sectionTop = sectionEl.getBoundingClientRect().top + window.scrollY;
-        const sectionHeight = sectionEl.offsetHeight;
         const viewportHeight = window.innerHeight;
-        // How far the section has traveled through the viewport — 0 when
-        // its top just reaches the bottom edge of the viewport, 1 once its
-        // bottom has scrolled all the way past the top edge. Geometric,
-        // based on the section's own height + the viewport, not on
-        // `scrollY` vs `sectionTop` directly — measured off Contact
-        // (short, last, nothing below it): its own top sits BELOW
-        // `maxScrollY` (measured 5992 vs 5789 max) — `scrollY` can
-        // physically never reach it, so any formula anchored on "has
-        // scrollY passed sectionTop yet" stays stuck at 0 the whole time
-        // it's on screen, then has to snap at the very end. Two earlier
-        // attempts both failed for this reason: clamping the height to
-        // `maxScrollY` collapsed the span near zero (jumped to 100%
-        // instantly on entry); reverting to the plain per-section ratio
-        // left it stuck at 0% until an end-of-page snap. This travel
-        // fraction keeps climbing smoothly as the viewport moves even
-        // when `scrollY` itself is capped, because it's driven by the
-        // section's live position relative to the viewport, not by how
-        // much further the document can still scroll.
-        const travelAt = (scrollY: number) => (viewportHeight - (sectionTop - scrollY)) / (sectionHeight + viewportHeight);
-        // Rescaled against whatever fraction THIS section can actually
-        // reach by the time the page hits its true bottom (1 for a normal
-        // section with room to fully traverse, less than 1 for a short
-        // trailing one) — so it always reaches exactly 100% right at
-        // `maxScrollY`, gradually, never a jump.
-        const reachableMax = Math.min(1, Math.max(travelAt(maxScrollY), 0.0001));
-        const raw = travelAt(window.scrollY) / reachableMax;
+        // Match the sweep to the same center-of-viewport transition used to
+        // choose the active section. The previous label reaches 100% at that
+        // exact point, so changing it to `data-state="passed"` never creates
+        // a visible jump.
+        const currentItem = fillLabel.closest<HTMLElement>("li[data-id]");
+        const nextId = currentItem?.nextElementSibling?.getAttribute("data-id");
+        const nextEl = nextId ? document.getElementById(nextId) : null;
+        const activationOffset = viewportHeight * 0.5;
+        const startScroll = activeRef.current === "hero"
+          ? 0
+          : Math.max(0, sectionTop - activationOffset);
+        const nextTop = nextEl
+          ? nextEl.getBoundingClientRect().top + window.scrollY
+          : null;
+        const endScroll = nextTop === null
+          ? maxScrollY
+          : Math.min(maxScrollY, Math.max(startScroll, nextTop - activationOffset));
+        const span = Math.max(endScroll - startScroll, 0.0001);
+        const raw = (window.scrollY - startScroll) / span;
         const sectionPct = Math.min(100, Math.max(0, raw * 100));
         fillLabel.style.setProperty("--index-fill", `${sectionPct}%`);
       }

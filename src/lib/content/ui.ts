@@ -5,6 +5,7 @@ import { defaultLocale, type Locale } from "@/lib/i18n";
 export interface UiContent {
   meta: { title: string; description: string };
   nav: {
+    skipToContent: string;
     home: string;
     work: string;
     stack: string;
@@ -49,6 +50,7 @@ export interface UiContent {
          `org` es muy largo (ej. "SAE (FCS-UNC)"). Ver AboutMe.tsx. */
       shortOrg?: string;
       detail: string;
+      projectLinks?: { label: string; href: string }[];
       links?: { label: string; href: string }[];
     }[];
   };
@@ -68,6 +70,19 @@ export interface UiContent {
     sectionLabel: string;
     sectionTitleItalic: string;
     groups: { category: string; items: string[] }[];
+  };
+  notFound: {
+    title: string;
+    message: string;
+    backHome: string;
+  };
+  notes: {
+    sectionLabel: string;
+    sectionTitle: string;
+    backHome: string;
+    backToNotes: string;
+    empty: string;
+    kind: { note: string; post: string };
   };
   contact: {
     sectionLabel: string;

@@ -7,6 +7,8 @@ const meta: ProjectMeta = {
   stack: ["HTML/CSS/JS", "Supabase", "Vercel"],
   links: [{ label: "purpuraceniza.com", url: "https://purpuraceniza.com" }],
   featured: false,
+  cover: "/covers/purpura-ceniza-home-startup.webp",
+  coverAspect: 16 / 10,
 };
 
 export default meta;

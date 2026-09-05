@@ -1,4 +1,19 @@
 import type { ReactElement } from "react";
+import {
+  siElementor,
+  siGithub,
+  siGooglecloud,
+  siGooglegemini,
+  siGooglemaps,
+  siLinux,
+  siN8n,
+  siNodedotjs,
+  siPhp,
+  siReact,
+  siShopify,
+  siWoocommerce,
+  siWordpress,
+} from "simple-icons";
 
 /*
  * Stack de un proyecto como iconos, no como tags de texto. Todos SVG de un
@@ -30,9 +45,31 @@ const WHEEL = g("M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2.2a7.8 7.8 0 0 1 7.
 const BOT = g("M11 2h2v2h3a3 3 0 0 1 3 3v2h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-1H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1V7a3 3 0 0 1 3-3h3zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm6 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z");
 const LOOP = g("M12 4V1L8 5l4 4V6a6 6 0 0 1 5.2 9l1.5 1.5A8 8 0 0 0 12 4zm0 14a6 6 0 0 1-5.2-9L5.3 7.5A8 8 0 0 0 12 20v3l4-4-4-4z");
 const CHIP = g("M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm2 4v2h12V9zm0 4v2h8v-2z");
+const SEARCH = g("M10.5 3a7.5 7.5 0 1 0 4.7 13.35L21.85 23 23 21.85l-6.65-6.65A7.5 7.5 0 0 0 10.5 3zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11z");
 
 /* --- Registro. Clave = string exacto del `stack` en content/projects. --- */
 const ICONS: Record<string, { label: string; glyph: Glyph }> = {
+  React: { label: "React", glyph: g(siReact.path) },
+  "HTML / CSS / SCSS": { label: "HTML / CSS / SCSS", glyph: CODE },
+  "Node.js": { label: "Node.js", glyph: g(siNodedotjs.path) },
+  PHP: { label: "PHP", glyph: g(siPhp.path) },
+  "REST APIs": { label: "REST APIs", glyph: PLUG },
+  "n8n Automation": { label: "n8n Automation", glyph: g(siN8n.path) },
+  "Storefront API": { label: "Storefront API", glyph: g(siShopify.path) },
+  "Admin API": { label: "Admin API", glyph: g(siShopify.path) },
+  "Loop Subscriptions": { label: "Loop Subscriptions", glyph: LOOP },
+  WooCommerce: { label: "WooCommerce", glyph: g(siWoocommerce.path) },
+  WordPress: { label: "WordPress", glyph: g(siWordpress.path) },
+  "Custom Plugins": { label: "Custom Plugins", glyph: PLUG },
+  Elementor: { label: "Elementor", glyph: g(siElementor.path) },
+  WPML: { label: "WPML", glyph: g(siWordpress.path) },
+  ACF: { label: "ACF", glyph: CHIP },
+  "Git / GitHub": { label: "Git / GitHub", glyph: g(siGithub.path) },
+  "Google Cloud Run": { label: "Google Cloud Run", glyph: g(siGooglecloud.path) },
+  "Linux / SSH": { label: "Linux / SSH", glyph: g(siLinux.path) },
+  "Google Places API": { label: "Google Places API", glyph: g(siGooglemaps.path) },
+  SerpAPI: { label: "SerpAPI", glyph: SEARCH },
+  "Gemini AI": { label: "Gemini AI", glyph: g(siGooglegemini.path) },
   "Next.js": { label: "Next.js", glyph: g("M18.665 21.978C16.758 23.255 14.465 24 12 24 5.377 24 0 18.623 0 12S5.377 0 12 0s12 5.377 12 12c0 3.583-1.574 6.801-4.067 9.001L9.219 7.2H7.2v9.596h1.615V9.251l9.85 12.727Zm-3.332-8.533 1.6 2.061V7.2h-1.6v6.245Z") },
   Supabase: { label: "Supabase", glyph: g("M11.9 1.036c-.015-.986-1.26-1.41-1.874-.637L.764 12.05C-.33 13.427.65 15.455 2.409 15.455h9.579l.113 7.51c.014.985 1.259 1.408 1.873.636l9.262-11.653c1.093-1.375.113-3.403-1.645-3.403h-9.642z") },
   Stripe: { label: "Stripe", glyph: g("M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z") },
@@ -62,20 +99,44 @@ const ICONS: Record<string, { label: string; glyph: Glyph }> = {
   "automatización": { label: "Automatización", glyph: LOOP },
 };
 
-export function StackIcons({ stack, className }: { stack: string[]; className?: string }) {
+export function StackIcons({
+  stack,
+  className,
+  variant = "icons",
+}: {
+  stack: string[];
+  className?: string;
+  variant?: "icons" | "labeled";
+}) {
   if (stack.length === 0) return null;
   return (
-    <ul className={`stack-icons${className ? ` ${className}` : ""}`}>
+    <ul className={`stack-icons stack-icons--${variant}${className ? ` ${className}` : ""}`}>
       {stack.map((name) => {
         const entry = ICONS[name];
         const label = entry?.label ?? name;
         return (
-          <li key={name} className="stack-icon" tabIndex={0} role="img" aria-label={label}>
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              {entry?.glyph ?? CHIP}
-            </svg>
-            <span className="stack-icon__tip" aria-hidden="true">
-              {label}
+          // El `<li>` queda vacío de atributos a propósito: `role="img"` en el
+          // propio `<li>` le pisa el rol implícito `listitem` y Lighthouse/axe
+          // lo marca como hijo no permitido de un `<ul>` (etapa 8, bloque
+          // Lighthouse). El rol/aria-label/tabIndex se mueven al `<span>` de
+          // adentro, que es quien de verdad necesita ser el foco enfocable.
+          <li key={name}>
+            <span
+              className="stack-icon"
+              tabIndex={variant === "icons" ? 0 : undefined}
+              role={variant === "icons" ? "img" : undefined}
+              aria-label={variant === "icons" ? label : undefined}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                {entry?.glyph ?? CHIP}
+              </svg>
+              {variant === "labeled" ? (
+                <span className="stack-icon__label">{label}</span>
+              ) : (
+                <span className="stack-icon__tip" aria-hidden="true">
+                  {label}
+                </span>
+              )}
             </span>
           </li>
         );

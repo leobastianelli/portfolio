@@ -14,16 +14,21 @@ import Work from "@/components/Work";
 import Stack from "@/components/Stack";
 import Personal from "@/components/Personal";
 import Contact from "@/components/Contact";
+import { useLang } from "@/context/LanguageContext";
 
 function Sections({ projects }: { projects: Project[] }) {
+  const { t } = useLang();
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("visible");
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+      { threshold: 0, rootMargin: "0px 0px -40px 0px" }
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
@@ -34,15 +39,18 @@ function Sections({ projects }: { projects: Project[] }) {
   const hasPersonal = projects.some((project) => project.personal);
 
   return (
-    <div className="relative site-shell">
+    <div id="site-shell" className="relative site-shell">
+      <a href="#main-content" className="skip-link">{t.nav.skipToContent}</a>
       <Nav />
       <SectionIndex hasPersonal={hasPersonal} />
-      <Hero />
-      <AboutMe />
-      <Work projects={projects} />
-      <Stack />
-      <Personal projects={projects} />
-      <Contact />
+      <main id="main-content" tabIndex={-1}>
+        <Hero />
+        <AboutMe />
+        <Work projects={projects} />
+        <Stack />
+        <Personal projects={projects} />
+        <Contact />
+      </main>
     </div>
   );
 }

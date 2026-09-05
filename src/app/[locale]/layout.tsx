@@ -62,29 +62,12 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: SITE.author,
-    jobTitle: "Full-Stack Developer",
-    description: getUi(locale).meta.description,
-    url: localizedUrl(SITE.url, "/", locale),
-    email: SITE.email,
-    sameAs: [SITE.social.linkedin, SITE.social.github].filter(Boolean),
-  };
-
   return (
     <html
       lang={locale}
       className={display.variable}
     >
-      <body className="min-h-screen">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {children}
-      </body>
+      <body className="min-h-screen">{children}</body>
     </html>
   );
 }
