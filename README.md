@@ -77,6 +77,14 @@ helpers — no bare `posthog.capture` in components):
 | `note_read` | scrolled 75% through a Log note | `components/analytics/NoteReadTracker.tsx` |
 | `$pageview` | every route change (manual, App Router) | `components/analytics/PostHogPageview.tsx` |
 
+**Excluding your own traffic.** Visit any page once with `?internal=1`
+(e.g. `https://leobastianelli.dev/en?internal=1`). That registers an
+`is_internal: true` super property on that browser, which PostHog persists and
+attaches to every subsequent event. In PostHog, filter it out with
+`is_internal is not set` (or `!= true`) on insights / replay. It's per-browser
+and sticks until site data is cleared; re-apply after clearing. Handled in
+`components/analytics/PostHogPageview.tsx`.
+
 `cv_download`, `hero_cta_click` and `contact_form_submit` helpers exist but are
 unwired — the site currently has no CV download, no hero CTA and no contact
 form. Wire the helper at the call site if any of those get added.

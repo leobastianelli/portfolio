@@ -20,6 +20,13 @@ function PageviewTracker() {
   useEffect(() => {
     if (!posthog.__loaded) return;
 
+    // `?internal=1` once, from this browser, flags every later event with the
+    // `is_internal` super property (persisted in localStorage by PostHog) so
+    // our own traffic can be filtered out. The param doesn't need clearing.
+    if (searchParams.get("internal") === "1") {
+      posthog.register({ is_internal: true });
+    }
+
     let url = window.origin + pathname;
     const query = searchParams.toString();
     if (query) url += `?${query}`;
