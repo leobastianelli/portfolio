@@ -9,6 +9,7 @@ import { StackIcons } from "@/components/StackIcons";
 import type { ContentMode } from "@/context/ContentModeContext";
 import { useContentMode } from "@/context/ContentModeContext";
 import { useLang } from "@/context/LanguageContext";
+import { analytics } from "@/lib/analytics";
 import type { Project, ProjectStatus } from "@/lib/content/types";
 
 export function StatusLabel({ status, label }: { status: ProjectStatus; label: string }) {
@@ -83,7 +84,13 @@ function ProjectCardDetails({
       />
       <StackIcons stack={project.stack} />
       {link && (
-        <a href={link.url} target="_blank" rel="noopener noreferrer" className="font-mono featured-card__link">
+        <a
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-mono featured-card__link"
+          onClick={() => analytics.projectLinkClick(project.slug, link.url)}
+        >
           {link.label} &rarr;
         </a>
       )}
@@ -298,7 +305,16 @@ function FeaturedCards({ projects, statusLabels, mode }: { projects: Project[]; 
               <div className="featured-project__header">
                 <ProjectCardDetails project={project} statusLabels={statusLabels} mode={mode} />
               </div>
-              {!textOnly && <ScreenshotDeck project={project} screenshots={screenshots} onOpen={(index) => setOpen({ project, screenshots, index })} />}
+              {!textOnly && (
+                <ScreenshotDeck
+                  project={project}
+                  screenshots={screenshots}
+                  onOpen={(index) => {
+                    analytics.projectCardClick(project.slug);
+                    setOpen({ project, screenshots, index });
+                  }}
+                />
+              )}
             </article>
           );
         })}
@@ -369,7 +385,13 @@ export default function Work({ projects }: { projects: Project[] }) {
                   <div className="more-project-row__title">
                     <h3 className="editorial-type" style={{ fontSize: "var(--text-base)", fontWeight: 500, color: "var(--color-ink)" }}>
                       {link ? (
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="more-project-row__title-link">
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="more-project-row__title-link"
+                          onClick={() => analytics.projectLinkClick(project.slug, link.url)}
+                        >
                           {project.title} <span aria-hidden="true">&rarr;</span>
                         </a>
                       ) : project.title}
@@ -406,7 +428,13 @@ export default function Work({ projects }: { projects: Project[] }) {
                     </div>
                     <h3 className="editorial-type more-project-pair__title" style={{ fontSize: "var(--text-base)", fontWeight: 500, color: "var(--color-ink)" }}>
                       {link ? (
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="more-project-row__title-link">
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="more-project-row__title-link"
+                          onClick={() => analytics.projectLinkClick(project.slug, link.url)}
+                        >
                           {project.title} <span aria-hidden="true">&rarr;</span>
                         </a>
                       ) : project.title}

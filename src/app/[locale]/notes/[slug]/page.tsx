@@ -9,6 +9,7 @@ import { articleNode } from "@/lib/jsonld";
 import { noteMetas } from "../../../../../content/notes";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Nav from "@/components/Nav";
+import NoteReadTracker from "@/components/analytics/NoteReadTracker";
 
 export function generateStaticParams() {
   return locales.flatMap((locale) => noteMetas.map((meta) => ({ locale, slug: meta.slug })));
@@ -99,6 +100,7 @@ export default async function NotePage({ params }: PageProps<"/[locale]/notes/[s
           <div className="note-body">
             <Body />
           </div>
+          <NoteReadTracker slug={slug} />
         </div>
       </main>
     </LanguageProvider>

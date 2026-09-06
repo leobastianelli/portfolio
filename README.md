@@ -9,6 +9,7 @@ Personal portfolio and developer log for Leo Bastianelli — full-stack develope
 - **Content**: MDX (`@next/mdx`) for the notes/log, hand-rolled parsing for project copy — no markdown/frontmatter library
 - **i18n**: no library — a proxy (middleware) resolves the locale and redirects, `[locale]` segments handle routing
 - **OG images**: `next/og` (`ImageResponse`), generated per route
+- **Analytics**: Vercel Web Analytics, plus PostHog (custom events + session replay, behind a `/ingest` reverse proxy) and Microsoft Clarity (heatmaps) — both production-only
 - **Testing/verification**: Playwright (dev dependency, used for manual accessibility and visual verification, not an automated suite)
 
 ## Project structure
@@ -48,6 +49,37 @@ npm run build   # production build
 npm start       # serve the production build
 npm run lint    # eslint
 ```
+
+## Environment variables
+
+All client-side and public by design (`NEXT_PUBLIC_*`) — no secrets. They're set
+in Vercel (Production, type "Config"); for local work copy them into an
+untracked `.env.local`:
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project API key (EU Cloud) |
+| `NEXT_PUBLIC_POSTHOG_HOST` | PostHog ingestion host — `https://eu.i.posthog.com` (the browser talks to the `/ingest` proxy; this documents the upstream) |
+| `NEXT_PUBLIC_CLARITY_PROJECT_ID` | Microsoft Clarity project id |
+
+PostHog and Clarity boot only when `NODE_ENV === "production"`, so `next dev`
+never sends data regardless of what's in `.env.local`.
+
+**Custom PostHog events** are centralised in `src/lib/analytics.ts` (typed
+helpers — no bare `posthog.capture` in components):
+
+| Event | Where it fires | File |
+| --- | --- | --- |
+| `contact_click` | any contact link (Contact section + menu panel) | `components/Contact.tsx`, `components/Nav.tsx` |
+| `language_switch` | ES/EN switch | `components/LocaleSwitcher.tsx` |
+| `project_card_click` | opening a featured project's screenshot viewer | `components/Work.tsx` |
+| `project_link_click` | repo/live link on any project | `components/Work.tsx` |
+| `note_read` | scrolled 75% through a Log note | `components/analytics/NoteReadTracker.tsx` |
+| `$pageview` | every route change (manual, App Router) | `components/analytics/PostHogPageview.tsx` |
+
+`cv_download`, `hero_cta_click` and `contact_form_submit` helpers exist but are
+unwired — the site currently has no CV download, no hero CTA and no contact
+form. Wire the helper at the call site if any of those get added.
 
 ## Notable technical decisions
 

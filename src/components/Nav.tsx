@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useLang } from "@/context/LanguageContext";
 import { getContactLinks } from "@/lib/contactLinks";
+import { analytics } from "@/lib/analytics";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 
 /**
@@ -359,6 +360,7 @@ export default function Nav() {
                   target={link.href.startsWith("mailto") ? undefined : "_blank"}
                   rel={link.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                   className="menu-panel-link"
+                  onClick={() => analytics.contactClick(link.key as "email" | "linkedin" | "github")}
                   onFocus={(e) => setUnderlineTarget(e.currentTarget)}
                   onBlur={() => setUnderlineTarget(null)}
                 >

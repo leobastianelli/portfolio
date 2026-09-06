@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLang } from "@/context/LanguageContext";
+import { analytics } from "@/lib/analytics";
 import {
   LOCALE_COOKIE,
   LOCALE_COOKIE_MAX_AGE,
@@ -47,7 +48,10 @@ export default function LocaleSwitcher() {
               hrefLang={l}
               aria-label={t.nav.localeNames[l]}
               aria-current={current ? "true" : undefined}
-              onClick={() => rememberLocale(l)}
+              onClick={() => {
+                rememberLocale(l);
+                if (!current) analytics.languageSwitch(locale, l);
+              }}
               className="label-engraved"
               style={{
                 display: "inline-flex",

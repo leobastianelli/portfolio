@@ -26,12 +26,14 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except Next internals, API routes, and any path containing a
-  // dot (favicon.ico, sitemap.xml, robots.txt, images).
+  // Everything except Next internals, API routes, the PostHog reverse proxy
+  // (`/ingest/*`, see next.config.ts — a locale redirect there would break
+  // event capture), and any path containing a dot (favicon.ico, sitemap.xml,
+  // robots.txt, images).
   //
   // The literal dot is a character class on purpose: a `/` inside a class is
   // read by path-to-regexp as a path delimiter, and an escaped dot sits one
   // TypeScript-string layer away from collapsing into a bare `.`, which
   // would silently exclude every non-empty path.
-  matcher: ["/((?!_next|api|.*[.]).*)"],
+  matcher: ["/((?!_next|api|ingest|.*[.]).*)"],
 };
