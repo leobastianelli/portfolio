@@ -2,6 +2,7 @@ import postgres from "postgres";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const maxDuration = 30;
 
 type Summary = {
   pageviews: string;
@@ -64,11 +65,16 @@ function dateTime(value: string): string {
 async function dashboardData() {
   const databaseUrl = process.env.ANALYTICS_DATABASE_URL;
   if (!databaseUrl) throw new Error("Analytics database is not configured");
-  const sql = postgres(databaseUrl, { max: 1, prepare: false, ssl: "require", idle_timeout: 5 });
+  const sql = postgres(databaseUrl, {
+    max: 1,
+    prepare: false,
+    ssl: "require",
+    connect_timeout: 10,
+    idle_timeout: 5,
+  });
 
   try {
-    const [summaryRows, daily, runs, recommendations] = await Promise.all([
-      sql<Summary[]>`
+    const summaryRows = await sql<Summary[]>`
         select
           coalesce(sum(posthog_pageviews) filter (where date >= current_date - 27), 0) as pageviews,
           coalesce(sum(posthog_visitors) filter (where date >= current_date - 27), 0) as visitors,
@@ -78,8 +84,8 @@ async function dashboardData() {
           max(date) filter (where clarity_sessions > 0) as clarity_latest,
           max(date) filter (where gsc_impressions > 0 or gsc_clicks > 0) as gsc_latest
         from analytics_page_day
-      `,
-      sql<Daily[]>`
+      `;
+    const daily = await sql<Daily[]>`
         select
           date,
           sum(posthog_pageviews) as pageviews,
@@ -91,20 +97,19 @@ async function dashboardData() {
         where date >= current_date - 29
         group by date
         order by date desc
-      `,
-      sql<Run[]>`
+      `;
+    const runs = await sql<Run[]>`
         select id, generated_at, window_start, window_end, status, evidence
         from analytics_recommendation_run
         order by generated_at desc
         limit 8
-      `,
-      sql<Recommendation[]>`
+      `;
+    const recommendations = await sql<Recommendation[]>`
         select id, rule, page_key, score, confidence, status, spec_markdown, created_at
         from analytics_recommendation
         order by score desc, created_at desc
         limit 20
-      `,
-    ]);
+      `;
 
     return { summary: summaryRows[0], daily, runs, recommendations };
   } finally {
