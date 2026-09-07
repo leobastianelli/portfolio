@@ -25,8 +25,13 @@ export async function fetchPostHogRange(
       if(
         notEmpty(toString(properties.page_key)),
         toString(properties.page_key),
-        toString(properties.$pathname)
-      ) AS page_key,
+        if(
+          notEmpty(toString(properties.$pathname)),
+          toString(properties.$pathname),
+          toString(properties.$current_url)
+        )
+      ) AS page_ref,
+      any(toString(properties.$current_url)) AS current_url,
       any(toString(properties.locale)) AS locale,
       any(toString(properties.content_type)) AS content_type,
       any(toString(properties.content_slug)) AS content_slug,
@@ -40,14 +45,11 @@ export async function fetchPostHogRange(
       AND timestamp < toDateTime('${endDateExclusive} 00:00:00', 'UTC')
       AND (
         toString(properties.environment) = 'production'
-        OR (
-          empty(toString(properties.environment))
-          AND toString(properties.$host) IN ('leobastianelli.dev', 'www.leobastianelli.dev')
-        )
+        OR empty(toString(properties.environment))
       )
-      AND notEmpty(page_key)
+      AND notEmpty(page_ref)
       AND event IN ('$pageview', 'contact_click', 'project_link_click', 'note_read')
-    GROUP BY date, page_key
+    GROUP BY date, page_ref
   `;
 
   const response = await fetch(`${host}/api/projects/${encodeURIComponent(projectId)}/query/`, {
@@ -65,15 +67,25 @@ export async function fetchPostHogRange(
 
   return (body.results ?? []).flatMap((row): PostHogRow[] => {
     const date = String(row[0] ?? "");
-    const context = pageContextFromUrl(String(row[1] ?? ""));
+    const pageRef = String(row[1] ?? "");
+    const currentUrl = String(row[2] ?? "");
+    const context = pageContextFromUrl(pageRef);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !context) return [];
-    const rawLocale = String(row[2] ?? "unknown");
-    const rawContentType = String(row[3] ?? "unknown");
+    if (currentUrl) {
+      try {
+        const hostname = new URL(currentUrl).hostname;
+        if (hostname !== "leobastianelli.dev" && hostname !== "www.leobastianelli.dev") return [];
+      } catch {
+        return [];
+      }
+    }
+    const rawLocale = String(row[3] ?? "unknown");
+    const rawContentType = String(row[4] ?? "unknown");
     const locale = rawLocale === "en" || rawLocale === "es" ? rawLocale : context.locale;
     const contentType = ["home", "notes_index", "note"].includes(rawContentType)
       ? (rawContentType as PostHogRow["contentType"])
       : context.contentType;
-    const contentSlug = String(row[4] ?? "") || context.contentSlug;
+    const contentSlug = String(row[5] ?? "") || context.contentSlug;
 
     return [{
       date,
@@ -81,11 +93,11 @@ export async function fetchPostHogRange(
       locale,
       contentType,
       contentSlug,
-      pageviews: number(row[5]),
-      visitors: number(row[6]),
-      contactClicks: number(row[7]),
-      projectLinkClicks: number(row[8]),
-      noteReads: number(row[9]),
+      pageviews: number(row[6]),
+      visitors: number(row[7]),
+      contactClicks: number(row[8]),
+      projectLinkClicks: number(row[9]),
+      noteReads: number(row[10]),
     }];
   });
 }
