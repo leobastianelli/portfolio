@@ -2,8 +2,8 @@ import { analyticsConfig } from "@/lib/analytics-ops/config";
 import { persistAnalytics } from "@/lib/analytics-ops/database";
 import { isoDateDaysAgo } from "@/lib/analytics-ops/page-context";
 import { fetchClarity } from "@/lib/analytics-ops/sources/clarity";
-import { fetchPostHog } from "@/lib/analytics-ops/sources/posthog";
-import { fetchSearchConsole } from "@/lib/analytics-ops/sources/search-console";
+import { fetchPostHogRange } from "@/lib/analytics-ops/sources/posthog";
+import { fetchSearchConsoleRange } from "@/lib/analytics-ops/sources/search-console";
 
 type SourceName = "clarity" | "posthog" | "search_console";
 type SourceResult = { ok: true; rows: number } | { ok: false; error: string };
@@ -14,21 +14,36 @@ function safeFailure(reason: unknown): string {
 
 export async function ingestDailyAnalytics(): Promise<{
   ok: boolean;
-  dates: { behavior: string; searchConsole: string };
+  dates: {
+    clarity: string;
+    behaviorStart: string;
+    behaviorEnd: string;
+    searchConsoleStart: string;
+    searchConsoleEnd: string;
+  };
   sources: Record<SourceName, SourceResult>;
 }> {
   const config = analyticsConfig();
-  const behaviorDate = isoDateDaysAgo(1);
-  const searchConsoleDate = isoDateDaysAgo(3);
+  const clarityDate = isoDateDaysAgo(1);
+  const behaviorStart = isoDateDaysAgo(28);
+  const behaviorEnd = isoDateDaysAgo(1);
+  const searchConsoleStart = isoDateDaysAgo(30);
+  const searchConsoleEnd = isoDateDaysAgo(3);
   const [clarity, posthog, searchConsole] = await Promise.allSettled([
-    fetchClarity(config.clarityToken, behaviorDate),
-    fetchPostHog(
+    fetchClarity(config.clarityToken, clarityDate),
+    fetchPostHogRange(
       config.posthogHost,
       config.posthogProjectId,
       config.posthogApiKey,
-      behaviorDate,
+      behaviorStart,
+      behaviorEnd,
     ),
-    fetchSearchConsole(config.serviceAccount, config.gscSiteUrl, searchConsoleDate),
+    fetchSearchConsoleRange(
+      config.serviceAccount,
+      config.gscSiteUrl,
+      searchConsoleStart,
+      searchConsoleEnd,
+    ),
   ]);
 
   await persistAnalytics(config.databaseUrl, {
@@ -51,7 +66,13 @@ export async function ingestDailyAnalytics(): Promise<{
 
   return {
     ok: Object.values(sources).every((source) => source.ok),
-    dates: { behavior: behaviorDate, searchConsole: searchConsoleDate },
+    dates: {
+      clarity: clarityDate,
+      behaviorStart,
+      behaviorEnd,
+      searchConsoleStart,
+      searchConsoleEnd,
+    },
     sources,
   };
 }

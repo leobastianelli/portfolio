@@ -14,7 +14,8 @@ type SearchRow = {
 async function queryRows(
   accessToken: string,
   siteUrl: string,
-  date: string,
+  startDate: string,
+  endDate: string,
   dimensions: string[],
 ): Promise<SearchRow[]> {
   const endpoint = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
@@ -28,8 +29,8 @@ async function queryRows(
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        startDate: date,
-        endDate: date,
+        startDate,
+        endDate,
         dimensions,
         type: "web",
         dataState: "final",
@@ -50,20 +51,28 @@ async function queryRows(
   return rows;
 }
 
-export async function fetchSearchConsole(
+export async function fetchSearchConsoleRange(
   account: Account,
   siteUrl: string,
-  date: string,
+  startDate: string,
+  endDate: string,
 ): Promise<{ pages: GscPageRow[]; queries: GscQueryRow[] }> {
   const accessToken = await getGoogleAccessToken(account);
   const [pageRows, queryRowsResult] = await Promise.all([
-    queryRows(accessToken, siteUrl, date, ["page"]),
-    queryRows(accessToken, siteUrl, date, ["page", "query", "device", "country"]),
+    queryRows(accessToken, siteUrl, startDate, endDate, ["date", "page"]),
+    queryRows(
+      accessToken,
+      siteUrl,
+      startDate,
+      endDate,
+      ["date", "page", "query", "device", "country"],
+    ),
   ]);
 
   const pages = pageRows.flatMap((row): GscPageRow[] => {
-    const context = row.keys?.[0] ? pageContextFromUrl(row.keys[0]) : null;
-    if (!context) return [];
+    const [date, page] = row.keys ?? [];
+    const context = page ? pageContextFromUrl(page) : null;
+    if (!context || !date) return [];
     return [{
       date,
       ...context,
@@ -75,9 +84,9 @@ export async function fetchSearchConsole(
   });
 
   const queries = queryRowsResult.flatMap((row): GscQueryRow[] => {
-    const [page, query, device, country] = row.keys ?? [];
+    const [date, page, query, device, country] = row.keys ?? [];
     const context = page ? pageContextFromUrl(page) : null;
-    if (!context || !query) return [];
+    if (!context || !date || !query) return [];
     return [{
       date,
       pageKey: context.pageKey,

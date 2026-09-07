@@ -1,4 +1,4 @@
-import { nextIsoDate } from "@/lib/analytics-ops/page-context";
+import { nextIsoDate, pageContextFromUrl } from "@/lib/analytics-ops/page-context";
 import type { PostHogRow } from "@/lib/analytics-ops/types";
 
 type QueryResponse = {
@@ -11,16 +11,22 @@ function number(value: unknown): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export async function fetchPostHog(
+export async function fetchPostHogRange(
   host: string,
   projectId: string,
   apiKey: string,
-  date: string,
+  startDate: string,
+  endDateInclusive: string,
 ): Promise<PostHogRow[]> {
-  const endDate = nextIsoDate(date);
+  const endDateExclusive = nextIsoDate(endDateInclusive);
   const query = `
     SELECT
-      toString(properties.page_key) AS page_key,
+      toString(toDate(timestamp)) AS date,
+      if(
+        notEmpty(toString(properties.page_key)),
+        toString(properties.page_key),
+        toString(properties.$pathname)
+      ) AS page_key,
       any(toString(properties.locale)) AS locale,
       any(toString(properties.content_type)) AS content_type,
       any(toString(properties.content_slug)) AS content_slug,
@@ -30,12 +36,18 @@ export async function fetchPostHog(
       countIf(event = 'project_link_click') AS project_link_clicks,
       countIf(event = 'note_read') AS note_reads
     FROM events
-    WHERE timestamp >= toDateTime('${date} 00:00:00', 'UTC')
-      AND timestamp < toDateTime('${endDate} 00:00:00', 'UTC')
-      AND toString(properties.environment) = 'production'
-      AND notEmpty(toString(properties.page_key))
+    WHERE timestamp >= toDateTime('${startDate} 00:00:00', 'UTC')
+      AND timestamp < toDateTime('${endDateExclusive} 00:00:00', 'UTC')
+      AND (
+        toString(properties.environment) = 'production'
+        OR (
+          empty(toString(properties.environment))
+          AND toString(properties.$host) IN ('leobastianelli.dev', 'www.leobastianelli.dev')
+        )
+      )
+      AND notEmpty(page_key)
       AND event IN ('$pageview', 'contact_click', 'project_link_click', 'note_read')
-    GROUP BY page_key
+    GROUP BY date, page_key
   `;
 
   const response = await fetch(`${host}/api/projects/${encodeURIComponent(projectId)}/query/`, {
@@ -52,27 +64,28 @@ export async function fetchPostHog(
   const body = (await response.json()) as QueryResponse;
 
   return (body.results ?? []).flatMap((row): PostHogRow[] => {
-    const pageKey = String(row[0] ?? "");
-    if (!pageKey.startsWith("/")) return [];
-    const rawLocale = String(row[1] ?? "unknown");
-    const rawContentType = String(row[2] ?? "unknown");
-    const locale = rawLocale === "en" || rawLocale === "es" ? rawLocale : "unknown";
+    const date = String(row[0] ?? "");
+    const context = pageContextFromUrl(String(row[1] ?? ""));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !context) return [];
+    const rawLocale = String(row[2] ?? "unknown");
+    const rawContentType = String(row[3] ?? "unknown");
+    const locale = rawLocale === "en" || rawLocale === "es" ? rawLocale : context.locale;
     const contentType = ["home", "notes_index", "note"].includes(rawContentType)
       ? (rawContentType as PostHogRow["contentType"])
-      : "unknown";
-    const contentSlug = String(row[3] ?? "") || null;
+      : context.contentType;
+    const contentSlug = String(row[4] ?? "") || context.contentSlug;
 
     return [{
       date,
-      pageKey,
+      pageKey: context.pageKey,
       locale,
       contentType,
       contentSlug,
-      pageviews: number(row[4]),
-      visitors: number(row[5]),
-      contactClicks: number(row[6]),
-      projectLinkClicks: number(row[7]),
-      noteReads: number(row[8]),
+      pageviews: number(row[5]),
+      visitors: number(row[6]),
+      contactClicks: number(row[7]),
+      projectLinkClicks: number(row[8]),
+      noteReads: number(row[9]),
     }];
   });
 }
