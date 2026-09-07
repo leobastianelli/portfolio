@@ -16,7 +16,8 @@ against their declared success metric and guardrails.
 1. A daily Vercel Cron job fetches Clarity, plus rolling 28-day windows from
    PostHog and Search Console so late data and historical events are reconciled.
 2. Source rows are upserted into the private Postgres tables in `schema.sql`.
-3. A weekly job compares the latest 28 complete days with the previous 28.
+3. A weekly Monday job compares the latest 28 complete days with the previous
+   28 and stores its run, evidence, recommendations, and draft specs.
 4. Deterministic rules produce candidates and an evidence payload.
 5. A language model may summarize that payload and fill `spec-template.md`; it
    must not calculate metrics or invent missing evidence.
