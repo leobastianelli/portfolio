@@ -9,13 +9,13 @@ type Summary = {
   visitors: string;
   clarity_sessions: string;
   gsc_impressions: string;
-  posthog_latest: string | null;
-  clarity_latest: string | null;
-  gsc_latest: string | null;
+  posthog_latest: string | Date | null;
+  clarity_latest: string | Date | null;
+  gsc_latest: string | Date | null;
 };
 
 type Daily = {
-  date: string;
+  date: string | Date;
   pageviews: string;
   visitors: string;
   clarity_sessions: string;
@@ -25,9 +25,9 @@ type Daily = {
 
 type Run = {
   id: string;
-  generated_at: string;
-  window_start: string;
-  window_end: string;
+  generated_at: string | Date;
+  window_start: string | Date;
+  window_end: string | Date;
   status: "complete" | "insufficient_data" | "failed";
   evidence: Record<string, unknown>;
 };
@@ -47,19 +47,23 @@ function integer(value: string | number | null): string {
   return Math.round(Number(value ?? 0)).toLocaleString("es-AR");
 }
 
-function date(value: string | null): string {
+function date(value: string | Date | null): string {
   if (!value) return "Sin datos";
-  return new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeZone: "UTC" }).format(
-    new Date(`${value.slice(0, 10)}T12:00:00Z`),
-  );
+  const parsed = value instanceof Date
+    ? value
+    : new Date(`${String(value).slice(0, 10)}T12:00:00Z`);
+  return new Intl.DateTimeFormat("es-AR", {
+    dateStyle: "medium",
+    timeZone: "UTC",
+  }).format(parsed);
 }
 
-function dateTime(value: string): string {
+function dateTime(value: string | Date): string {
   return new Intl.DateTimeFormat("es-AR", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "America/Argentina/Buenos_Aires",
-  }).format(new Date(value));
+  }).format(value instanceof Date ? value : new Date(value));
 }
 
 async function dashboardData() {
@@ -160,7 +164,7 @@ export default async function AnalyticsDashboard() {
             <thead><tr><th>Fecha</th><th>Pageviews</th><th>Visitantes</th><th>Clarity</th><th>Impresiones</th><th>Clicks SEO</th></tr></thead>
             <tbody>
               {daily.map((row) => (
-                <tr key={row.date}><td>{date(row.date)}</td><td>{integer(row.pageviews)}</td><td>{integer(row.visitors)}</td><td>{integer(row.clarity_sessions)}</td><td>{integer(row.impressions)}</td><td>{integer(row.clicks)}</td></tr>
+                <tr key={String(row.date)}><td>{date(row.date)}</td><td>{integer(row.pageviews)}</td><td>{integer(row.visitors)}</td><td>{integer(row.clarity_sessions)}</td><td>{integer(row.impressions)}</td><td>{integer(row.clicks)}</td></tr>
               ))}
             </tbody>
           </table>
