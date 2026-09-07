@@ -43,10 +43,6 @@ export async function fetchPostHogRange(
     FROM events
     WHERE timestamp >= toDateTime('${startDate} 00:00:00', 'UTC')
       AND timestamp < toDateTime('${endDateExclusive} 00:00:00', 'UTC')
-      AND (
-        toString(properties.environment) = 'production'
-        OR empty(toString(properties.environment))
-      )
       AND notEmpty(page_ref)
       AND event IN ('$pageview', 'contact_click', 'project_link_click', 'note_read')
     GROUP BY date, page_ref
@@ -66,18 +62,16 @@ export async function fetchPostHogRange(
   const body = (await response.json()) as QueryResponse;
 
   return (body.results ?? []).flatMap((row): PostHogRow[] => {
-    const date = String(row[0] ?? "");
+    const date = String(row[0] ?? "").slice(0, 10);
     const pageRef = String(row[1] ?? "");
     const currentUrl = String(row[2] ?? "");
     const context = pageContextFromUrl(pageRef);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !context) return [];
-    if (currentUrl) {
-      try {
-        const hostname = new URL(currentUrl).hostname;
-        if (hostname !== "leobastianelli.dev" && hostname !== "www.leobastianelli.dev") return [];
-      } catch {
-        return [];
-      }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !context || !currentUrl) return [];
+    try {
+      const hostname = new URL(currentUrl).hostname;
+      if (hostname !== "leobastianelli.dev" && hostname !== "www.leobastianelli.dev") return [];
+    } catch {
+      return [];
     }
     const rawLocale = String(row[3] ?? "unknown");
     const rawContentType = String(row[4] ?? "unknown");

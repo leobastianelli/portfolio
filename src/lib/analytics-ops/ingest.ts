@@ -64,6 +64,17 @@ export async function ingestDailyAnalytics(): Promise<{
       : { ok: false, error: safeFailure(searchConsole.reason) },
   };
 
+  console.info("analytics ingestion", {
+    dates: {
+      clarity: clarityDate,
+      behaviorStart,
+      behaviorEnd,
+      searchConsoleStart,
+      searchConsoleEnd,
+    },
+    sources,
+  });
+
   return {
     ok: Object.values(sources).every((source) => source.ok),
     dates: {
