@@ -62,8 +62,9 @@ untracked `.env.local`:
 | `NEXT_PUBLIC_POSTHOG_HOST` | PostHog ingestion host — `https://eu.i.posthog.com` (the browser talks to the `/ingest` proxy; this documents the upstream) |
 | `NEXT_PUBLIC_CLARITY_PROJECT_ID` | Microsoft Clarity project id |
 
-PostHog and Clarity boot only when `NODE_ENV === "production"`, so `next dev`
-never sends data regardless of what's in `.env.local`.
+PostHog and Clarity boot only on the canonical `leobastianelli.dev` hostname.
+Local development and Vercel previews never send data regardless of what's in
+`.env.local`.
 
 **Custom PostHog events** are centralised in `src/lib/analytics.ts` (typed
 helpers — no bare `posthog.capture` in components):
@@ -78,12 +79,19 @@ helpers — no bare `posthog.capture` in components):
 | `$pageview` | every route change (manual, App Router) | `components/analytics/PostHogPageview.tsx` |
 
 **Excluding your own traffic.** Visit any page once with `?internal=1`
-(e.g. `https://leobastianelli.dev/en?internal=1`). That registers an
-`is_internal: true` super property on that browser, which PostHog persists and
-attaches to every subsequent event. In PostHog, filter it out with
-`is_internal is not set` (or `!= true`) on insights / replay. It's per-browser
-and sticks until site data is cleared; re-apply after clearing. Handled in
-`components/analytics/PostHogPageview.tsx`.
+(e.g. `https://leobastianelli.dev/en?internal=1`). That opts the browser out of
+both PostHog and Clarity until site data is cleared. Visit once with
+`?internal=0` to opt back in. The control query parameter is never included in
+captured page URLs.
+
+Every captured event includes a shared page context (`page_key`, `locale`,
+`content_type`, optional `content_slug`, and `environment`). Contact and project
+link events also include their UI `placement`. Clarity receives the same page
+context as custom tags and the same named interaction events, so sessions can
+be filtered consistently across both tools.
+
+The warehouse contract, automation stages, and recommendation spec format live
+in [`analytics/README.md`](analytics/README.md).
 
 `cv_download`, `hero_cta_click` and `contact_form_submit` helpers exist but are
 unwired — the site currently has no CV download, no hero CTA and no contact

@@ -360,7 +360,7 @@ export default function Nav() {
                   target={link.href.startsWith("mailto") ? undefined : "_blank"}
                   rel={link.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                   className="menu-panel-link"
-                  onClick={() => analytics.contactClick(link.key as "email" | "linkedin" | "github")}
+                  onClick={() => analytics.contactClick(link.key as "email" | "linkedin" | "github", "navigation_panel")}
                   onFocus={(e) => setUnderlineTarget(e.currentTarget)}
                   onBlur={() => setUnderlineTarget(null)}
                 >

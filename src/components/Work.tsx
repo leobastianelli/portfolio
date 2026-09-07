@@ -89,7 +89,7 @@ function ProjectCardDetails({
           target="_blank"
           rel="noopener noreferrer"
           className="font-mono featured-card__link"
-          onClick={() => analytics.projectLinkClick(project.slug, link.url)}
+          onClick={() => analytics.projectLinkClick(project.slug, link.url, "featured_card")}
         >
           {link.label} &rarr;
         </a>
@@ -390,7 +390,7 @@ export default function Work({ projects }: { projects: Project[] }) {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="more-project-row__title-link"
-                          onClick={() => analytics.projectLinkClick(project.slug, link.url)}
+                          onClick={() => analytics.projectLinkClick(project.slug, link.url, "more_project_list")}
                         >
                           {project.title} <span aria-hidden="true">&rarr;</span>
                         </a>
@@ -433,7 +433,7 @@ export default function Work({ projects }: { projects: Project[] }) {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="more-project-row__title-link"
-                          onClick={() => analytics.projectLinkClick(project.slug, link.url)}
+                          onClick={() => analytics.projectLinkClick(project.slug, link.url, "more_project_grid")}
                         >
                           {project.title} <span aria-hidden="true">&rarr;</span>
                         </a>

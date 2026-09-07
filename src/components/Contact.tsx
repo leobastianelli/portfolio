@@ -33,7 +33,7 @@ export default function Contact() {
             <a
               key={link.label}
               href={link.href}
-              onClick={() => analytics.contactClick(link.key as "email" | "linkedin" | "github")}
+              onClick={() => analytics.contactClick(link.key as "email" | "linkedin" | "github", "contact_section")}
               target={link.href.startsWith("mailto") ? undefined : "_blank"}
               rel={link.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
               className="reveal project-card flex-1 p-6 md:p-7 flex flex-col gap-2 group no-underline"

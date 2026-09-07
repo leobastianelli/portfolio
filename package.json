@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "analytics:check": "node scripts/analytics/check-config.mjs",
     "capture": "node scripts/capture-project.mjs",
     "render-cover": "node scripts/render-startup-cover.mjs"
   },
