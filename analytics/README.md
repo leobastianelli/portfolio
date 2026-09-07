@@ -21,7 +21,8 @@ against their declared success metric and guardrails.
 4. Deterministic rules produce candidates and an evidence payload.
 5. A language model may summarize that payload and fill `spec-template.md`; it
    must not calculate metrics or invent missing evidence.
-6. The report is opened as a GitHub issue and deduplicated by fingerprint.
+6. An authenticated server-rendered dashboard exposes the generated evidence
+   and specs to the owner; it is excluded from search indexing.
 
 Clarity must run daily because its export API only exposes the previous one to
 three days. Search Console collection should re-fetch recent finalized dates so
@@ -74,7 +75,7 @@ optionally, local shell variables:
 | `POSTHOG_PROJECT_ID` | PostHog project id |
 | `POSTHOG_HOST` | Optional API host; defaults to PostHog EU |
 | `CRON_SECRET` | Protects the daily ingestion endpoint |
-| `ANALYTICS_DASHBOARD_PASSWORD` | Password for the private `/ops/analytics` dashboard |
+| `ANALYTICS_DASHBOARD_PASSWORD` | Password for the private analytics dashboard |
 
 Run `npm run analytics:check` in the configured environment before enabling a
 schedule. The check prints variable names only and never secret values.
