@@ -12,6 +12,37 @@ import { LOCALE_COOKIE, isLocale, localeFromAcceptLanguage } from "@/lib/i18n";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/ops/analytics" || pathname.startsWith("/ops/analytics/")) {
+    const expectedPassword = process.env.ANALYTICS_DASHBOARD_PASSWORD;
+    const authorization = request.headers.get("authorization");
+    let valid = false;
+
+    if (expectedPassword && authorization?.startsWith("Basic ")) {
+      try {
+        const decoded = atob(authorization.slice(6));
+        const separator = decoded.indexOf(":");
+        valid =
+          separator >= 0 &&
+          decoded.slice(0, separator) === "analytics" &&
+          decoded.slice(separator + 1) === expectedPassword;
+      } catch {
+        valid = false;
+      }
+    }
+
+    if (!valid) {
+      return new Response("Authentication required", {
+        status: 401,
+        headers: {
+          "Cache-Control": "no-store",
+          "WWW-Authenticate": 'Basic realm="Portfolio Analytics", charset="UTF-8"',
+        },
+      });
+    }
+
+    return NextResponse.next();
+  }
+
   if (isLocale(pathname.split("/")[1])) return;
 
   const chosen = request.cookies.get(LOCALE_COOKIE)?.value;

@@ -74,6 +74,7 @@ optionally, local shell variables:
 | `POSTHOG_PROJECT_ID` | PostHog project id |
 | `POSTHOG_HOST` | Optional API host; defaults to PostHog EU |
 | `CRON_SECRET` | Protects the daily ingestion endpoint |
+| `ANALYTICS_DASHBOARD_PASSWORD` | Password for the private `/ops/analytics` dashboard |
 
 Run `npm run analytics:check` in the configured environment before enabling a
 schedule. The check prints variable names only and never secret values.

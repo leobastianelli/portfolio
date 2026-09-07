@@ -6,6 +6,7 @@ const requiredVariables = [
   "POSTHOG_PERSONAL_API_KEY",
   "POSTHOG_PROJECT_ID",
   "CRON_SECRET",
+  "ANALYTICS_DASHBOARD_PASSWORD",
 ];
 
 const missing = requiredVariables.filter((name) => !process.env[name]?.trim());
