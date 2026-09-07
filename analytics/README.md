@@ -13,7 +13,7 @@ against their declared success metric and guardrails.
 
 ## Data flow
 
-1. A daily scheduled job fetches Clarity, PostHog, and Search Console.
+1. A daily Vercel Cron job fetches Clarity, PostHog, and Search Console.
 2. Source rows are upserted into the private Postgres tables in `schema.sql`.
 3. A weekly job compares the latest 28 complete days with the previous 28.
 4. Deterministic rules produce candidates and an evidence payload.
@@ -59,7 +59,8 @@ floor. Corroboration by a second source raises confidence; it is not mandatory.
 
 ## Private configuration
 
-Store these as GitHub Actions secrets and, optionally, local shell variables:
+Store these as sensitive Production environment variables in Vercel and,
+optionally, local shell variables:
 
 | Variable | Purpose |
 | --- | --- |
@@ -69,6 +70,8 @@ Store these as GitHub Actions secrets and, optionally, local shell variables:
 | `GSC_SITE_URL` | Exact property name, e.g. `sc-domain:leobastianelli.dev` |
 | `POSTHOG_PERSONAL_API_KEY` | Read-only personal API key |
 | `POSTHOG_PROJECT_ID` | PostHog project id |
+| `POSTHOG_HOST` | Optional API host; defaults to PostHog EU |
+| `CRON_SECRET` | Protects the daily ingestion endpoint |
 
 Run `npm run analytics:check` in the configured environment before enabling a
 schedule. The check prints variable names only and never secret values.
@@ -80,4 +83,5 @@ schedule. The check prints variable names only and never secret values.
 3. Add the six secrets and pass `npm run analytics:check`.
 4. Implement and run each collector manually against a one-day window.
 5. Reconcile totals with each source dashboard.
-6. Enable daily ingestion, then the weekly recommendation job.
+6. Deploy `vercel.json` to enable the daily ingestion at 06:15 UTC, then add
+   the weekly recommendation job.

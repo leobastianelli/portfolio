@@ -5,6 +5,7 @@ const requiredVariables = [
   "GSC_SITE_URL",
   "POSTHOG_PERSONAL_API_KEY",
   "POSTHOG_PROJECT_ID",
+  "CRON_SECRET",
 ];
 
 const missing = requiredVariables.filter((name) => !process.env[name]?.trim());
