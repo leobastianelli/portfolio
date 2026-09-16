@@ -22,6 +22,7 @@ export interface UiContent {
     labelCity: string;
     intro: string;
     introSecondary: string;
+    availability: string;
     cta: string;
     moreLabel: string;
     bioMore: { p1: string; p2pre: string; p2post: string };

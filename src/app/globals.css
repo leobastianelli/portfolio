@@ -898,6 +898,26 @@
   background: var(--color-ink);
   color: var(--color-paper);
 }
+.cta-btn:focus-visible {
+  outline: 2px solid var(--color-accent-ink);
+  outline-offset: 4px;
+}
+
+.hero-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--color-ink-faded);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+.hero-availability__dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-accent-ink);
+}
 
 /* Contact invertido (2026-08-31, Leo): fondo negro, tinta clara. Mismo
    mecanismo que `.section-index` — se re-scopean los tokens y todo lo que

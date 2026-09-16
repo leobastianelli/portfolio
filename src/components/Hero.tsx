@@ -2,6 +2,7 @@
 
 import { useLang } from "@/context/LanguageContext";
 import { SITE } from "@/lib/site";
+import { analytics } from "@/lib/analytics";
 import HeroPortrait from "@/components/HeroPortrait";
 
 export default function Hero() {
@@ -53,8 +54,7 @@ export default function Hero() {
         {/* Bloque a dos columnas DESDE el nombre: a la izquierda nombre +
             intro; a la derecha el retrato inclinable, alineado al tope del
             h1 (`items-start`). Dos columnas desde lg — abajo de eso se apila
-            y el retrato cae después de la intro. El CTA "Escribime" se sacó
-            (el contacto vive en el menú). */}
+            y el retrato cae después de la intro. */}
         {/* Sin `mb` propio: es el último bloque de la sección, así que el
             aire de abajo lo pone el `pb` de la sección y no dos fuentes
             sumadas (en mobile eran 64px de margen + 64px de padding). */}
@@ -119,6 +119,20 @@ export default function Hero() {
               >
                 {t.hero.introSecondary}
               </p>
+            </div>
+
+            <div className="fade-up delay-4 mt-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+              <p className="hero-availability font-body">
+                <span className="hero-availability__dot" aria-hidden="true" />
+                {t.hero.availability}
+              </p>
+              <a
+                href={`mailto:${SITE.email}`}
+                className="cta-btn no-underline"
+                onClick={() => analytics.heroCtaClick(t.hero.cta)}
+              >
+                {t.hero.cta}
+              </a>
             </div>
 
             {/* Ficha técnica — dl de etiqueta/valor. Vive debajo del intro, en

@@ -30,7 +30,8 @@
     "labelCity": "Córdoba, Argentina",
     "intro": "Desarrollo aplicaciones web y sistemas internos.",
     "introSecondary": "Trabajo con clientes en Argentina, Europa y Estados Unidos.",
-    "cta": "Escribime →",
+    "availability": "Disponible para proyectos freelance y contratos.",
+    "cta": "Contactame →",
     "moreLabel": "Acerca de mí",
     "bioMore": {
       "p1": "Soy desarrollador full-stack con foco en producto: React, Next.js, TypeScript, y las últimas suscripciones e integraciones de IA que construí para clientes en Europa y Estados Unidos.",
@@ -41,7 +42,6 @@
       { "label": "Experiencia", "value": "5+ años" },
       { "label": "Ubicación", "value": "Córdoba, Argentina" },
       { "label": "Idiomas", "value": "Español (nativo), inglés (fluido)" },
-      { "label": "Disponibilidad", "value": "Freelance y contratos" },
       { "label": "Zona horaria", "value": "GMT-3 (ART)" }
     ]
   },
