@@ -359,7 +359,7 @@ export default function Work({ projects }: { projects: Project[] }) {
           <h2 className="editorial-type" style={{ fontSize: "var(--text-title)", fontWeight: 500, lineHeight: 1.15, color: "var(--color-ink)" }}>{t.work.sectionTitle}</h2>
         </div>
         {featured.length > 0 && <FeaturedCards projects={featured} statusLabels={statusLabels} mode={mode} />}
-        <div className="reveal mb-7 mt-9 md:mt-10">
+        <div className="reveal mb-7 mt-[1.125rem] md:mt-10">
           <p className="section-label font-mono mb-3">{t.work.moreLabel}</p>
           <h2 className="editorial-type" style={{ fontSize: "var(--text-heading)", fontWeight: 500, lineHeight: 1.2, color: "var(--color-ink)" }}>{t.work.moreTitle}</h2>
         </div>

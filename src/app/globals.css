@@ -1986,6 +1986,11 @@
   .more-project-row__stack { grid-column: 2; }
 }
 @media (max-width: 767.98px) {
+  #about.site-section,
+  #work.site-section,
+  #stack.site-section {
+    padding-block: 1.75rem;
+  }
   .screenshot-deck { padding-right: 0; }
   .more-project-row__summary p, .more-project-pair__summary p { font-size: 0.9375rem; line-height: 1.65; }
 }
