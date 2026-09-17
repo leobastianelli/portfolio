@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Bricolage_Grotesque } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import PostHogPageview from "@/components/analytics/PostHogPageview";
+import ConsoleMessage from "@/components/ConsoleMessage";
 import { SITE } from "@/lib/site";
 import { isLocale, locales, localizedUrl } from "@/lib/i18n";
 import { getUi } from "@/lib/content/ui";
@@ -71,6 +72,7 @@ export default async function LocaleLayout({
     >
       <body className="min-h-screen">
         {children}
+        <ConsoleMessage locale={locale} />
         <PostHogPageview />
         <Analytics />
       </body>

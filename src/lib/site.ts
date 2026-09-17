@@ -8,6 +8,7 @@ export const SITE = {
   name: "lb.dev",
   author: "Leo Bastianelli",
   email: "leonelbastianelli@gmail.com",
+  repository: "https://github.com/leobastianelli/portfolio",
   social: {
     linkedin: "https://www.linkedin.com/in/leo-bastianelli",
     github: "https://github.com/leobastianelli",

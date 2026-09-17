@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import Image from "next/image";
 import { SITE } from "@/lib/site";
 
@@ -25,7 +25,7 @@ const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export default function HeroPortrait() {
+export default function HeroPortrait({ footer }: { footer?: ReactNode }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const boundsRef = useRef<DOMRect | null>(null);
@@ -72,11 +72,11 @@ export default function HeroPortrait() {
           src="/leo-portrait.png"
           alt={`Retrato de ${SITE.author}`}
           fill
-          preload
-          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 38vw, 70vw"
+          sizes="(min-width: 1024px) clamp(280px, 27vw, 320px), (min-width: 640px) clamp(180px, 22vw, 220px), 112px"
           className="portrait-tilt__img"
         />
         <div ref={glowRef} className="portrait-tilt__glow" aria-hidden="true" />
+        {footer}
       </div>
     </div>
   );

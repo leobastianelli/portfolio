@@ -28,13 +28,13 @@ export default function Hero() {
      */
     <section
       id="hero"
-      className="relative px-5 md:px-6 pt-8 pb-7 md:pt-9 md:pb-9 lg:overflow-hidden lg:pt-[clamp(1.5rem,4dvh,4.5rem)] lg:pb-[clamp(1.5rem,4dvh,2.5rem)]"
+      className="relative px-5 md:px-6 pt-4 pb-7 md:pt-9 md:pb-9 lg:overflow-hidden lg:pt-[clamp(1.5rem,4dvh,4.5rem)] lg:pb-[clamp(1.5rem,4dvh,2.5rem)]"
     >
       <div className="max-w-6xl mx-auto w-full lg:flex lg:flex-col lg:h-full lg:min-h-0">
         {/* Ubicación — arriba de todo, chica y tenue. Atenuada por alfa en el
             color, NO por `opacity`: `.fade-up` anima opacity 0→1 con fill-mode
             both y su keyframe final pisa cualquier `opacity` inline. */}
-        <div className="fade-up mb-1">
+        <div className="fade-up">
           <span
             className="section-label font-mono"
             style={{
@@ -51,20 +51,18 @@ export default function Hero() {
           <span className="section-label">{t.hero.labelRole}</span>
         </div>
 
-        {/* Bloque a dos columnas DESDE el nombre: a la izquierda nombre +
-            intro; a la derecha el retrato inclinable, alineado al tope del
-            h1 (`items-start`). Dos columnas desde lg — abajo de eso se apila
-            y el retrato cae después de la intro. */}
+        {/* Cada pieza ocupa un área propia del grid. Así el retrato puede vivir
+            junto a la introducción en mobile y pasar a la columna derecha,
+            alineado al nombre, desde lg. */}
         {/* Sin `mb` propio: es el último bloque de la sección, así que el
             aire de abajo lo pone el `pb` de la sección y no dos fuentes
             sumadas (en mobile eran 64px de margen + 64px de padding). */}
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(300px,400px)] gap-7 lg:gap-8 items-start">
-          <div className="lg:self-stretch lg:flex lg:flex-col">
+        <div className="hero-grid grid grid-cols-[minmax(0,1fr)_clamp(6rem,28vw,7rem)] sm:grid-cols-1 lg:grid-cols-[minmax(0,1fr)_clamp(280px,27vw,320px)] lg:gap-x-8 items-start">
             {/* Display name — one h1, styled as two lines (R-A: two <h1>s
                 read as two top-level headings to a screen reader; this is
                 one name). */}
             <h1
-              className="font-display"
+              className="hero-name font-display lg:col-start-1 lg:row-start-1"
               style={{
                 /* Ligado a la ALTURA del viewport (dvh) además del ancho:
                    así se achica solo en pantallas bajas y el hero entra. */
@@ -99,40 +97,58 @@ export default function Hero() {
               </span>
             </h1>
 
-            {/* Intro */}
-            <div
-              className="fade-up delay-3 flex flex-col gap-1"
-              style={{ maxWidth: "540px" }}
+            {/* Las dos líneas mantienen la misma jerarquía del intro. En
+                mobile se separan como áreas de grid para que la segunda pueda
+                compartir el ancho con el retrato. */}
+            <p
+              className="hero-intro-primary fade-up delay-3 editorial-type lg:col-start-1 lg:row-start-2"
+              style={{ maxWidth: "540px", fontSize: "var(--text-lead)", lineHeight: 1.4, fontWeight: 700, color: "var(--color-ink)" }}
             >
-              {/* Los dos renglones son el mismo párrafo: mismo tamaño y mismo
-                  color. La única distinción es el peso — el primero en negrita,
-                  el segundo en 400. */}
-              <p
-                className="editorial-type"
-                style={{ fontSize: "var(--text-lead)", lineHeight: 1.4, fontWeight: 700, color: "var(--color-ink)" }}
-              >
-                {t.hero.intro}
-              </p>
-              <p
-                className="editorial-type"
-                style={{ fontSize: "var(--text-lead-sm)", lineHeight: 1.4, fontWeight: 400, color: "var(--color-ink)" }}
-              >
-                {t.hero.introSecondary}
-              </p>
-            </div>
+              {t.hero.intro}
+            </p>
+            <p
+              className="hero-intro-secondary fade-up delay-3 editorial-type sm:mt-1 lg:col-start-1 lg:row-start-3"
+              style={{ maxWidth: "540px", fontSize: "var(--text-lead-sm)", lineHeight: 1.4, fontWeight: 400, color: "var(--color-ink)" }}
+            >
+              {t.hero.introSecondary}
+            </p>
 
-            <div className="fade-up delay-4 mt-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-              <p className="hero-availability font-body">
-                <span className="hero-availability__dot" aria-hidden="true" />
-                {t.hero.availability}
-              </p>
-              <a
-                href={`mailto:${SITE.email}`}
-                className="cta-btn no-underline"
-                onClick={() => analytics.heroCtaClick(t.hero.cta)}
-              >
-                {t.hero.cta}
-              </a>
+            {/* Mobile/tablet reciben los hijos como piezas del grid. En
+                desktop el contacto se superpone dentro del retrato. */}
+            <div className="hero-media contents lg:col-start-2 lg:row-start-1 lg:row-span-4 lg:block">
+              <div className="hero-portrait fade-up delay-2 w-full justify-self-center sm:mt-5 sm:justify-self-end sm:max-w-[clamp(180px,22vw,220px)] lg:mt-0 lg:max-w-none">
+                <HeroPortrait
+                  footer={(
+                    <div className="portrait-tilt__footer">
+                      <p className="hero-availability font-body">
+                        <span className="hero-availability__dot" aria-hidden="true" />
+                        {t.hero.availability}
+                      </p>
+                      <a
+                        href={`mailto:${SITE.email}`}
+                        className="cta-btn no-underline"
+                        onClick={() => analytics.heroCtaClick(t.hero.cta)}
+                      >
+                        {t.hero.cta}
+                      </a>
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="hero-actions fade-up delay-4 mt-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center lg:hidden">
+                <p className="hero-availability font-body">
+                  <span className="hero-availability__dot" aria-hidden="true" />
+                  {t.hero.availability}
+                </p>
+                <a
+                  href={`mailto:${SITE.email}`}
+                  className="cta-btn no-underline"
+                  onClick={() => analytics.heroCtaClick(t.hero.cta)}
+                >
+                  {t.hero.cta}
+                </a>
+              </div>
             </div>
 
             {/* Ficha técnica — dl de etiqueta/valor. Vive debajo del intro, en
@@ -143,7 +159,7 @@ export default function Hero() {
                 valor en el peso del cuerpo, alineado a la derecha. Raya fina
                 entre filas cruzando el ancho de la columna de texto. */}
             <dl
-              className="fade-up delay-3 mt-6 lg:mt-7 flex flex-col"
+              className="hero-facts fade-up delay-3 mt-6 lg:mt-7 flex flex-col lg:col-start-1 lg:row-start-4"
               style={{ maxWidth: "460px" }}
             >
               {t.hero.table.map((row, i) => (
@@ -169,14 +185,6 @@ export default function Hero() {
                 </div>
               ))}
             </dl>
-          </div>
-
-          {/* Columna derecha — retrato, alineado al tope del nombre. En lg+ el
-              ancho (y por lo tanto el alto 3:4) sigue a la altura del
-              viewport para no pasarse. */}
-          <div className="justify-self-center lg:justify-self-end w-full max-w-[260px] sm:max-w-[400px] lg:max-w-[clamp(240px,46dvh,400px)]">
-            <HeroPortrait />
-          </div>
         </div>
       </div>
     </section>
